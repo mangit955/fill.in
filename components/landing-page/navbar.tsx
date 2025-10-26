@@ -12,8 +12,8 @@ export const Navbar = () => {
           <Image
             src="/logo.svg" // or /logo.png — put your file inside the public/ folder
             alt="Fill.in logo"
-            width={130} // adjust as needed
-            height={130}
+            width={150} // adjust as needed
+            height={150}
             className="rounded-sm" // optional: or remove
           />
         </Link>
