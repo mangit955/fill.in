@@ -11,7 +11,7 @@ export const Herosection = () => {
           The{" "}
           <span className="relative inline-block">
             simplest
-            <span className="absolute left-0 right-0 -bottom-2 w-full h-[18px] pointer-events-none select-none">
+            <span className="absolute left-0 right-0 -bottom-2 w-full  pointer-events-none select-none">
               {/* Inline SVG below */}
               <svg
                 xmlns="http://www.w3.org/2000/svg"
@@ -53,11 +53,11 @@ export const Herosection = () => {
             fill="#ffff"
           />
         </svg>
-        <Button variant="default" className="px-3 py-2 font-semibold gap-2">
+        <Button variant="default" className="px-3  font-semibold gap-2">
           Create a free form
           <ArrowRight className="size-4 translate-y-2px font-bold" />
         </Button>
-        <h3 className="text-sm text-gray-700 pt-2">No signup required</h3>
+        <h3 className="text-sm text-gray-700 ">No signup required</h3>
       </div>
       <div>
         <div className="justify-between flex">
@@ -71,10 +71,10 @@ export const Herosection = () => {
             <path
               d="M231.654 338.871C226.62 328.369 215.525 326.434 199.105 326.459M231.654 338.871C225.998 327.972 228.442 313.96 239.986 304.673M231.654 338.871C230.13 339.104 224.107 318.996 210.59 297.968M199.326 279.195L187.311 259.67M176.046 242.774L165.908 227.004M155.62 210.859L143.605 192.461M133.535 178.327L121.895 160.68M112.283 146.111L100.268 129.214M89.0786 113.445L78.1898 97.2995M68.4273 83.4069L56.0365 67.6368M44.4719 53.3697C41.9687 49.615 35.9861 41.0541 32.0812 36.8487M22.3189 24.457L5.79785 6.05859"
               stroke="#FFAA33"
-              stroke-width="11.3869"
-              stroke-miterlimit="1.5"
-              stroke-linecap="round"
-              stroke-linejoin="round"
+              strokeWidth="11.3869"
+              strokeMiterlimit="1.5"
+              strokeLinecap="round"
+              strokeLinejoin="round"
               fill="#000000"
             />
           </svg>
@@ -88,15 +88,15 @@ export const Herosection = () => {
             <path
               d="M95.4 1L1 95.3"
               stroke="#B9BBB6"
-              stroke-miterlimit="10"
-              stroke-dasharray="13 13"
+              strokeMiterlimit="10"
+              strokeDasharray="13 13"
               fill="#000000"
             />
             <path
               d="M95.4 1L1 95.3"
               stroke="#000000"
-              stroke-miterlimit="10"
-              stroke-dasharray="13 13"
+              strokeMiterlimit="10"
+              strokeDasharray="13 13"
               fill="#000000"
             />
           </svg>
