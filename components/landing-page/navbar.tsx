@@ -22,18 +22,21 @@ export const Navbar = () => {
         <div className="flex items-center gap-3">
           <Button
             variant="ghost"
-            className="text-gray-500 hidden md:inline-flex"
+            className="text-gray-500 hidden md:inline-flex cursor-pointer"
           >
             Pricing
           </Button>
-          <Button variant="ghost" className="text-gray-500">
+          <Button variant="ghost" className="text-gray-500 cursor-pointer">
             Log in
           </Button>
-          <Button variant="ghost" className="text-gray-500">
+          <Button variant="ghost" className="text-gray-500 cursor-pointer">
             Sign up
           </Button>
           <Link href="/builder">
-            <Button variant="default" className="hidden md:inline-flex">
+            <Button
+              variant="default"
+              className="hidden md:inline-flex cursor-pointer"
+            >
               Create form
             </Button>
           </Link>

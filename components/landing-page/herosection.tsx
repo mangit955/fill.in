@@ -1,9 +1,12 @@
+"use client";
 import Image from "next/image";
 import { Button } from "../ui/button";
 import { ArrowRight } from "lucide-react";
 import MakeCombine from "../ui/svg/makeCombine";
+import { useRouter } from "next/navigation";
 
 export const Herosection = () => {
+  const router = useRouter();
   return (
     <section className=" flex flex-col justify-center items-center text-center px-6 pt-20">
       <div className="justify-center item-center flex-col flex">
@@ -53,7 +56,11 @@ export const Herosection = () => {
             fill="#ffff"
           />
         </svg>
-        <Button variant="default" className="px-3  font-semibold gap-2">
+        <Button
+          onClick={() => router.push("/builder")}
+          variant="default"
+          className="px-3 cursor-pointer font-semibold gap-2"
+        >
           Create a free form
           <ArrowRight className="size-4 translate-y-2px font-bold" />
         </Button>
@@ -115,22 +122,22 @@ export const Herosection = () => {
             <path
               d="M51.7507 89.3764C46.8423 66.4714 31.0526 25.5123 50.1502 3.05555C58.8532 -7.17824 59.7483 23.877 59.8718 28.7465C60.2341 43.0332 57.3781 58.0896 54.0402 71.9591C53.619 73.7096 50.1637 89.4389 53.567 83.552"
               stroke="#36454F"
-              stroke-width="2"
-              stroke-linecap="round"
+              strokeWidth="2"
+              strokeLinecap="round"
               fill="#36454F"
             />
             <path
               d="M55.6964 89.94C47.8635 70.753 38.2096 40.9109 18.6681 29.7903C15.5318 28.0055 11.0088 25.8114 7.30074 27.0869C2.22045 28.8344 -1.14609 36.2692 2.59999 40.6874C9.04447 48.288 19.2442 53.6699 26.8448 60.0878C33.9423 66.0808 40.8449 72.4465 46.3646 79.9614C47.3542 81.3088 50.8939 89.7118 50.3729 88.0611"
               stroke="#36454F"
-              stroke-width="2"
-              stroke-linecap="round"
+              strokeWidth="2"
+              strokeLinecap="round"
               fill="#36454F"
             />
             <path
               d="M58.4522 86.9339C53.3152 65.1436 55.5759 46.5023 64.0367 25.563C65.1417 22.8282 79.5285 -0.850586 81.8932 6.4026C92.3835 38.5792 61.9165 65.1202 51.8134 92.2571"
               stroke="#36454F"
-              stroke-width="2"
-              stroke-linecap="round"
+              strokeWidth="2"
+              strokeLinecap="round"
               fill="#36454F"
             />
           </svg>
@@ -258,10 +265,10 @@ export const Herosection = () => {
             <path
               d="M255.96 297.192C237.913 297.008 233.277 298.332 217.38 314.45M255.96 297.192C240.121 294.8 229.965 287.293 224.445 271.396M255.96 297.192C243.539 295.939 214.054 292.556 195.473 289.047M173.022 285.425L146.184 281.555M126.572 278.974C121.669 278.544 109.592 277.322 100.508 275.877M80.8961 274.844C74.0146 273.984 59.0645 272.264 54.3162 272.264M32.8975 269.94L6.05957 268.65L11.7368 233.812M16.1238 207.233L21.0269 175.75M23.8655 151.493L29.0266 120.01M32.1233 97.0437L36.2522 69.1735M40.8972 39.2393C42.0155 32.3578 44.4068 16.1174 45.0261 6.20801"
               stroke="#36454F"
-              stroke-width="11.3869"
-              stroke-miterlimit="1.5"
-              stroke-linecap="round"
-              stroke-linejoin="round"
+              strokeWidth="11.3869"
+              strokeMiterlimit="1.5"
+              strokeLinecap="round"
+              strokeLinejoin="round"
               fill="#000000"
             />
           </svg>
@@ -276,57 +283,57 @@ export const Herosection = () => {
             <path
               d="M41.5816 1.21606C39.7862 5.82482 40.3852 10.0977 40.5593 14.9633C40.7854 21.2812 40.9774 27.5593 41.4363 33.8661"
               stroke="#000000"
-              stroke-width="1.90596"
-              stroke-linecap="round"
+              strokeWidth="1.90596"
+              strokeLinecap="round"
               fill="#000000"
             />
             <path
               d="M41.0651 45.1798C39.7505 51.5096 40.3418 57.6794 40.8893 64.0791C41.4093 70.1568 42.1389 76.2117 42.8566 82.2682"
               stroke="#000000"
-              stroke-width="1.90596"
-              stroke-linecap="round"
+              strokeWidth="1.90596"
+              strokeLinecap="round"
               fill="#000000"
             />
             <path
               d="M1.13413 46.6647C5.16696 44.8703 8.96881 44.7974 13.3092 44.5029C19.8761 44.0572 26.2025 43.2089 32.656 41.952"
               stroke="#000000"
-              stroke-width="1.90596"
-              stroke-linecap="round"
+              strokeWidth="1.90596"
+              strokeLinecap="round"
               fill="#000000"
             />
             <path
               d="M47.2629 40.0959C58.4139 39.3819 69.3895 37.5305 80.4472 35.9965"
               stroke="#000000"
-              stroke-width="1.90596"
-              stroke-linecap="round"
+              strokeWidth="1.90596"
+              strokeLinecap="round"
               fill="#000000"
             />
             <path
               d="M49.3429 34.6508L52.917 28.1667"
               stroke="#B2BEB5"
-              stroke-width="1.90596"
-              stroke-linecap="round"
+              strokeWidth="1.90596"
+              strokeLinecap="round"
               fill="#000000"
             />
             <path
               d="M32.9786 50.3504L28.6387 54.6391"
               stroke="#B2BEB5"
-              stroke-width="1.90596"
-              stroke-linecap="round"
+              strokeWidth="1.90596"
+              strokeLinecap="round"
               fill="#000000"
             />
             <path
               d="M52.6361 48.6656L56.9506 51.5758"
               stroke="#B2BEB5"
-              stroke-width="1.90596"
-              stroke-linecap="round"
+              strokeWidth="1.90596"
+              strokeLinecap="round"
               fill="#000000"
             />
             <path
               d="M31.549 30.8471C26.8741 29.4323 22.7143 27.3543 18.2738 25.3586"
               stroke="#B2BEB5"
-              stroke-width="1.90596"
-              stroke-linecap="round"
+              strokeWidth="1.90596"
+              strokeLinecap="round"
               fill="#000000"
             />
           </svg>

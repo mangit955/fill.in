@@ -6,10 +6,11 @@ import Image from "next/image";
 
 export default function Footer() {
   return (
-    <footer className="border-t border-gray-200 dark:border-neutral-800 border-[0.5px] mt-10 items-center flex ">
-      <div className="max-w-7xl mx-auto px-6 py-12 flex flex-col md:flex-row justify-between items-start md:items-center gap-40">
+    <footer className="border-t border-gray-200 dark:border-neutral-800 border-[0.5px] mt-15 items-center flex justify-center">
+      <div className="max-w-7xl mx-auto px-6 border-t border-gray-200 dark:border-neutral-800 border-[0.5px]"></div>
+      <div className="max-w-7xl mx-auto px-6 py-12 flex flex-col md:flex-row justify-between items-start  gap-40">
         {/* Left Section */}
-        <div className="space-y-4 max-w-sm">
+        <div className="space-y-4 max-w-md ">
           <Link href="/" className="flex items-center gap-2 ">
             <Image
               src="/logo.svg" // or /logo.png — put your file inside the public/ folder
@@ -22,24 +23,27 @@ export default function Footer() {
           <p className="text-md font-semibold text-gray-900">
             Made and hosted by Manas 🇮🇳
           </p>
-          <div className=" text-md text-gray-600 ">
+          <div className=" text-md text-gray-800 ">
             © {new Date().getFullYear()} fill.in
           </div>
           <div className="flex gap-4">
-            <Link href="https://twitter.com" target="_blank">
-              <Twitter className="h-5 w-5 text-muted-foreground hover:text-foreground transition" />
+            <Link href="https://x.com/Ragu_dev23" target="_blank">
+              <Twitter className="h-5 w-5 text-gray-700 hover:text-foreground transition" />
             </Link>
             <Link href="https://facebook.com" target="_blank">
-              <Facebook className="h-5 w-5 text-muted-foreground hover:text-foreground transition" />
+              <Facebook className="h-5 w-5 text-gray-700  hover:text-foreground transition" />
             </Link>
-            <Link href="https://github.com" target="_blank">
-              <Github className="h-5 w-5 text-muted-foreground hover:text-foreground transition" />
+            <Link href="https://github.com/mangit955" target="_blank">
+              <Github className="h-5 w-5 text-gray-700 hover:text-foreground transition" />
             </Link>
-            <Link href="https://instagram.com" target="_blank">
-              <Instagram className="h-5 w-5 text-muted-foreground hover:text-foreground transition" />
+            <Link href="https://www.instagram.com/manas._2817/" target="_blank">
+              <Instagram className="h-5 w-5 text-gray-700  hover:text-foreground transition" />
             </Link>
-            <Link href="https://linkedin.com" target="_blank">
-              <Linkedin className="h-5 w-5 text-muted-foreground hover:text-foreground transition" />
+            <Link
+              href="https://www.linkedin.com/in/manas-raghuwanshi-526a55291/"
+              target="_blank"
+            >
+              <Linkedin className="h-5 w-5 text-gray-700  hover:text-foreground transition" />
             </Link>
           </div>
         </div>
