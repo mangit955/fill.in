@@ -36,7 +36,7 @@ export const Herosection = () => {
         </h1>
 
         <h2 className="font-medium text-lg sm:text-xl text-[rgb(55, 53, 47)] max-w-xl mx-auto pt-5">
-          Say goodbye to boring forms. Meet Tally — the free, intuitive form
+          Say goodbye to boring forms. Meet Fill.in — the free, intuitive form
           builder you’ve been looking for.
         </h2>
       </div>
@@ -59,7 +59,7 @@ export const Herosection = () => {
         <Button
           onClick={() => router.push("/builder")}
           variant="default"
-          className="px-3 cursor-pointer font-semibold gap-2"
+          className=" cursor-pointer font-semibold gap-2"
         >
           Create a free form
           <ArrowRight className="size-4 translate-y-2px font-bold" />
