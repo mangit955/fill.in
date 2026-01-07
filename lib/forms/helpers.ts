@@ -6,7 +6,7 @@
 // It answers:
 // “Given current blocks, and an intent, what is the next valid state?”
 
-import { FormBlock } from "@/app/api/forms/types";
+import { FormBlock } from "@/lib/forms/types";
 
 //addBlock => takes current block and returns a new array & appends a new block
 export function addBlock(blocks: FormBlock[], block: FormBlock): FormBlock[] {

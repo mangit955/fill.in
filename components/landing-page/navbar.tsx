@@ -32,7 +32,7 @@ export const Navbar = () => {
           <Button variant="ghost" className="text-gray-500 cursor-pointer">
             Sign up
           </Button>
-          <Link href="/builder">
+          <Link href="/create">
             <Button
               variant="default"
               className="hidden md:inline-flex cursor-pointer"

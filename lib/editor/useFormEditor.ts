@@ -1,4 +1,5 @@
-import { Form, FormBlock } from "@/app/api/forms/types";
+"use client";
+import { Form, FormBlock } from "@/lib/forms/types";
 import { useState } from "react";
 import {
   addBlock,
@@ -7,7 +8,7 @@ import {
   updateBlockConfig,
   updateBlockMeta,
 } from "../forms/helpers";
-import { createEmptyForm } from "@/app/api/forms/defaults";
+import { createEmptyForm } from "../forms/defaults";
 
 // Hooks//
 export function useFormEditor(initialForm?: Form) {

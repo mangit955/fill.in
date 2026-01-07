@@ -57,7 +57,7 @@ export const Herosection = () => {
           />
         </svg>
         <Button
-          onClick={() => router.push("/builder")}
+          onClick={() => router.push("/create")}
           variant="default"
           className=" cursor-pointer font-semibold gap-2"
         >
