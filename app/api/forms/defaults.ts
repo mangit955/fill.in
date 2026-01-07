@@ -8,12 +8,24 @@ import {
   ShortTextConfig,
 } from "./types";
 
-//Id generator (centralized)
+//Id generator (centralized): did this to maintain consistency(not repeating the same logic again)
+
+//By centralizing:
+//All blocks follow same ID pattern
+//Easy to change later (e.g. nanoid)
+
 function generateId(prefix: string) {
   return `${prefix}_${crypto.randomUUID()}`;
 }
 
 //default configs
+
+// WHY functions, not objects?
+// Because functions return a NEW object each time.
+
+// That means:
+// No shared references
+// Editing one block doesn’t mutate others
 
 function createShortTextConfig(): ShortTextConfig {
   return {
@@ -40,6 +52,13 @@ function createMultipleChoiceConfig(): MultipleChoiceConfig {
 }
 
 //factory functions
+
+// What this guarantees
+// Every Short Text block:
+// Has an ID
+// Has correct type
+// Has required flag
+// Has a valid config
 
 export function createShortTextBlock(): ShortTextBlock {
   return {

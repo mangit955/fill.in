@@ -1,3 +1,20 @@
+// “These are the only valid shapes that form data can ever have in my app.”
+// UI changes.
+// Backend changes.
+// Database changes.
+// But this stays stable.
+// That’s why this file is so important.
+
+// BlockType — why not just use strings?
+// What this does
+// This creates a closed set of allowed values.
+// TypeScript now knows:
+// "short_text" ✅
+// "email" ❌
+// "ShortText" ❌
+// This means:
+// “There are exactly 3 block types. No more. No less.”
+
 export type BlockType = "short_text" | "long_text" | "multiple_choice";
 
 // config types
@@ -27,6 +44,16 @@ export type BaseBlock = {
   required: boolean;
 };
 
+// What & means
+// It means intersection.
+// So ShortTextBlock become
+// {
+//   id: string;
+//   required: boolean;
+//   type: "short_text";
+//   config: ShortTextConfig;
+// }
+
 export type ShortTextBlock = BaseBlock & {
   type: "short_text";
   config: ShortTextConfig;
@@ -51,3 +78,18 @@ export type Form = {
   description: string;
   blocks: FormBlock[];
 };
+
+// What TypeScript learns from this
+
+// It learns that:
+// If type === "short_text"
+// → config is ShortTextConfig
+// If type === "long_text"
+// → config is LongTextConfig
+// So this works:
+// function renderBlock(block: FormBlock) {
+//   if (block.type === "short_text") {
+//     block.config.maxLength; // ✅ allowed
+//     block.config.rows;      // ❌ error (correctly)
+//   }
+// }

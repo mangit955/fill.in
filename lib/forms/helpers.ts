@@ -1,10 +1,29 @@
+// What is this file REALLY?
+
+// This is your block state reducer layer.
+// Not React-specific.
+// Not UI-specific.
+// It answers:
+// “Given current blocks, and an intent, what is the next valid state?”
+
 import { FormBlock } from "@/app/api/forms/types";
 
+//addBlock => takes current block and returns a new array & appends a new block
 export function addBlock(blocks: FormBlock[], block: FormBlock): FormBlock[] {
   return [...blocks, block];
 }
 
-//Update
+//Update =>
+
+// Pick<FormBlock, "required">
+// Means:
+// “Take ONLY the required field from FormBlock”
+
+// Partial<...>
+// Means:
+// { required?: boolean }
+//“This function is ONLY allowed to update metadata, and ONLY required.”
+
 export function updateBlockMeta(
   blocks: FormBlock[],
   blockId: string,
@@ -14,6 +33,14 @@ export function updateBlockMeta(
     block.id === blockId ? { ...block, ...updates } : block
   );
 }
+
+// What is <T extends FormBlock>?
+// This means:  “T is some specific kind of FormBlock.”
+// At call site, T might be: ShortTextBlock | LongTextBlock | MultipleChoiceBlock
+// So T["config"] becomes: ShortTextConfig OR LongTextConfig OR MultipleChoiceConfig
+// This is how you get config-specific typing.
+
+//review this once more
 
 export function updateBlockConfig<T extends FormBlock>(
   blocks: FormBlock[],
