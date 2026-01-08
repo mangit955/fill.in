@@ -1,16 +1,36 @@
-import { FormBlock } from "../../lib/forms/types";
+import {
+  FormBlock,
+  ShortTextBlock as ShortTextBlockType,
+} from "../../lib/forms/types";
 import LongTextBlock from "./LongTextBlock";
 import MultipleChoiceBlock from "./MultipleChoiceBlock";
 import ShortTextBlock from "./ShortTextBlock";
 
 type BlockRendererProps = {
   block: FormBlock;
+  onUpdateMeta: (blockId: string, updates: { required?: boolean }) => void;
+  onUpdateConfig: <T extends FormBlock>(
+    blockId: string,
+    updater: (config: T["config"]) => T["config"]
+  ) => void;
 };
 
-export default function BlockRenderer({ block }: BlockRendererProps) {
+export default function BlockRenderer({
+  block,
+  onUpdateMeta,
+  onUpdateConfig,
+}: BlockRendererProps) {
   switch (block.type) {
     case "short_text":
-      return <ShortTextBlock block={block} />;
+      return (
+        <ShortTextBlock
+          block={block}
+          onUpdateMeta={onUpdateMeta}
+          onUpdateConfig={(id, updater) =>
+            onUpdateConfig<ShortTextBlockType>(id, updater)
+          }
+        />
+      );
 
     case "long_text":
       return <LongTextBlock block={block} />;

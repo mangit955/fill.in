@@ -10,7 +10,11 @@ export default function CreatePage() {
     <div className="max-w-3xl mx-auto py-10">
       <h1 className="text-xl font-semibold mb-6">Form Builder</h1>
 
-      <BuilderCanvas blocks={editor.blocks} />
+      <BuilderCanvas
+        blocks={editor.blocks}
+        onUpdateMeta={editor.updateMeta}
+        onUpdateConfig={editor.updateConfig}
+      />
     </div>
   );
 }
