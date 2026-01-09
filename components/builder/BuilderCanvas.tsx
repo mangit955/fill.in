@@ -5,6 +5,7 @@ import BlockRenderer from "./BuilderRenderer";
 
 type BuilderCanvasProps = {
   blocks: FormBlock[];
+  focusedBlockId: string | null;
   onUpdateMeta: (blockId: string, updates: { required?: boolean }) => void;
   onUpdateConfig: <T extends FormBlock>(
     blockId: string,
@@ -16,6 +17,7 @@ export default function BuilderCanvas({
   blocks,
   onUpdateMeta,
   onUpdateConfig,
+  focusedBlockId,
 }: BuilderCanvasProps) {
   if (blocks.length === 0) {
     return (
@@ -32,6 +34,7 @@ export default function BuilderCanvas({
       {blocks.map((block) => (
         <BlockRenderer
           key={block.id}
+          autoFocus={block.id === focusedBlockId}
           block={block}
           onUpdateMeta={onUpdateMeta}
           onUpdateConfig={onUpdateConfig}

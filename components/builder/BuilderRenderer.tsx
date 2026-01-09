@@ -8,6 +8,7 @@ import ShortTextBlock from "./ShortTextBlock";
 
 type BlockRendererProps = {
   block: FormBlock;
+  autoFocus?: boolean;
   onUpdateMeta: (blockId: string, updates: { required?: boolean }) => void;
   onUpdateConfig: <T extends FormBlock>(
     blockId: string,
@@ -17,6 +18,7 @@ type BlockRendererProps = {
 
 export default function BlockRenderer({
   block,
+  autoFocus,
   onUpdateMeta,
   onUpdateConfig,
 }: BlockRendererProps) {
@@ -25,6 +27,7 @@ export default function BlockRenderer({
       return (
         <ShortTextBlock
           block={block}
+          autoFocus={autoFocus}
           onUpdateMeta={onUpdateMeta}
           onUpdateConfig={(id, updater) =>
             onUpdateConfig<ShortTextBlockType>(id, updater)

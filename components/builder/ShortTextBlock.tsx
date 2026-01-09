@@ -1,9 +1,10 @@
 import { ShortTextBlock as ShortTextBlockType } from "@/lib/forms/types";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import RequiredToggle from "./controls/RequiredToggle";
 
 type Props = {
   block: ShortTextBlockType;
+  autoFocus?: boolean;
   onUpdateMeta: (blockId: string, updates: { required?: boolean }) => void;
   onUpdateConfig: (
     blockId: string,
@@ -15,11 +16,13 @@ type Props = {
 
 export default function ShortTextBlock({
   block,
+  autoFocus,
   onUpdateConfig,
   onUpdateMeta,
 }: Props) {
   const [isEditing, setIsEditing] = useState(false);
   const [value, setValue] = useState(block.config.label);
+  const inputRef = useRef<HTMLInputElement>(null);
 
   function save() {
     if (value === block.config.label) {
@@ -34,6 +37,18 @@ export default function ShortTextBlock({
   }
 
   useEffect(() => {
+    if (autoFocus && isEditing) {
+      inputRef.current?.focus();
+    }
+  }, [autoFocus, isEditing]);
+
+  useEffect(() => {
+    if (autoFocus) {
+      setIsEditing(true);
+    }
+  }, [autoFocus]);
+
+  useEffect(() => {
     if (!isEditing) {
       setValue(block.config.label);
     }
@@ -44,7 +59,7 @@ export default function ShortTextBlock({
       {/* Label */}
       {isEditing ? (
         <input
-          autoFocus
+          ref={inputRef}
           value={value}
           onChange={(e) => setValue(e.target.value)}
           onBlur={save}
