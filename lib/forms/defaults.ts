@@ -46,7 +46,10 @@ function createLongTextConfig(): LongTextConfig {
 function createMultipleChoiceConfig(): MultipleChoiceConfig {
   return {
     label: "Choose an option",
-    options: ["Option 1", "Option 2"],
+    options: [
+      { id: crypto.randomUUID(), label: "Option 1" },
+      { id: crypto.randomUUID(), label: "Option 2" },
+    ],
     allowMultiple: false,
   };
 }

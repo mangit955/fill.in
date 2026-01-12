@@ -31,9 +31,15 @@ export type LongTextConfig = {
   rows: number;
 };
 
+export type MCQOption = {
+  id: string;
+  label: string;
+};
+
 export type MultipleChoiceConfig = {
   label: string;
-  options: string[];
+
+  options: MCQOption[];
   allowMultiple: boolean;
 };
 
