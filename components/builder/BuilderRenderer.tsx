@@ -1,5 +1,6 @@
 import {
   FormBlock,
+  LongTextBlock as LongTextBlockType,
   MultipleChoiceBlock as MultipleChoiceBlockType,
   ShortTextBlock as ShortTextBlockType,
 } from "../../lib/forms/types";
@@ -37,12 +38,22 @@ export default function BlockRenderer({
       );
 
     case "long_text":
-      return <LongTextBlock block={block} />;
+      return (
+        <LongTextBlock
+          block={block}
+          autoFocus={autoFocus}
+          onUpdateMeta={onUpdateMeta}
+          onUpdateConfig={(id, updater) =>
+            onUpdateConfig<LongTextBlockType>(id, updater)
+          }
+        />
+      );
 
     case "multiple_choice":
       return (
         <MultipleChoiceBlock
           block={block}
+          autoFocus={autoFocus}
           onUpdateMeta={onUpdateMeta}
           onUpdateConfig={(id, updater) =>
             onUpdateConfig<MultipleChoiceBlockType>(id, updater)

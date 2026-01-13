@@ -1,8 +1,10 @@
 import { MultipleChoiceBlock as MultipleChoiceBlockType } from "@/lib/forms/types";
 import RequiredToggle from "./controls/RequiredToggle";
+import { useEffect, useRef, useState } from "react";
 
 type Props = {
   block: MultipleChoiceBlockType;
+  autoFocus?: boolean;
   onUpdateMeta: (blockId: string, updates: { required?: boolean }) => void;
   onUpdateConfig: (
     blockId: string,
@@ -14,16 +16,73 @@ type Props = {
 
 export default function MultipleChoiceBlock({
   block,
+  autoFocus,
   onUpdateConfig,
   onUpdateMeta,
 }: Props) {
+  const [isEditing, setIsEditing] = useState(false);
+  const [value, setValue] = useState(block.config.label);
+  const inputRef = useRef<HTMLInputElement>(null);
+
+  function save() {
+    if (value === block.config.label) {
+      setIsEditing(false);
+      return;
+    }
+    onUpdateConfig(block.id, (config) => ({
+      ...config,
+      label: value,
+    }));
+    setIsEditing(false);
+  }
+  useEffect(() => {
+    if (autoFocus && isEditing) {
+      inputRef.current?.focus();
+    }
+  }, [autoFocus, isEditing]);
+
+  useEffect(() => {
+    if (autoFocus) {
+      setIsEditing(true);
+    }
+  }, [autoFocus]);
+
+  useEffect(() => {
+    if (!isEditing) {
+      setValue(block.config.label);
+    }
+  }, [block.config.label, isEditing]);
+
   return (
     <div className="border rounded-md p-4">
       {/* Label */}
-      <p className="text-sm font-medium mb-2">
-        {block.config.label}{" "}
-        {block.required && <span className="text-red-500">*</span>}
-      </p>
+      {isEditing ? (
+        <input
+          ref={inputRef}
+          value={value}
+          onChange={(e) => setValue(e.target.value)}
+          onBlur={save}
+          onKeyDown={(e) => {
+            if (e.key === "Enter") {
+              e.preventDefault();
+              save();
+            }
+            if (e.key === "Escape") {
+              setValue(block.config.label);
+              setIsEditing(false);
+            }
+          }}
+          className="w-full border rounded px-2 py-1 text-sm mb-1"
+        />
+      ) : (
+        <p
+          className="text-sm font-medium cursor-pointer"
+          onClick={() => setIsEditing(true)}
+        >
+          {block.config.label}
+          {block.required && <span className="text-red-500 ml-1">*</span>}
+        </p>
+      )}
 
       {/* options */}
       <div className="space-y-2">
