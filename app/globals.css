@@ -121,3 +121,24 @@
     @apply bg-background text-foreground;
   }
 }
+
+/* ===== SINGLE BELT MARQUEE (NO overlap, NO reset) ===== */
+
+.marquee-track {
+  display: flex;
+  width: max-content;
+  align-items: center;
+  will-change: transform;
+  animation: marquee-scroll 60s linear infinite;
+  transform: translateZ(0);
+  will-change: transform;
+}
+
+@keyframes marquee-scroll {
+  from {
+    transform: translateX(0);
+  }
+  to {
+    transform: translateX(-50%);
+  }
+}

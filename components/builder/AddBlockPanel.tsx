@@ -1,4 +1,8 @@
-import { Button } from "../ui/button";
+"use client";
+
+import { useState } from "react";
+import { motion, AnimatePresence } from "framer-motion";
+import { BlockButton } from "../ui/blockButton";
 
 type Props = {
   onAddShortText: () => void;
@@ -11,32 +15,38 @@ export default function AddBlockPanel({
   onAddShortText,
   onAddMultipleChoice,
 }: Props) {
+  const [isOpen, setIsOpen] = useState(false);
+
   return (
-    <div className="border space-y-2 rounded-md p-4">
-      <p className="text-sm font-medium"> Add a question</p>
-      <div className="space-y-1">
-        <Button
-          variant="ghost"
-          onClick={onAddShortText}
-          className="text-left block text-sm cursor-pointer"
-        >
-          Short text
-        </Button>
-        <Button
-          variant="ghost"
-          onClick={onAddLongText}
-          className="text-left block text-sm cursor-pointer"
-        >
-          Long text
-        </Button>
-        <Button
-          variant="ghost"
-          onClick={onAddMultipleChoice}
-          className="text-left block text-sm cursor-pointer"
-        >
-          Multiple choice
-        </Button>
-      </div>
+    <div className="rounded-md p-6 space-y-2">
+      {/* Toggle */}
+      <button
+        onClick={() => setIsOpen((prev) => !prev)}
+        className="text-sm cursor-pointer font-medium text-pink-500"
+      >
+        + Add a block
+      </button>
+
+      {/* Animated list */}
+      <AnimatePresence>
+        {isOpen && (
+          <motion.div
+            initial={{ height: 0, opacity: 0 }}
+            animate={{ height: "auto", opacity: 1 }}
+            exit={{ height: 0, opacity: 0 }}
+            transition={{ duration: 0.25, ease: "easeOut" }}
+            className="overflow-hidden w-fit"
+          >
+            <div className=" rounded-md">
+              <BlockButton onClick={onAddShortText}>Short text</BlockButton>
+              <BlockButton onClick={onAddLongText}>Long text</BlockButton>
+              <BlockButton onClick={onAddMultipleChoice}>
+                Multiple choice
+              </BlockButton>
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </div>
   );
 }

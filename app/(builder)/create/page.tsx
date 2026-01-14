@@ -23,7 +23,7 @@ export default function CreatePage() {
 
   return (
     <div className="max-w-3xl mx-auto py-10">
-      <h1 className="text-xl font-semibold mb-6">Form Builder</h1>
+      <h1 className="text-8xl font-bold text-gray-300 mb-6">Form Builder/</h1>
 
       <AddBlockPanel
         onAddShortText={() => addAndFocus(createShortTextBlock)}

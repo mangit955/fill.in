@@ -36,8 +36,8 @@ export default function BuilderCanvas({
   // 2️ After hydration: real UI decisions
   if (blocks.length === 0) {
     return (
-      <div className="min-h-[400px] border border-dashed rounded-md p-6">
-        <p className="text-muted-foreground text-sm">
+      <div className="min-h-[400px] border border-dashed border-gray-300 rounded-md p-6">
+        <p className="text-muted-foreground text-sm text-center pt-40">
           No fields yet. Add a block to get started.
         </p>
       </div>

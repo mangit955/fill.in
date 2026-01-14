@@ -2,13 +2,13 @@
 import Image from "next/image";
 import { Button } from "../ui/button";
 import { ArrowRight } from "lucide-react";
-import MakeCombine from "../ui/svg/makeCombine";
 import { useRouter } from "next/navigation";
+import { MarqueeLogos } from "./marqueeLogos";
 
 export const Herosection = () => {
   const router = useRouter();
   return (
-    <section className=" flex flex-col justify-center items-center text-center px-6 pt-20">
+    <section className=" flex flex-col justify-center items-center text-center px-6 pt-30">
       <div className="justify-center item-center flex-col flex">
         <h1 className="text-4xl sm:text-6xl font-bold mb-4 leading-tight text-black">
           The{" "}
@@ -66,6 +66,24 @@ export const Herosection = () => {
         </Button>
         <h3 className="text-sm text-gray-700 ">No signup required</h3>
       </div>
+
+      {/* Marquee animation */}
+
+      <div
+        className="relative mx-auto w-full max-w-4xl overflow-hidden mt-20 mb-24 h-24 flex items-center "
+        style={{
+          WebkitMaskImage:
+            "linear-gradient(to right, transparent, black 12%, black 88%, transparent)",
+          maskImage:
+            "linear-gradient(to right, transparent, black 12%, black 88%, transparent)",
+        }}
+      >
+        <div className="marquee-track">
+          <MarqueeLogos />
+          <MarqueeLogos />
+        </div>
+      </div>
+
       <div>
         <div className="justify-between flex">
           <svg
@@ -342,36 +360,26 @@ export const Herosection = () => {
       <h3 className="text-md text-gray ">
         Powering 500,000+ teams at the world’s best companies
       </h3>
-      <div className=" flex gap-6">
-        <Image
-          src="/notion-svgrepo-com.svg" // or /logo.png — put your file inside the public/ folder
-          alt="notion logo"
-          width={35} // adjust as needed
-          height={35}
-          className="rounded-sm" // optional: or remove
-        />
-        <MakeCombine />
-        <Image
-          src="/coffee.svg" // or /logo.png — put your file inside the public/ folder
-          alt="notion logo"
-          width={220} // adjust as needed
-          height={220}
-          className="rounded-sm" // optional: or remove
-        />
-        <Image
-          src="/rakuten.svg" // or /logo.png — put your file inside the public/ folder
-          alt="rakutenlogo"
-          width={90} // adjust as needed
-          height={90}
-          className="rounded-sm" // optional: or remove
-        />
-      </div>
+      {/* <div
+        className="relative mx-auto w-full max-w-5xl overflow-hidden mt-8 h-24 flex items-center"
+        style={{
+          WebkitMaskImage:
+            "linear-gradient(to right, transparent, black 12%, black 88%, transparent)",
+          maskImage:
+            "linear-gradient(to right, transparent, black 12%, black 88%, transparent)",
+        }}
+      >
+        <div className="marquee-track">
+          <MarqueeLogos />
+          <MarqueeLogos />
+        </div>
+      </div> */}
       <Image
         src="/kitty.png" //  — put your file inside the public/ folder
         alt="rakutenlogo"
         width={250} // adjust as needed
         height={250}
-        className="rounded-md" // optional: or remove
+        className="rounded-md pt-4 " // optional: or remove
       />
     </section>
   );
