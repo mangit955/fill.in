@@ -10,6 +10,7 @@ import {
 } from "@/lib/forms/defaults";
 import { useState } from "react";
 import { FormBlock } from "@/lib/forms/types";
+import { NavbarApp } from "@/components/navbar/navbarApp";
 
 export default function CreatePage() {
   const editor = useFormEditor();
@@ -22,24 +23,27 @@ export default function CreatePage() {
   }
 
   return (
-    <div className="max-w-3xl mx-auto py-10">
-      <h1 className="text-8xl font-bold text-gray-300 mb-6">Form Builder/</h1>
+    <div>
+      <NavbarApp />
+      <div className="max-w-3xl mx-auto py-10">
+        <h1 className="text-8xl font-bold text-gray-300 mb-6">Form Builder/</h1>
 
-      <AddBlockPanel
-        onAddShortText={() => addAndFocus(createShortTextBlock)}
-        onAddLongText={() => addAndFocus(createLongTextBlock)}
-        onAddMultipleChoice={() => addAndFocus(createMultipleChoiceBlock)}
-      />
+        <AddBlockPanel
+          onAddShortText={() => addAndFocus(createShortTextBlock)}
+          onAddLongText={() => addAndFocus(createLongTextBlock)}
+          onAddMultipleChoice={() => addAndFocus(createMultipleChoiceBlock)}
+        />
 
-      <BuilderCanvas
-        blocks={editor.blocks}
-        hydrated={editor.hydrated}
-        activeBlockId={activeBlockId}
-        onUpdateMeta={editor.updateMeta}
-        onUpdateConfig={editor.updateConfig}
-        onRemove={editor.remove}
-        onConsumeFocus={() => setActiveBlockId(null)}
-      />
+        <BuilderCanvas
+          blocks={editor.blocks}
+          hydrated={editor.hydrated}
+          activeBlockId={activeBlockId}
+          onUpdateMeta={editor.updateMeta}
+          onUpdateConfig={editor.updateConfig}
+          onRemove={editor.remove}
+          onConsumeFocus={() => setActiveBlockId(null)}
+        />
+      </div>
     </div>
   );
 }

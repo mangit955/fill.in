@@ -15,6 +15,7 @@ export function MarqueeLogos() {
           <MakeCombine />
           <Image src="/coffee.svg" alt="Coffee" width={220} height={40} />
           <Image src="/rakuten.svg" alt="Rakuten" width={90} height={40} />
+          <Image src="/glovo.svg" alt="Glovo" width={90} height={40} />
         </div>
       ))}
     </div>

@@ -1,6 +1,6 @@
 import Footer from "@/components/landing-page/footer";
 import { Herosection } from "@/components/landing-page/herosection";
-import { Navbar } from "@/components/landing-page/navbar";
+import { Navbar } from "@/components/navbar/navbar";
 import Head from "next/head";
 
 export default function Home() {

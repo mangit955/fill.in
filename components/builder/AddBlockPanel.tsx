@@ -19,13 +19,20 @@ export default function AddBlockPanel({
 
   return (
     <div className="rounded-md p-6 space-y-2">
-      {/* Toggle */}
-      <button
+      {/* Toggle & rotation animation*/}
+      <motion.button
         onClick={() => setIsOpen((prev) => !prev)}
-        className="text-sm cursor-pointer font-medium text-pink-500"
+        className="text-lg text-gray-300 cursor-pointer font-medium  flex items-center gap-2"
       >
-        + Add a block
-      </button>
+        <motion.span
+          whileHover={{ rotate: 90 }}
+          transition={{ duration: 0.3 }}
+          className="inline-block text-3xl font-semibold text-pink-500"
+        >
+          +
+        </motion.span>
+        <span>Add a block/</span>
+      </motion.button>
 
       {/* Animated list */}
       <AnimatePresence>
