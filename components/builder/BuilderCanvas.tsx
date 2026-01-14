@@ -2,23 +2,38 @@
 
 import { FormBlock } from "@/lib/forms/types";
 import BlockRenderer from "./BuilderRenderer";
+import BlockActions from "./BlockActions";
 
 type BuilderCanvasProps = {
   blocks: FormBlock[];
-  focusedBlockId: string | null;
+  hydrated: boolean;
+  activeBlockId: string | null;
   onUpdateMeta: (blockId: string, updates: { required?: boolean }) => void;
   onUpdateConfig: <T extends FormBlock>(
     blockId: string,
     updater: (config: T["config"]) => T["config"]
   ) => void;
+  onRemove: (blockId: string) => void;
+  onConsumeFocus: () => void;
 };
 
 export default function BuilderCanvas({
   blocks,
+  hydrated,
   onUpdateMeta,
   onUpdateConfig,
-  focusedBlockId,
+  activeBlockId,
+  onRemove,
+  onConsumeFocus,
 }: BuilderCanvasProps) {
+  // 1️ Before hydration: render neutral shell
+  if (!hydrated) {
+    return (
+      <div className="min-h-[400px] border border-dashed rounded-md p-6" />
+    );
+  }
+
+  // 2️ After hydration: real UI decisions
   if (blocks.length === 0) {
     return (
       <div className="min-h-[400px] border border-dashed rounded-md p-6">
@@ -32,13 +47,24 @@ export default function BuilderCanvas({
   return (
     <div className="space-y-4">
       {blocks.map((block) => (
-        <BlockRenderer
-          key={block.id}
-          autoFocus={block.id === focusedBlockId}
-          block={block}
-          onUpdateMeta={onUpdateMeta}
-          onUpdateConfig={onUpdateConfig}
-        />
+        <div key={block.id} className="relative">
+          {/* Block Actions */}
+          <div className="absolute top-2 right-2">
+            <BlockActions
+              onDelete={() => {
+                onRemove(block.id);
+                onConsumeFocus();
+              }}
+            />
+          </div>
+
+          <BlockRenderer
+            autoFocus={block.id === activeBlockId}
+            block={block}
+            onUpdateMeta={onUpdateMeta}
+            onUpdateConfig={onUpdateConfig}
+          />
+        </div>
       ))}
     </div>
   );

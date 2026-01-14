@@ -13,12 +13,12 @@ import { FormBlock } from "@/lib/forms/types";
 
 export default function CreatePage() {
   const editor = useFormEditor();
-  const [focusedBlockId, setFocusedBlockId] = useState<string | null>(null);
+  const [activeBlockId, setActiveBlockId] = useState<string | null>(null);
 
   function addAndFocus(create: () => FormBlock) {
     const block = create();
     editor.add(block);
-    setFocusedBlockId(block.id);
+    setActiveBlockId(block.id);
   }
 
   return (
@@ -33,10 +33,12 @@ export default function CreatePage() {
 
       <BuilderCanvas
         blocks={editor.blocks}
-        focusedBlockId={focusedBlockId}
+        hydrated={editor.hydrated}
+        activeBlockId={activeBlockId}
         onUpdateMeta={editor.updateMeta}
         onUpdateConfig={editor.updateConfig}
-        onConsumeFocus={() => setFocusedBlockId(null)}
+        onRemove={editor.remove}
+        onConsumeFocus={() => setActiveBlockId(null)}
       />
     </div>
   );

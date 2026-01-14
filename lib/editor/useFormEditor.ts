@@ -1,6 +1,6 @@
 "use client";
 import { Form, FormBlock } from "@/lib/forms/types";
-import { useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import {
   addBlock,
   deleteBlock,
@@ -9,10 +9,41 @@ import {
   updateBlockMeta,
 } from "../forms/helpers";
 import { createEmptyForm } from "../forms/defaults";
+import { debounce } from "../utils/debounce";
 
-// Hooks//
+const STORAGE_KEY = "form_draft_v1";
+function loadDraft() {
+  if (typeof window === "undefined") return null;
+
+  const raw = localStorage.getItem(STORAGE_KEY);
+  if (!raw) return null;
+
+  try {
+    return JSON.parse(raw);
+  } catch {
+    return null;
+  }
+}
+
 export function useFormEditor(initialForm?: Form) {
-  const [form, setForm] = useState<Form>(initialForm ?? createEmptyForm());
+  const [form, setForm] = useState<Form>(() => {
+    return loadDraft() ?? initialForm ?? createEmptyForm();
+  });
+  const [hydrated, setHydrated] = useState(false);
+
+  function persist(form: Form) {
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(form));
+  }
+
+  useEffect(() => {
+    setHydrated(true);
+  }, []);
+
+  const debouncePersist = useMemo(() => debounce(persist, 500), []);
+
+  useEffect(() => {
+    debouncePersist(form);
+  }, [form, debouncePersist]);
 
   //Intent APIs
 
@@ -61,6 +92,7 @@ export function useFormEditor(initialForm?: Form) {
     form,
     blocks: form.blocks,
     add,
+    hydrated,
     remove,
     updateMeta,
     updateConfig,
