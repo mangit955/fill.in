@@ -41,6 +41,7 @@ export default function CreatePage() {
           onUpdateMeta={editor.updateMeta}
           onUpdateConfig={editor.updateConfig}
           onRemove={editor.remove}
+          onDuplicate={editor.duplicate}
           onConsumeFocus={() => setActiveBlockId(null)}
         />
       </div>

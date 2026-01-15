@@ -54,7 +54,7 @@ export default function MultipleChoiceBlock({
   }, [block.config.label, isEditing]);
 
   return (
-    <div className="border rounded-md p-4">
+    <div className="shadow-sm rounded-md p-4">
       {/* Label */}
       {isEditing ? (
         <input

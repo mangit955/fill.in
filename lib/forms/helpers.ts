@@ -74,3 +74,22 @@ export function reorderBlock(
 
   return next;
 }
+
+export function cloneBlock(block: FormBlock): FormBlock {
+  return {
+    ...block,
+    id: crypto.randomUUID(),
+    config: structuredClone(block.config),
+  };
+}
+
+export function insertBlockAfter(
+  blocks: FormBlock[],
+  afterId: string,
+  newBlock: FormBlock
+): FormBlock[] {
+  const index = blocks.findIndex((b) => b.id === afterId);
+  if (index === -1) return blocks;
+
+  return [...blocks.slice(0, index + 1), newBlock, ...blocks.slice(index + 1)];
+}

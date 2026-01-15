@@ -22,12 +22,12 @@ export default function AddBlockPanel({
       {/* Toggle & rotation animation*/}
       <motion.button
         onClick={() => setIsOpen((prev) => !prev)}
-        className="text-lg text-gray-300 cursor-pointer font-medium  flex items-center gap-2"
+        className="text-lg text-gray-300 font-medium  flex items-center gap-2"
       >
         <motion.span
           whileHover={{ rotate: 90 }}
           transition={{ duration: 0.3 }}
-          className="inline-block text-3xl font-semibold text-pink-500"
+          className="inline-block text-3xl text-pink-400 cursor-pointer"
         >
           +
         </motion.span>

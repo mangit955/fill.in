@@ -55,7 +55,7 @@ export default function ShortTextBlock({
   }, [block.config.label, isEditing]);
 
   return (
-    <div className="border rounded-md p-4">
+    <div className="shadow-sm rounded-md p-4">
       {/* Label */}
       {isEditing ? (
         <input
@@ -73,11 +73,11 @@ export default function ShortTextBlock({
               setIsEditing(false);
             }
           }}
-          className="w-full border rounded px-2 py-1 text-sm"
+          className="w-full rounded mb-2 px-2 py-1 text-sm"
         />
       ) : (
         <p
-          className="text-sm font-medium cursor-pointer"
+          className="text-sm mb-2 font-medium cursor-pointer"
           onClick={() => setIsEditing(true)}
         >
           {block.config.label}
@@ -89,7 +89,7 @@ export default function ShortTextBlock({
       <input
         disabled
         placeholder={block.config.placeholder}
-        className="w-full border rounded px-2 py-1"
+        className="w-full border rounded px-2 py-1 mb-2"
       />
 
       {/* Required toggle */}

@@ -10,11 +10,12 @@ export default function RequiredToggle({
   onChange,
 }: RequiredToggleProps) {
   return (
-    <label className="flex items-center gap-2 text-sm cursor-pointer">
+    <label className="flex items-center gap-2 text-sm ">
       <input
         type="checkbox"
         checked={required}
         onChange={(e) => onChange(e.target.checked)}
+        className="cursor-pointer"
       />
       Required
     </label>

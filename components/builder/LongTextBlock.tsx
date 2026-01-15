@@ -55,7 +55,7 @@ export default function LongTextBlock({
   }, [block.config.label, isEditing]);
 
   return (
-    <div className="border rounded-md p-4">
+    <div className="shadow-sm rounded-md p-4">
       {/* Label */}
       {isEditing ? (
         <input
@@ -73,11 +73,11 @@ export default function LongTextBlock({
               setIsEditing(false);
             }
           }}
-          className="w-full border rounded px-2 py-1 text-sm mb-1"
+          className="w-full px-2 py-1 text-sm mb-2"
         />
       ) : (
         <p
-          className="text-sm font-medium cursor-pointer"
+          className="text-sm mb-2 font-medium cursor-pointer"
           onClick={() => setIsEditing(true)}
         >
           {block.config.label}
@@ -91,7 +91,7 @@ export default function LongTextBlock({
         disabled
         rows={block.config.rows}
         placeholder={block.config.placeholder}
-        className="w-full border rounded px-2 py-1"
+        className="w-full rounded border px-2 py-1"
       />
 
       {/* Required toggle */}

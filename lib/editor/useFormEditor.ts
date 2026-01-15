@@ -4,6 +4,7 @@ import { useEffect, useMemo, useState } from "react";
 import {
   addBlock,
   deleteBlock,
+  insertBlockAfter,
   reorderBlock,
   updateBlockConfig,
   updateBlockMeta,
@@ -61,6 +62,24 @@ export function useFormEditor(initialForm?: Form) {
     }));
   }
 
+  function duplicate(blockId: string) {
+    setForm((prev) => {
+      const source = prev.blocks.find((b) => b.id === blockId);
+      if (!source) return prev;
+
+      const cloned = {
+        ...source,
+        id: crypto.randomUUID(),
+        config: structuredClone(source.config),
+      };
+
+      return {
+        ...prev,
+        blocks: insertBlockAfter(prev.blocks, blockId, cloned),
+      };
+    });
+  }
+
   function updateMeta(
     blockId: string,
     updates: Partial<Pick<FormBlock, "required">>
@@ -91,6 +110,7 @@ export function useFormEditor(initialForm?: Form) {
   return {
     form,
     blocks: form.blocks,
+    duplicate,
     add,
     hydrated,
     remove,

@@ -1,18 +1,13 @@
+import { Trash2 } from "lucide-react";
+
 type Props = {
   onDelete: () => void;
 };
 
 export default function BlockActions({ onDelete }: Props) {
   function handleDelete() {
-    const ok = window.confirm("Are you sure you want to delete this question?");
-    if (ok) onDelete();
+    onDelete();
   }
-  return (
-    <button
-      onClick={handleDelete}
-      className="text-xs text-red-600 hover:underline"
-    >
-      Delete
-    </button>
-  );
+
+  return <div className="flex left-2 items-center text-neutral-400 "></div>;
 }
