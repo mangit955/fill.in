@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { BlockButton } from "../ui/blockButton";
+import { CircleCheckBig, Rows2, Rows3 } from "lucide-react";
 
 type Props = {
   onAddShortText: () => void;
@@ -45,9 +46,16 @@ export default function AddBlockPanel({
             className="overflow-hidden w-fit"
           >
             <div className=" rounded-md">
-              <BlockButton onClick={onAddShortText}>Short text</BlockButton>
-              <BlockButton onClick={onAddLongText}>Long text</BlockButton>
+              <BlockButton onClick={onAddShortText}>
+                <Rows2 />
+                Short text
+              </BlockButton>
+              <BlockButton onClick={onAddLongText}>
+                <Rows3 />
+                Long text
+              </BlockButton>
               <BlockButton onClick={onAddMultipleChoice}>
+                <CircleCheckBig />
                 Multiple choice
               </BlockButton>
             </div>

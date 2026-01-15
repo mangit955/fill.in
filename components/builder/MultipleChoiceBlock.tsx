@@ -72,11 +72,11 @@ export default function MultipleChoiceBlock({
               setIsEditing(false);
             }
           }}
-          className="w-full border rounded px-2 py-1 text-sm mb-1"
+          className="w-full rounded px-2 py-1 text-sm mb-2"
         />
       ) : (
         <p
-          className="text-sm font-medium cursor-pointer"
+          className="text-sm font-medium mb-2 cursor-pointer"
           onClick={() => setIsEditing(true)}
         >
           {block.config.label}
@@ -102,46 +102,52 @@ export default function MultipleChoiceBlock({
                   ),
                 }))
               }
-              className="border rounded px-2 py-1 text-sm w-full"
+              className="border rounded px-2 py-1 text-sm w-full cursor-pointer"
             />
-            <button
-              disabled={block.config.options.length === 1}
-              onClick={() =>
-                onUpdateConfig(block.id, (config) => ({
-                  ...config,
-                  options:
-                    config.options.length === 1
-                      ? config.options
-                      : config.options.filter((o) => o.id !== option.id),
-                }))
-              }
-            >
-              ✕
-            </button>
+            <div className="hover:bg-gray-100 text-neutral-400  hover:text-neutral-600  rounded px-1">
+              <button
+                disabled={block.config.options.length === 1}
+                onClick={() =>
+                  onUpdateConfig(block.id, (config) => ({
+                    ...config,
+                    options:
+                      config.options.length === 1
+                        ? config.options
+                        : config.options.filter((o) => o.id !== option.id),
+                  }))
+                }
+                className=" cursor-pointer"
+              >
+                ✕
+              </button>
+            </div>
           </div>
         ))}
       </div>
 
       {/* Add option */}
-      <button
-        className="text-sm textblue-600"
-        onClick={() =>
-          onUpdateConfig(block.id, (config) => ({
-            ...config,
-            options: [
-              ...config.options,
-              { id: crypto.randomUUID(), label: "" },
-            ],
-          }))
-        }
-      >
-        + Add option
-      </button>
+      <div className="hover:bg-gray-100 mb-2 mt-2 cursor-pointer  text-neutral-400 hover:text-neutral-600 w-fit rounded px-1">
+        <button
+          className="text-sm cursor-pointer"
+          onClick={() =>
+            onUpdateConfig(block.id, (config) => ({
+              ...config,
+              options: [
+                ...config.options,
+                { id: crypto.randomUUID(), label: "" },
+              ],
+            }))
+          }
+        >
+          + Add option
+        </button>
+      </div>
 
       {/* Multiple select toggle */}
       <label className="flex items-center gap-2 text-sm">
         <input
           type="checkbox"
+          className="cursor-pointer"
           checked={block.config.allowMultiple}
           onChange={(e) =>
             onUpdateConfig(block.id, (config) => ({

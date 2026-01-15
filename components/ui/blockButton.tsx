@@ -18,7 +18,7 @@ export function BlockButton({
       <Button
         variant="ghost"
         onClick={onClick}
-        className="w-full border justify-start text-sm text-slate-600 cursor-pointer"
+        className="flex gap-2 w-full border justify-start text-sm text-neutral-500 cursor-pointer"
       >
         {children}
       </Button>

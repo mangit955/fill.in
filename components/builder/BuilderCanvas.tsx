@@ -2,7 +2,7 @@
 
 import { FormBlock } from "@/lib/forms/types";
 import BlockRenderer from "./BuilderRenderer";
-import BlockActions from "./BlockActions";
+
 import { Plus, Trash2 } from "lucide-react";
 import { Tooltip, TooltipContent, TooltipTrigger } from "../ui/tooltip";
 
@@ -54,50 +54,40 @@ export default function BuilderCanvas({
         <div key={block.id} className="relative">
           {/* interactions button */}
           <div className="absolute left-2  translate-y-0 top-[40%]  flex gap-3 items-center text-neutral-400">
-            <button
-              onClick={() => {
-                onRemove(block.id);
-                onConsumeFocus();
-              }}
-              className="cursor-pointer"
-            >
-              <Tooltip>
-                <TooltipTrigger>
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <button
+                  onClick={() => {
+                    onRemove(block.id);
+                    onConsumeFocus();
+                  }}
+                  className="cursor-pointer"
+                >
                   <div className=" cursor-pointer rounded-sm hover:text-neutral-600 hover:bg-gray-100 p-1">
                     <Trash2 size={18} />
                   </div>
-                </TooltipTrigger>
-                <TooltipContent>
-                  <p>Delete this block</p>
-                </TooltipContent>
-              </Tooltip>
-            </button>
+                </button>
+              </TooltipTrigger>
+              <TooltipContent>
+                <p>Delete this block</p>
+              </TooltipContent>
+            </Tooltip>
 
-            <button
-              onClick={() => onDuplicate(block.id)}
-              className=" left-2 -translate-x-1/2 px-2"
-            >
-              <Tooltip>
-                <TooltipTrigger>
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <button
+                  onClick={() => onDuplicate(block.id)}
+                  className=" left-2 -translate-x-1/2 px-2"
+                >
                   <div className=" cursor-pointer text-neutral-400 rounded-sm hover:text-neutral-600 hover:bg-gray-100 p-1">
                     <Plus size={18} />
                   </div>
-                </TooltipTrigger>
-                <TooltipContent>
-                  <p>Insert block below</p>
-                </TooltipContent>
-              </Tooltip>
-            </button>
-          </div>
-
-          {/* Block Actions */}
-          <div className="absolute left-2 top-1/2 -translate-y-1/2">
-            <BlockActions
-              onDelete={() => {
-                onRemove(block.id);
-                onConsumeFocus();
-              }}
-            />
+                </button>
+              </TooltipTrigger>
+              <TooltipContent>
+                <p>Insert block below</p>
+              </TooltipContent>
+            </Tooltip>
           </div>
 
           {/* Block Content */}
