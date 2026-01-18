@@ -1,7 +1,7 @@
 "use client";
 import { motion,  } from "framer-motion";
 import { BlockButton } from "../ui/blockButton";
-import { CircleCheckBig, LayoutDashboard, Rows2, Rows3 } from "lucide-react";
+import { CircleCheckBig, PanelsTopLeft, Rows2, Rows3 } from "lucide-react";
 import { Popover, PopoverContent, PopoverTrigger } from "../ui/popover";
 import { ScrollArea } from "../ui/scroll-area";
 
@@ -37,7 +37,7 @@ export default function AddBlockPanel({
        </PopoverTrigger>
        
       <PopoverContent className="w-fit p-2">
-          <ScrollArea className="h-24 pr-2">
+          <ScrollArea className="h-24 pr-1">
             <motion.div
             initial={{ height: 0, opacity: 0 }}
             animate={{ height: "auto", opacity: 1 }}
@@ -78,7 +78,7 @@ export default function AddBlockPanel({
         </PopoverContent>
         </Popover>
       <div className="w-fit items-center flex gap-2 cursor-pointer text-neutral-400 rounded-sm hover:text-neutral-600 hover:bg-gray-100 p-1">
-        <LayoutDashboard size={18} />
+        <PanelsTopLeft size={18} />
         <span className="font-semibold">Use this templet</span>
       </div>  
     </div>

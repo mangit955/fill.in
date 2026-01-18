@@ -1,12 +1,15 @@
 import { Button } from "./button";
 import { motion } from "framer-motion";
+import { cn } from "@/lib/utils";
 
 export function BlockButton({
   children,
   onClick,
+  className,
 }: {
   children: React.ReactNode;
   onClick: () => void;
+  className?:string;
 }) {
   return (
     <motion.div
@@ -18,7 +21,8 @@ export function BlockButton({
       <Button
         variant="ghost"
         onClick={onClick}
-        className="flex gap-2 w-full border justify-start text-sm text-neutral-500 cursor-pointer"
+        className={cn("flex items-center border gap-2 w-full justify-start text-left",
+  "text-sm text-neutral-500 cursor-pointer", className)}
       >
         {children}
       </Button>

@@ -5,6 +5,7 @@ import BlockRenderer from "./BuilderRenderer";
 
 import { Plus, Trash2 } from "lucide-react";
 import { Tooltip, TooltipContent, TooltipTrigger } from "../ui/tooltip";
+import EmptyState from "./EmptyState";
 
 type BuilderCanvasProps = {
   blocks: FormBlock[];
@@ -40,11 +41,7 @@ export default function BuilderCanvas({
   // 2️ After hydration: real UI decisions
   if (blocks.length === 0) {
     return (
-      <div className="min-h-[400px] border border-dashed border-gray-300 rounded-md p-6">
-        <p className="text-muted-foreground text-sm text-center pt-40">
-          No fields yet. Add a block to get started.
-        </p>
-      </div>
+      <EmptyState />
     );
   }
 
