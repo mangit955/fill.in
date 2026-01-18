@@ -20,15 +20,16 @@ export default function AddBlockPanel({
   return (
     <div className="rounded-md p-6 space-y-2">
       {/* Toggle & rotation animation*/}
-      <Popover>
+      <motion.div whileHover="hover" whileFocus="hover" className="inline-block">
+        <Popover>
         <PopoverTrigger asChild>
           <motion.button
-        className="text-lg text-gray-400 font-medium  flex items-center gap-2"
+        className=" text-lg text-gray-400 hover: hover:text-gray-600 font-medium  flex items-center gap-2 hover:bg-neutral-100 rounded-md px-1 cursor-pointer"
       >
         <motion.span
           whileHover={{ rotate: 90 }}
           transition={{ duration: 0.3 }}
-          className="inline-block text-3xl text-pink-400 cursor-pointer"
+          className="inline-block text-3xl text-pink-400 hover:text-pink-500 "
         >
           +
         </motion.span>
@@ -77,7 +78,8 @@ export default function AddBlockPanel({
           </ScrollArea>
         </PopoverContent>
         </Popover>
-      <div className="w-fit items-center flex gap-2 cursor-pointer text-neutral-400 rounded-sm hover:text-neutral-600 hover:bg-gray-100 p-1">
+      </motion.div>
+      <div className="w-fit items-center flex gap-2 cursor-pointer text-neutral-400 rounded-md hover:text-neutral-600 hover:bg-gray-100 p-1">
         <PanelsTopLeft size={18} />
         <span className="font-semibold">Use this templet</span>
       </div>  

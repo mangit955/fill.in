@@ -12,8 +12,8 @@ export default function EmptyState({
 }: Props) {
   return (
     <div className="p-6">
-      <p className="text-lg text-gray-600 mb-1 ">Fill.in is a form builder that <span className="text-pink-400 font-bold px-1 py-1 rounded bg-pink-100">works like a doc</span>.</p>
-      <p className="text-lg text-gray-600 ">Just type <span className="text-pink-400 font-bold px-1 py-1 rounded bg-pink-100">/</span> to insert form blocks and <span className="text-pink-400 font-bold px-1 py-1 rounded bg-pink-100">@</span> to mention question answers.</p>
+      <p className="text-lg text-gray-600 mb-1 ">Fill.in is a form builder that <span className="text-pink-400 font-bold px-1  rounded bg-pink-100">works like a doc</span>.</p>
+      <p className="text-lg text-gray-600 ">Just type <span className="text-pink-400 font-bold px-1 rounded bg-pink-100">/</span> to insert form blocks and <span className="text-pink-400 font-bold px-1 rounded bg-pink-100">@</span> to mention question answers.</p>
       <div className="mt-12 gap-2 w-full flex flex-col items-start ">
         <p className=" font-bold text-sm">
           Get started
