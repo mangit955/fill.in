@@ -43,6 +43,7 @@ export default function CreatePage() {
           onRemove={editor.remove}
           onDuplicate={editor.duplicate}
           onConsumeFocus={() => setActiveBlockId(null)}
+          onReorder={editor.reorder}
         />
       </div>
     </div>
