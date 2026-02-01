@@ -78,11 +78,33 @@ export type FormBlock = ShortTextBlock | LongTextBlock | MultipleChoiceBlock;
 
 //Form
 
+export type LogicOperator =
+  | "equals"
+  | "not_equals"
+  | "contains"
+  | "greater_than"
+  | "less_than";
+
+export type LogicCondition = {
+  blockId: string;
+  operator: LogicOperator;
+  value: unknown;
+};
+
+export type LogicJump = {
+  id: string;
+  fromBlockId: string;
+  order: number;
+  condition: LogicCondition;
+  toBlockId: string;
+};
+
 export type Form = {
   id: string;
   title: string;
   description: string;
   blocks: FormBlock[];
+  logicJumps: LogicJump[];
 };
 
 // What TypeScript learns from this

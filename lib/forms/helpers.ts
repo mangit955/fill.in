@@ -7,6 +7,7 @@
 // “Given current blocks, and an intent, what is the next valid state?”
 
 import { FormBlock } from "@/lib/forms/types";
+import { LogicJump } from "@/lib/forms/logic";
 
 //addBlock => takes current block and returns a new array & appends a new block
 export function addBlock(blocks: FormBlock[], block: FormBlock): FormBlock[] {
@@ -76,10 +77,22 @@ export function reorderBlock(
 }
 
 export function cloneBlock(block: FormBlock): FormBlock {
+  if (block.type === "multiple_choice") {
+    return {
+      ...block,
+      id: crypto.randomUUID(),
+      config: {
+        ...block.config,
+        options: block.config.options.map((o) => ({
+          ...o,
+          id: crypto.randomUUID(),
+        })),
+      },
+    };
+  }
   return {
     ...block,
     id: crypto.randomUUID(),
-    config: structuredClone(block.config),
   };
 }
 
@@ -92,4 +105,23 @@ export function insertBlockAfter(
   if (index === -1) return blocks;
 
   return [...blocks.slice(0, index + 1), newBlock, ...blocks.slice(index + 1)];
+}
+
+export function addLogicJump(jumps: LogicJump[], jump: LogicJump): LogicJump[] {
+  return [...jumps, jump];
+}
+
+export function removeLogicJump(
+  jumps: LogicJump[],
+  jumpId: string
+): LogicJump[] {
+  return jumps.filter((j) => j.id !== jumpId);
+}
+
+export function updateLogicJump(
+  jumps: LogicJump[],
+  jumpId: string,
+  updates: Partial<Omit<LogicJump, "id">>
+): LogicJump[] {
+  return jumps.map((j) => (j.id === jumpId ? { ...j, ...updates } : j));
 }
