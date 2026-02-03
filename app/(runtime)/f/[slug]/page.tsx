@@ -1,19 +1,29 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { getNextBlockId } from "@/lib/forms/evaluate";
+import { isBlockVisible } from "@/lib/forms/visibility";
+import { createShortTextBlock } from "@/lib/forms/defaults";
+import { Form } from "@/lib/forms/types";
 
-const form = {
+const a = createShortTextBlock();
+const b = createShortTextBlock();
+const c = createShortTextBlock();
+
+a.id = "a";
+b.id = "b";
+c.id = "c";
+
+const form: Form = {
   id: "test",
-  blocks: [
-    { id: "a", type: "short_text", required: false, config: { label: "A" } },
-    { id: "b", type: "short_text", required: false, config: { label: "B" } },
-    { id: "c", type: "short_text", required: false, config: { label: "C" } },
-  ],
+  title: "Test form",
+  description: "Runtime test",
+  blocks: [a, b, c],
   logicJumps: [
     {
       id: "j1",
       fromBlockId: "a",
+      order: 2,
       condition: {
         blockId: "a",
         operator: "equals",
@@ -22,16 +32,18 @@ const form = {
       toBlockId: "c",
     },
   ],
+  visibilityRules: [],
 };
 
 export default function RuntimePage() {
-  const [currentBlockId, setCurrentBlockId] = useState("a");
+  const [currentBlockId, setCurrentBlockId] = useState<string | null>("a");
   const [answers, setAnswers] = useState<Record<string, unknown>>({});
   const [answer, setAnswer] = useState("");
 
   const currentBlock = form.blocks.find((b) => b.id === currentBlockId);
 
   function handleNext() {
+    if (!currentBlockId) return;
     const nextAnswer = {
       ...answers,
       [currentBlockId]: answer,
@@ -43,6 +55,17 @@ export default function RuntimePage() {
     setAnswer("");
     setCurrentBlockId(nextId);
   }
+
+  useEffect(() => {
+    if (!currentBlockId) return;
+
+    const visible = isBlockVisible(currentBlockId, answers, form);
+
+    if (!visible) {
+      const next = getNextBlockId(currentBlockId, answers, form);
+      setCurrentBlockId(next);
+    }
+  }, [currentBlockId, answers]);
 
   if (!currentBlock) {
     return <div>Form complete</div>;

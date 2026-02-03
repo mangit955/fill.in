@@ -1,4 +1,5 @@
 "use client";
+
 import { Form, FormBlock } from "@/lib/forms/types";
 import { useEffect, useMemo, useState } from "react";
 import {
@@ -17,10 +18,16 @@ function loadDraft() {
   if (typeof window === "undefined") return null;
 
   const raw = localStorage.getItem(STORAGE_KEY);
+
   if (!raw) return null;
 
   try {
-    return JSON.parse(raw);
+    const data = JSON.parse(raw);
+
+    return {
+      ...data,
+      VisibilityRules: data.visibilityRules ?? [],
+    };
   } catch {
     return null;
   }

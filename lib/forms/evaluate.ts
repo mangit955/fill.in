@@ -1,7 +1,7 @@
 import { LogicCondition } from "./types";
 import { Form } from "./types";
 
-function matchesCondition(answer: unknown, condition: LogicCondition) {
+export function matchesCondition(answer: unknown, condition: LogicCondition) {
   switch (condition.operator) {
     case "equals":
       return answer === condition.value;

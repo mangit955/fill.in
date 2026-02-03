@@ -99,12 +99,19 @@ export type LogicJump = {
   toBlockId: string;
 };
 
+export type VisibilityRule = {
+  id: string;
+  targetBlockId: string;
+  condition: LogicCondition;
+};
+
 export type Form = {
   id: string;
   title: string;
   description: string;
   blocks: FormBlock[];
   logicJumps: LogicJump[];
+  visibilityRules: VisibilityRule[];
 };
 
 // What TypeScript learns from this
