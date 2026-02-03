@@ -74,11 +74,8 @@ export function useFormEditor(initialForm?: Form) {
       const source = prev.blocks.find((b) => b.id === blockId);
       if (!source) return prev;
 
-      const cloned = {
-        ...source,
-        id: crypto.randomUUID(),
-        config: structuredClone(source.config),
-      };
+      const cloned: FormBlock = structuredClone(source);
+      cloned.id = crypto.randomUUID();
 
       return {
         ...prev,

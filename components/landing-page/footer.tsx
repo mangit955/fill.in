@@ -80,7 +80,7 @@ export default function Footer() {
                   href="/whatsnew"
                   className="hover:underline underline-offset-4"
                 >
-                  What's new
+                  What&apos;s new
                 </Link>
               </li>
               <li>
