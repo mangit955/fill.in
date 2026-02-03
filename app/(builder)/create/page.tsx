@@ -26,7 +26,9 @@ export default function CreatePage() {
     <div>
       <NavbarApp />
       <div className="max-w-3xl mx-auto py-10">
-        <h1 className="text-8xl font-bold text-neutral-300 mb-6">Form Builder/</h1>
+        <h1 className="text-8xl font-bold text-neutral-300 mb-6">
+          Form Builder/
+        </h1>
 
         <AddBlockPanel
           onAddShortText={() => addAndFocus(createShortTextBlock)}
@@ -44,6 +46,9 @@ export default function CreatePage() {
           onDuplicate={editor.duplicate}
           onConsumeFocus={() => setActiveBlockId(null)}
           onReorder={editor.reorder}
+          visibilityRules={editor.visibilityRule}
+          onRemoveVisibilityRule={editor.removeVisibilityRule}
+          onUpsertVisibilityRule={editor.upsertVisibilityRule}
         />
       </div>
     </div>

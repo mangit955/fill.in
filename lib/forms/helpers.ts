@@ -6,7 +6,8 @@
 // It answers:
 // “Given current blocks, and an intent, what is the next valid state?”
 
-import { FormBlock, LogicJump } from "@/lib/forms/types";
+import { FormBlock, LogicJump, VisibilityRule } from "@/lib/forms/types";
+import { Target } from "lucide-react";
 
 //addBlock => takes current block and returns a new array & appends a new block
 export function addBlock(blocks: FormBlock[], block: FormBlock): FormBlock[] {
@@ -123,4 +124,24 @@ export function updateLogicJump(
   updates: Partial<Omit<LogicJump, "id">>
 ): LogicJump[] {
   return jumps.map((j) => (j.id === jumpId ? { ...j, ...updates } : j));
+}
+
+export function upsertVisibilityRule(
+  rules: VisibilityRule[],
+  rule: VisibilityRule
+): VisibilityRule[] {
+  const existing = rules.find((r) => r.targetBlockId === rule.targetBlockId);
+
+  if (!existing) {
+    return [...rules, rule];
+  }
+
+  return rules.map((r) => (r.targetBlockId === rule.targetBlockId ? rule : r));
+}
+
+export function removeVisibilityRule(
+  rules: VisibilityRule[],
+  targetBlockId: string
+): VisibilityRule[] {
+  return rules.filter((r) => r.targetBlockId !== targetBlockId);
 }

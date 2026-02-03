@@ -1,6 +1,6 @@
 "use client";
 
-import { FormBlock } from "@/lib/forms/types";
+import { FormBlock, VisibilityRule } from "@/lib/forms/types";
 import BlockRenderer from "./BuilderRenderer";
 import { GripVertical, Plus, Trash2 } from "lucide-react";
 import { Tooltip, TooltipContent, TooltipTrigger } from "../ui/tooltip";
@@ -11,6 +11,7 @@ import {
   verticalListSortingStrategy,
 } from "@dnd-kit/sortable";
 import { SortableBlockItem } from "./SortableBlockItem";
+import BlockShell from "./BlockShell";
 
 type BuilderCanvasProps = {
   blocks: FormBlock[];
@@ -19,12 +20,15 @@ type BuilderCanvasProps = {
   onUpdateMeta: (blockId: string, updates: { required?: boolean }) => void;
   onUpdateConfig: <T extends FormBlock>(
     blockId: string,
-    updater: (config: T["config"]) => T["config"],
+    updater: (config: T["config"]) => T["config"]
   ) => void;
   onRemove: (blockId: string) => void;
   onConsumeFocus: () => void;
   onDuplicate: (blockId: string) => void;
   onReorder: (from: number, to: number) => void;
+  visibilityRules: VisibilityRule[];
+  onUpsertVisibilityRule: (rule: VisibilityRule) => void;
+  onRemoveVisibilityRule: (targetBlockId: string) => void;
 };
 
 export default function BuilderCanvas({
@@ -37,6 +41,9 @@ export default function BuilderCanvas({
   onConsumeFocus,
   onDuplicate,
   onReorder,
+  visibilityRules,
+  onRemoveVisibilityRule,
+  onUpsertVisibilityRule,
 }: BuilderCanvasProps) {
   function handleDragEnd(event: DragEndEvent) {
     const { active, over } = event;
@@ -78,67 +85,76 @@ export default function BuilderCanvas({
                   style={style}
                   className={`relative ${isDragging ? "opacity-80" : ""}`}
                 >
-                  {/* Actions + handle */}
-                  <div className="absolute left-2 top-[40%] flex items-center">
-                    {/* Delete */}
-                    <Tooltip>
-                      <TooltipTrigger asChild>
-                        <button
-                          onClick={() => {
-                            onRemove(block.id);
-                            onConsumeFocus();
-                          }}
-                          className="cursor-pointer text-neutral-400 hover:text-neutral-600 hover:bg-gray-100 p-1 rounded"
-                        >
-                          <Trash2 size={18} />
-                        </button>
-                      </TooltipTrigger>
-                      <TooltipContent className="font-bold">
-                        Delete block
-                      </TooltipContent>
-                    </Tooltip>
+                  {" "}
+                  <BlockShell
+                    block={block}
+                    blocks={blocks}
+                    visibilityRules={visibilityRules}
+                    onRemoveRule={onRemoveVisibilityRule}
+                    onUpsertRule={onUpsertVisibilityRule}
+                  >
+                    {/* Actions + handle */}
+                    <div className="absolute left-2 top-[40%] flex items-center">
+                      {/* Delete */}
+                      <Tooltip>
+                        <TooltipTrigger asChild>
+                          <button
+                            onClick={() => {
+                              onRemove(block.id);
+                              onConsumeFocus();
+                            }}
+                            className="cursor-pointer text-neutral-400 hover:text-neutral-600 hover:bg-gray-100 p-1 rounded"
+                          >
+                            <Trash2 size={18} />
+                          </button>
+                        </TooltipTrigger>
+                        <TooltipContent className="font-bold">
+                          Delete block
+                        </TooltipContent>
+                      </Tooltip>
 
-                    {/* Duplicate */}
-                    <Tooltip>
-                      <TooltipTrigger asChild>
-                        <button
-                          onClick={() => onDuplicate(block.id)}
-                          className="cursor-pointer text-neutral-400 hover:text-neutral-600 hover:bg-gray-100 p-1 rounded"
-                        >
-                          <Plus size={18} />
-                        </button>
-                      </TooltipTrigger>
-                      <TooltipContent className="font-bold">
-                        Insert block below
-                      </TooltipContent>
-                    </Tooltip>
+                      {/* Duplicate */}
+                      <Tooltip>
+                        <TooltipTrigger asChild>
+                          <button
+                            onClick={() => onDuplicate(block.id)}
+                            className="cursor-pointer text-neutral-400 hover:text-neutral-600 hover:bg-gray-100 p-1 rounded"
+                          >
+                            <Plus size={18} />
+                          </button>
+                        </TooltipTrigger>
+                        <TooltipContent className="font-bold">
+                          Insert block below
+                        </TooltipContent>
+                      </Tooltip>
 
-                    {/* Drag handle */}
-                    <Tooltip>
-                      <TooltipTrigger asChild>
-                        <div
-                          {...attributes}
-                          {...listeners}
-                          className="cursor-grab text-neutral-400 hover:text-neutral-600 hover:bg-gray-100 p-1 rounded"
-                        >
-                          <GripVertical size={16} />
-                        </div>
-                      </TooltipTrigger>
-                      <TooltipContent className="font-bold">
-                        Drag <span className="text-neutral-400">to move</span>
-                      </TooltipContent>
-                    </Tooltip>
-                  </div>
+                      {/* Drag handle */}
+                      <Tooltip>
+                        <TooltipTrigger asChild>
+                          <div
+                            {...attributes}
+                            {...listeners}
+                            className="cursor-grab text-neutral-400 hover:text-neutral-600 hover:bg-gray-100 p-1 rounded"
+                          >
+                            <GripVertical size={16} />
+                          </div>
+                        </TooltipTrigger>
+                        <TooltipContent className="font-bold">
+                          Drag <span className="text-neutral-400">to move</span>
+                        </TooltipContent>
+                      </Tooltip>
+                    </div>
 
-                  {/* Block content */}
-                  <div className="pl-22">
-                    <BlockRenderer
-                      autoFocus={block.id === activeBlockId}
-                      block={block}
-                      onUpdateMeta={onUpdateMeta}
-                      onUpdateConfig={onUpdateConfig}
-                    />
-                  </div>
+                    {/* Block content */}
+                    <div className="pl-22">
+                      <BlockRenderer
+                        autoFocus={block.id === activeBlockId}
+                        block={block}
+                        onUpdateMeta={onUpdateMeta}
+                        onUpdateConfig={onUpdateConfig}
+                      />
+                    </div>
+                  </BlockShell>
                 </div>
               )}
             </SortableBlockItem>

@@ -1,14 +1,16 @@
 "use client";
 
-import { Form, FormBlock } from "@/lib/forms/types";
+import { Form, FormBlock, VisibilityRule } from "@/lib/forms/types";
 import { useEffect, useMemo, useState } from "react";
 import {
   addBlock,
   deleteBlock,
   insertBlockAfter,
+  removeVisibilityRule,
   reorderBlock,
   updateBlockConfig,
   updateBlockMeta,
+  upsertVisibilityRule,
 } from "../forms/helpers";
 import { createEmptyForm } from "../forms/defaults";
 import { debounce } from "../utils/debounce";
@@ -26,7 +28,7 @@ function loadDraft() {
 
     return {
       ...data,
-      VisibilityRules: data.visibilityRules ?? [],
+      visibilityRules: data.visibilityRules ?? [],
     };
   } catch {
     return null;
@@ -111,9 +113,28 @@ export function useFormEditor(initialForm?: Form) {
     }));
   }
 
+  function upsertVisibility(rule: VisibilityRule) {
+    setForm((prev) => ({
+      ...prev,
+      visibilityRules: upsertVisibilityRule(prev.visibilityRules, rule),
+    }));
+  }
+
+  function removeVisibility(targetBlockId: string) {
+    setForm((prev) => ({
+      ...prev,
+      visibilityRules: removeVisibilityRule(
+        prev.visibilityRules,
+        targetBlockId
+      ),
+    }));
+  }
+
   return {
     form,
     blocks: form.blocks,
+    visibilityRule: form.visibilityRules,
+
     duplicate,
     add,
     hydrated,
@@ -121,5 +142,8 @@ export function useFormEditor(initialForm?: Form) {
     updateMeta,
     updateConfig,
     reorder,
+
+    upsertVisibilityRule: upsertVisibility,
+    removeVisibilityRule: removeVisibility,
   };
 }
