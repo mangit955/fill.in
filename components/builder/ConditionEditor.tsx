@@ -15,6 +15,8 @@ export default function ConditionEditor({
   availableBlocks,
   onChange,
 }: Props) {
+  const isSourceSelected = Boolean(condition.blockId);
+
   return (
     <div className="flex flex-wrap gap-2 items-center text-xs">
       {/* Source Block */}
@@ -36,6 +38,7 @@ export default function ConditionEditor({
       {/* Operator */}
       <select
         value={condition.operator}
+        disabled={!isSourceSelected}
         onChange={(e) =>
           onChange({ ...condition, operator: e.target.value as LogicOperator })
         }
@@ -51,6 +54,7 @@ export default function ConditionEditor({
       {/* Value */}
       <input
         type="text"
+        disabled={!isSourceSelected}
         value={String(condition.value ?? "")}
         onChange={(e) => onChange({ ...condition, value: e.target.value })}
         className="border rounded px-1 py-0.5 w-24"

@@ -24,6 +24,10 @@ export default function BlockConditionSection({
   const blockIndex = blocks.findIndex((b) => b.id === block.id);
   const availableBlocks = blocks.slice(0, blockIndex);
 
+  if (availableBlocks.length === 0) {
+    return null;
+  }
+
   if (!existingRule) {
     return (
       <button
