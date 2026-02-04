@@ -145,3 +145,15 @@ export function removeVisibilityRule(
 ): VisibilityRule[] {
   return rules.filter((r) => r.targetBlockId !== targetBlockId);
 }
+
+export function getNextJumpOrder(
+  jumps: LogicJump[],
+  fromBlockId: string
+): number {
+  return (
+    Math.max(
+      0,
+      ...jumps.filter((j) => j.fromBlockId === fromBlockId).map((j) => j.order)
+    ) + 1
+  );
+}

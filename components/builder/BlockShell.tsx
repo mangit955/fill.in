@@ -1,8 +1,9 @@
 "use client";
 
-import { FormBlock, VisibilityRule } from "@/lib/forms/types";
+import { FormBlock, LogicJump, VisibilityRule } from "@/lib/forms/types";
 import { ReactNode } from "react";
 import BlockConditionSection from "./BlockConditionSection";
+import BlockLogicJumpSection from "./BlockLogicJumpSection";
 
 type Props = {
   block: FormBlock;
@@ -11,6 +12,13 @@ type Props = {
   onUpsertRule: (rule: VisibilityRule) => void;
   onRemoveRule: (targetBlockId: string) => void;
   children: ReactNode;
+  logicJumps: LogicJump[];
+  onAddLogicJump: (jump: LogicJump) => void;
+  onRemoveLogicJump: (jumpId: string) => void;
+  onUpdateLogicJump: (
+    jumpId: string,
+    updates: Partial<Omit<LogicJump, "id">>
+  ) => void;
 };
 
 export default function BlockShell({
@@ -20,6 +28,10 @@ export default function BlockShell({
   visibilityRules,
   onRemoveRule,
   onUpsertRule,
+  logicJumps,
+  onAddLogicJump,
+  onRemoveLogicJump,
+  onUpdateLogicJump,
 }: Props) {
   return (
     <div className="relative  space-y-3">
@@ -35,6 +47,14 @@ export default function BlockShell({
           visibilityRules={visibilityRules}
           onRemoveRule={onRemoveRule}
           onUpsertRule={onUpsertRule}
+        />
+        <BlockLogicJumpSection
+          block={block}
+          blocks={blocks}
+          logicJumps={logicJumps}
+          onAddJump={onAddLogicJump}
+          onUpdateJump={onUpdateLogicJump}
+          onRemoveJump={onRemoveLogicJump}
         />
       </div>
     </div>

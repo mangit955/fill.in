@@ -1,6 +1,6 @@
 "use client";
 
-import { FormBlock, VisibilityRule } from "@/lib/forms/types";
+import { FormBlock, LogicJump, VisibilityRule } from "@/lib/forms/types";
 import BlockRenderer from "./BuilderRenderer";
 import { GripVertical, Plus, Trash2 } from "lucide-react";
 import { Tooltip, TooltipContent, TooltipTrigger } from "../ui/tooltip";
@@ -29,6 +29,13 @@ type BuilderCanvasProps = {
   visibilityRules: VisibilityRule[];
   onUpsertVisibilityRule: (rule: VisibilityRule) => void;
   onRemoveVisibilityRule: (targetBlockId: string) => void;
+  logicJumps: LogicJump[];
+  onAddLogicJump: (jump: LogicJump) => void;
+  onUpdateLogicJump: (
+    jumpId: string,
+    updates: Partial<Omit<LogicJump, "id">>
+  ) => void;
+  onRemoveLogicJump: (jumpId: string) => void;
 };
 
 export default function BuilderCanvas({
@@ -44,6 +51,10 @@ export default function BuilderCanvas({
   visibilityRules,
   onRemoveVisibilityRule,
   onUpsertVisibilityRule,
+  logicJumps,
+  onAddLogicJump,
+  onRemoveLogicJump,
+  onUpdateLogicJump,
 }: BuilderCanvasProps) {
   function handleDragEnd(event: DragEndEvent) {
     const { active, over } = event;
@@ -92,6 +103,10 @@ export default function BuilderCanvas({
                     visibilityRules={visibilityRules}
                     onRemoveRule={onRemoveVisibilityRule}
                     onUpsertRule={onUpsertVisibilityRule}
+                    logicJumps={logicJumps}
+                    onAddLogicJump={onAddLogicJump}
+                    onRemoveLogicJump={onRemoveLogicJump}
+                    onUpdateLogicJump={onUpdateLogicJump}
                   >
                     {/* Actions + handle */}
                     <div className="absolute left-2 top-[40%] flex items-center">

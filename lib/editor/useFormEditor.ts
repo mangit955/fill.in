@@ -1,15 +1,18 @@
 "use client";
 
-import { Form, FormBlock, VisibilityRule } from "@/lib/forms/types";
+import { Form, FormBlock, LogicJump, VisibilityRule } from "@/lib/forms/types";
 import { useEffect, useMemo, useState } from "react";
 import {
   addBlock,
+  addLogicJump,
   deleteBlock,
   insertBlockAfter,
+  removeLogicJump,
   removeVisibilityRule,
   reorderBlock,
   updateBlockConfig,
   updateBlockMeta,
+  updateLogicJump,
   upsertVisibilityRule,
 } from "../forms/helpers";
 import { createEmptyForm } from "../forms/defaults";
@@ -29,6 +32,7 @@ function loadDraft() {
     return {
       ...data,
       visibilityRules: data.visibilityRules ?? [],
+      logicJumps: data.logicJumps ?? [],
     };
   } catch {
     return null;
@@ -130,10 +134,32 @@ export function useFormEditor(initialForm?: Form) {
     }));
   }
 
+  function addJump(jump: LogicJump) {
+    setForm((prev) => ({
+      ...prev,
+      logicJumps: addLogicJump(prev.logicJumps, jump),
+    }));
+  }
+
+  function updateJump(jumpId: string, updates: Partial<Omit<LogicJump, "id">>) {
+    setForm((prev) => ({
+      ...prev,
+      logicJumps: updateLogicJump(prev.logicJumps, jumpId, updates),
+    }));
+  }
+
+  function removeJump(jumpId: string) {
+    setForm((prev) => ({
+      ...prev,
+      logicJumps: removeLogicJump(prev.logicJumps, jumpId),
+    }));
+  }
+
   return {
     form,
     blocks: form.blocks,
-    visibilityRule: form.visibilityRules,
+    visibilityRules: form.visibilityRules,
+    logicJumps: form.logicJumps,
 
     duplicate,
     add,
@@ -145,5 +171,9 @@ export function useFormEditor(initialForm?: Form) {
 
     upsertVisibilityRule: upsertVisibility,
     removeVisibilityRule: removeVisibility,
+
+    addLogicJump: addJump,
+    updateLogicJump: updateJump,
+    removeLogicJump: removeJump,
   };
 }

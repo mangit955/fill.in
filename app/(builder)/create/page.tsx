@@ -46,9 +46,13 @@ export default function CreatePage() {
           onDuplicate={editor.duplicate}
           onConsumeFocus={() => setActiveBlockId(null)}
           onReorder={editor.reorder}
-          visibilityRules={editor.visibilityRule}
+          visibilityRules={editor.visibilityRules}
           onRemoveVisibilityRule={editor.removeVisibilityRule}
           onUpsertVisibilityRule={editor.upsertVisibilityRule}
+          logicJumps={editor.logicJumps}
+          onAddLogicJump={editor.addLogicJump}
+          onRemoveLogicJump={editor.removeLogicJump}
+          onUpdateLogicJump={editor.updateLogicJump}
         />
       </div>
     </div>

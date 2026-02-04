@@ -1,7 +1,7 @@
 "use client";
 
 import { FormBlock, VisibilityRule } from "@/lib/forms/types";
-import ConditionEditor from "./ConditionEditor";
+import ConditionEditor from "../../lib/editor/ConditionEditor";
 
 type Props = {
   block: FormBlock;

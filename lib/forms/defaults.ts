@@ -93,5 +93,7 @@ export function createEmptyForm(): Form {
     title: "Untitled Form",
     description: "",
     blocks: [],
+    visibilityRules: [],
+    logicJumps: [],
   };
 }

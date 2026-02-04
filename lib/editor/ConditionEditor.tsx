@@ -6,6 +6,7 @@ type Props = {
   condition: LogicCondition;
   availableBlocks: FormBlock[];
   onChange: (condition: LogicCondition) => void;
+  mode?: "visibility" | "jump";
 };
 
 const OPERATORS: LogicOperator[] = ["equals", "not_equals", "contains"];
@@ -14,26 +15,30 @@ export default function ConditionEditor({
   condition,
   availableBlocks,
   onChange,
+  mode = "visibility",
 }: Props) {
+  const isJump = mode === "jump";
   const isSourceSelected = Boolean(condition.blockId);
 
   return (
     <div className="flex flex-wrap gap-2 items-center text-xs">
       {/* Source Block */}
-      <select
-        value={condition.blockId}
-        onChange={(e) => onChange({ ...condition, blockId: e.target.value })}
-        className="border rounded px-1 py-0.5"
-      >
-        <option value="" disabled>
-          Select question
-        </option>
-        {availableBlocks.map((b) => (
-          <option key={b.id} value={b.id}>
-            {b.config.label}
+      {!isJump && (
+        <select
+          value={condition.blockId}
+          onChange={(e) => onChange({ ...condition, blockId: e.target.value })}
+          className="border rounded px-1 py-0.5"
+        >
+          <option value="" disabled>
+            Select question
           </option>
-        ))}
-      </select>
+          {availableBlocks.map((b) => (
+            <option key={b.id} value={b.id}>
+              {b.config.label}
+            </option>
+          ))}
+        </select>
+      )}
 
       {/* Operator */}
       <select
