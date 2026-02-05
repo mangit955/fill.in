@@ -107,6 +107,7 @@ export type VisibilityRule = {
 
 export type Form = {
   id: string;
+  slug: string;
   title: string;
   description: string;
   blocks: FormBlock[];

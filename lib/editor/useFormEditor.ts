@@ -17,6 +17,7 @@ import {
 } from "../forms/helpers";
 import { createEmptyForm } from "../forms/defaults";
 import { debounce } from "../utils/debounce";
+import { supabase } from "../supabase/client";
 
 const STORAGE_KEY = "form_draft_v1";
 function loadDraft() {
@@ -155,6 +156,33 @@ export function useFormEditor(initialForm?: Form) {
     }));
   }
 
+  async function saveDraft() {
+    const safeForm = JSON.parse(JSON.stringify(form));
+
+    const { error } = await supabase.from("forms").upsert({
+      id: form.id,
+      slug: form.slug,
+      title: form.title,
+      description: form.description,
+      status: "draft",
+      schema: safeForm,
+    });
+
+    if (error) {
+      console.error("Supabase saveDraft error:", error);
+      throw error;
+    }
+  }
+
+  async function publish() {
+    const { error } = await supabase
+      .from("forms")
+      .update({ status: "published", schema: form })
+      .eq("id", form.id);
+
+    if (error) throw error;
+  }
+
   return {
     form,
     blocks: form.blocks,
@@ -168,6 +196,8 @@ export function useFormEditor(initialForm?: Form) {
     updateMeta,
     updateConfig,
     reorder,
+    saveDraft,
+    publish,
 
     upsertVisibilityRule: upsertVisibility,
     removeVisibilityRule: removeVisibility,

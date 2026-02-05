@@ -89,7 +89,8 @@ export function createMultipleChoiceBlock(): MultipleChoiceBlock {
 
 export function createEmptyForm(): Form {
   return {
-    id: "draft",
+    id: crypto.randomUUID(),
+    slug: crypto.randomUUID(),
     title: "Untitled Form",
     description: "",
     blocks: [],

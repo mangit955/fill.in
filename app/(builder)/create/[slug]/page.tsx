@@ -29,6 +29,19 @@ export default function CreatePage() {
         <h1 className="text-8xl font-bold text-neutral-300 mb-6">
           Form Builder/
         </h1>
+        <button
+          onClick={async () => {
+            try {
+              await editor.saveDraft();
+              alert("Saved");
+            } catch {
+              alert("Save failed");
+            }
+          }}
+          className="px-3 py-1 text-sm border rounded hover:bg-gray-100"
+        >
+          Save
+        </button>
 
         <AddBlockPanel
           onAddShortText={() => addAndFocus(createShortTextBlock)}
