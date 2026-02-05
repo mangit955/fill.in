@@ -1,23 +1,23 @@
+import { createServerSupabase } from "@/lib/supabase/server";
 import FormRuntime from "@/components/runtime/FormRuntime";
-import { supabase } from "@/lib/supabase/client";
 
 export default async function RuntimePage({
   params,
 }: {
-  params: { slug: string };
+  params: Promise<{ slug: string }>;
 }) {
-  const { data, error } = await supabase
+  const { slug } = await params;
+
+  const supabase = createServerSupabase();
+
+  const { data } = await supabase
     .from("forms")
-    .select("schema")
-    .eq("slug", params.slug)
+    .select("schema, status")
+    .eq("slug", slug)
     .eq("status", "published")
     .single();
 
-  if (error || !data) {
-    return <div>Form not found</div>;
-  }
+  if (!data) return <div>Form not published</div>;
 
-  const form = data.schema;
-
-  return <FormRuntime form={form} />;
+  return <FormRuntime form={data.schema} />;
 }

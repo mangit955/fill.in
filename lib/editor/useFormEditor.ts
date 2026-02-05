@@ -17,7 +17,7 @@ import {
 } from "../forms/helpers";
 import { createEmptyForm } from "../forms/defaults";
 import { debounce } from "../utils/debounce";
-import { supabase } from "../supabase/client";
+import { supabase } from "@/lib/supabase/client";
 
 const STORAGE_KEY = "form_draft_v1";
 function loadDraft() {
@@ -42,7 +42,7 @@ function loadDraft() {
 
 export function useFormEditor(initialForm?: Form) {
   const [form, setForm] = useState<Form>(() => {
-    return loadDraft() ?? initialForm ?? createEmptyForm();
+    return initialForm ?? loadDraft() ?? createEmptyForm();
   });
   const [hydrated, setHydrated] = useState(false);
 
@@ -157,20 +157,31 @@ export function useFormEditor(initialForm?: Form) {
   }
 
   async function saveDraft() {
-    const safeForm = JSON.parse(JSON.stringify(form));
+    console.log("saving draft", form);
 
-    const { error } = await supabase.from("forms").upsert({
+    const payload = {
       id: form.id,
-      slug: form.slug,
-      title: form.title,
-      description: form.description,
+      slug: form.slug ?? form.id,
+      title: form.title ?? "Untitled",
+      description: form.description ?? "",
+      schema: form,
       status: "draft",
-      schema: safeForm,
-    });
+    };
+
+    console.log("payload →", payload);
+
+    const { data, error } = await supabase
+      .from("forms")
+      .upsert(payload)
+      .select();
+
+    console.log("supabase data →", data);
+    console.log("supabase error →", error);
 
     if (error) {
-      console.error("Supabase saveDraft error:", error);
-      throw error;
+      alert("Save failed");
+      console.error(error);
+      return;
     }
   }
 
@@ -181,6 +192,8 @@ export function useFormEditor(initialForm?: Form) {
       .eq("id", form.id);
 
     if (error) throw error;
+
+    return form.slug;
   }
 
   return {
