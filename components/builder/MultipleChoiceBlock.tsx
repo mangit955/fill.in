@@ -60,6 +60,7 @@ export default function MultipleChoiceBlock({
         <input
           ref={inputRef}
           value={value}
+          placeholder="Type a question"
           onChange={(e) => setValue(e.target.value)}
           onBlur={save}
           onKeyDown={(e) => {
@@ -72,7 +73,7 @@ export default function MultipleChoiceBlock({
               setIsEditing(false);
             }
           }}
-          className="w-full rounded px-2 py-1 text-sm mb-2"
+          className="placeholder:text-neutral-300 placeholder:font-semibold placeholder:text-2xl w-full rounded px-2 py-1 text-sm mb-2 border-none bg-transparent outline-none"
         />
       ) : (
         <p
@@ -114,7 +115,7 @@ export default function MultipleChoiceBlock({
                   ),
                 }))
               }
-              className="border border-gray-300 hover:shadow-md shadow-sm rounded-md px-2 py-1 text-sm w-full cursor-pointer"
+              className="border border-gray-300 shadow-sm hover:shadow-md rounded-md px-2 py-1 text-sm w-full cursor-pointer"
             />
             <div className="hover:bg-gray-100 text-neutral-400  hover:text-neutral-600  rounded px-1">
               <button
@@ -128,7 +129,7 @@ export default function MultipleChoiceBlock({
                         : config.options.filter((o) => o.id !== option.id),
                   }))
                 }
-                className="cursor-pointer"
+                className=" cursor-pointer"
               >
                 ✕
               </button>

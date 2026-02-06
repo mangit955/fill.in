@@ -29,7 +29,7 @@ function generateId(prefix: string) {
 
 function createShortTextConfig(): ShortTextConfig {
   return {
-    label: "Type a question",
+    label: "",
     placeholder: "Type your answer here",
     maxLength: 100,
   };
@@ -37,7 +37,7 @@ function createShortTextConfig(): ShortTextConfig {
 
 function createLongTextConfig(): LongTextConfig {
   return {
-    label: "Type a question",
+    label: "",
     placeholder: "Type your answer",
     rows: 4,
   };
@@ -45,7 +45,7 @@ function createLongTextConfig(): LongTextConfig {
 
 function createMultipleChoiceConfig(): MultipleChoiceConfig {
   return {
-    label: "Type a question",
+    label: "",
     options: [{ id: crypto.randomUUID(), label: "Option 1" }],
     allowMultiple: false,
   };

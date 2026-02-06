@@ -61,6 +61,7 @@ export default function ShortTextBlock({
         <input
           ref={inputRef}
           value={value}
+          placeholder="Type a question"
           onChange={(e) => setValue(e.target.value)}
           onBlur={save}
           onKeyDown={(e) => {
@@ -73,7 +74,7 @@ export default function ShortTextBlock({
               setIsEditing(false);
             }
           }}
-          className="w-full rounded mb-2 px-2 py-1 text-sm"
+          className="w-full placeholder:text-neutral-300 placeholder:font-bold placeholder:text-2xl rounded mb-2 px-2 py-1 bg-transparent outline-none text-sm"
         />
       ) : (
         <p

@@ -61,6 +61,7 @@ export default function LongTextBlock({
         <input
           ref={inputRef}
           value={value}
+          placeholder="Type a question"
           onChange={(e) => setValue(e.target.value)}
           onBlur={save}
           onKeyDown={(e) => {
@@ -73,7 +74,7 @@ export default function LongTextBlock({
               setIsEditing(false);
             }
           }}
-          className="w-full px-2 py-1 text-sm mb-2"
+          className="w-full placeholder:text-neutral-300 placeholder:font-semibold placeholder:text-2xl px-2 py-1 text-sm mb-2 border-none bg-transparent outline-none"
         />
       ) : (
         <p
