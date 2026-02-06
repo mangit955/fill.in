@@ -12,7 +12,8 @@ import { useEffect, useState } from "react";
 import { Form, FormBlock } from "@/lib/forms/types";
 import { NavbarApp } from "@/components/navbar/navbarApp";
 import { useDebouncedEffect } from "../hooks/useDebouncedEffect";
-import { title } from "process";
+import { Copy, Check } from "lucide-react";
+import { toast } from "sonner";
 
 type Props = {
   initialForm: Form;
@@ -20,9 +21,12 @@ type Props = {
 
 export default function FormEditorClient({ initialForm }: Props) {
   const editor = useFormEditor(initialForm);
+  const [mode, setMode] = useState<"editor" | "published">("editor");
+  const [publishedUrl, setPublishedUrl] = useState<string | null>(null);
   const [isPublishing, setIsPublishing] = useState(false);
   const [activeBlockId, setActiveBlockId] = useState<string | null>(null);
   const [hasUnsavedChanges, setHasUnsavedChanges] = useState(false);
+  const [copied, setCopied] = useState(false);
 
   function addAndFocus(create: () => FormBlock) {
     const block = create();
@@ -47,6 +51,56 @@ export default function FormEditorClient({ initialForm }: Props) {
     1500
   );
 
+  useEffect(() => {
+    if (mode === "published") return;
+    setPublishedUrl(null);
+  }, [editor.form]);
+
+  if (mode === "published" && publishedUrl) {
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <div className="w-full max-w-xl text-left space-y-6">
+          <h1 className="text-xl font-semibold">Share Link </h1>
+          <h2 className="text-muted-foreground">
+            Your form is now published and ready to be shared with the world!
+            Copy this link to share your form on social media, messaging apps or
+            via email.
+          </h2>
+
+          <div className="flex w-full items-center gap-3">
+            <div className="flex-1 border border-gray-300 rounded-md shadow-sm px-3 py-2 text-md bg-white whitespace-nowrap overflow-hidden text-ellipsis">
+              {publishedUrl}
+            </div>
+
+            <button
+              onClick={() => {
+                navigator.clipboard.writeText(publishedUrl);
+                setCopied(true);
+                setTimeout(() => setCopied(false), 1500);
+                toast.success("Link has been copied!");
+              }}
+              className=" flex items-center gap-2 px-3 py-2 text-md border font-semibold rounded-md cursor-pointer bg-black text-white hover:bg-neutral-700 whitespace-nowrap"
+            >
+              {copied ? (
+                <Check width={20} height={20} />
+              ) : (
+                <Copy width={20} height={20} />
+              )}
+              Copy
+            </button>
+          </div>
+
+          <button
+            onClick={() => setMode("editor")}
+            className="text-sm underline cursor-pointer text-muted-foreground hover:text-foreground"
+          >
+            Back to editor
+          </button>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div>
       <NavbarApp
@@ -54,8 +108,13 @@ export default function FormEditorClient({ initialForm }: Props) {
         onPublish={async () => {
           try {
             setIsPublishing(true);
+
             const slug = await editor.publish();
-            window.open(`/f/${slug}`, "_blank");
+
+            const url = `${window.location.origin}/f/${slug}`;
+
+            setPublishedUrl(url);
+            setMode("published");
           } finally {
             setIsPublishing(false);
           }
