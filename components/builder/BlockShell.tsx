@@ -39,7 +39,7 @@ export default function BlockShell({
       {children}
 
       {/* Condition UI placeholder (Phase 10.3) */}
-      <div className="mt-2 text-xs text-muted-foreground">
+      <div className="mt-2 text-xs text-muted-foreground ">
         {/* condition editor will go here */}
         <BlockConditionSection
           block={block}

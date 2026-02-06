@@ -45,7 +45,7 @@ export default function BlockLogicJumpSection({
       ))}
 
       <button
-        className="text-xs text-muted-foreground hover:text-foreground"
+        className="text-xs text-white hover:text-muted-foreground cursor-pointer"
         onClick={() =>
           onAddJump({
             id: crypto.randomUUID(),

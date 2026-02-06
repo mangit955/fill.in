@@ -31,7 +31,7 @@ export default function BlockConditionSection({
   if (!existingRule) {
     return (
       <button
-        className="text-xs text-muted-foreground hover:text-foreground"
+        className="text-xs text-white hover:text-muted-foreground cursor-pointer"
         onClick={() => {
           const rule: VisibilityRule = {
             id: crypto.randomUUID(),

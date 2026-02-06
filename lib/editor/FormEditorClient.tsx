@@ -66,7 +66,7 @@ export default function FormEditorClient({ initialForm }: Props) {
         <input
           value={editor.form.title}
           onChange={(e) => editor.updateFormMeta({ title: e.target.value })}
-          placeholder="Untitled form"
+          placeholder="Form Title"
           className="text-6xl md:text-8xl font-bold text-neutral-700 placeholder:text-neutral-300 mb-6 w-full bg-transparent outline-none border-none"
         ></input>
 

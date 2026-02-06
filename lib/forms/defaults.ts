@@ -91,7 +91,7 @@ export function createEmptyForm(): Form {
   return {
     id: crypto.randomUUID(),
     slug: crypto.randomUUID(),
-    title: "Untitled Form",
+    title: "",
     description: "",
     blocks: [],
     visibilityRules: [],
