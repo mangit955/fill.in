@@ -76,9 +76,14 @@ export default function FormRuntime({ form }: Props) {
   const selected = (answers[block.id] as string[]) ?? [];
 
   return (
-    <div className="min-h-screen w-full flex items-center justify-center">
-      <div className="w-full max-w-xl space-y-6">
-        <div className="text-xl font-semibold">{block.config.label}</div>
+    <div className="min-h-screen w-full relative ">
+      <div className="fixed top-6 left-1/2 -translate-x-1/2 w-full max-w-xl px-4 pointer-events-none">
+        <h1 className="text-5xl text-neutral-700 font-bold text-left">
+          {form.title}
+        </h1>
+      </div>
+      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-full max-w-xl space-y-6 px-4">
+        <div className="text-xl font-semibold mt-4">{block.config.label}</div>
 
         {/* Placeholder answer button */}
         {block.type === "short_text" && (
@@ -108,7 +113,7 @@ export default function FormRuntime({ form }: Props) {
         )}
 
         {block.type === "multiple_choice" && (
-          <div className="space-y-2">
+          <div className="space-y-2 ">
             {block.config.options.map((opt) => (
               <label key={opt.id} className="flex items-center gap-2">
                 <input
@@ -139,7 +144,7 @@ export default function FormRuntime({ form }: Props) {
 
             {block.config.allowMultiple && (
               <button
-                className="px-2 py-1 border bg-black text-white rounded-md cursor-pointer"
+                className="px-2 py-1 border bg-black text-white rounded-md cursor-pointer font-semibold"
                 onClick={() => submitAnswer(answers[block.id])}
               >
                 Next →
