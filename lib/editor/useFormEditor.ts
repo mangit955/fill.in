@@ -196,6 +196,15 @@ export function useFormEditor(initialForm?: Form) {
     return form.slug;
   }
 
+  function updateFormMeta(
+    updates: Partial<Pick<Form, "title" | "description">>
+  ) {
+    setForm((prev) => ({
+      ...prev,
+      ...updates,
+    }));
+  }
+
   return {
     form,
     blocks: form.blocks,
@@ -211,6 +220,7 @@ export function useFormEditor(initialForm?: Form) {
     reorder,
     saveDraft,
     publish,
+    updateFormMeta,
 
     upsertVisibilityRule: upsertVisibility,
     removeVisibilityRule: removeVisibility,

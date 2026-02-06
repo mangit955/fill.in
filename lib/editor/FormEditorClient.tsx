@@ -12,6 +12,7 @@ import { useEffect, useState } from "react";
 import { Form, FormBlock } from "@/lib/forms/types";
 import { NavbarApp } from "@/components/navbar/navbarApp";
 import { useDebouncedEffect } from "../hooks/useDebouncedEffect";
+import { title } from "process";
 
 type Props = {
   initialForm: Form;
@@ -62,9 +63,12 @@ export default function FormEditorClient({ initialForm }: Props) {
       />
 
       <div className="max-w-3xl mx-auto py-10">
-        <h1 className="text-8xl font-bold text-neutral-300 mb-6">
-          Form Builder/
-        </h1>
+        <input
+          value={editor.form.title}
+          onChange={(e) => editor.updateFormMeta({ title: e.target.value })}
+          placeholder="Untitled form"
+          className="text-6xl md:text-8xl font-bold text-neutral-700 placeholder:text-neutral-300 mb-6 w-full bg-transparent outline-none border-none"
+        ></input>
 
         <AddBlockPanel
           onAddShortText={() => addAndFocus(createShortTextBlock)}

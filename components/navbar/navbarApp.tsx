@@ -45,7 +45,6 @@ export const NavbarApp = ({ onPublish, isPublishing }: Props) => {
             onClick={() => {
               if (onPublish) onPublish();
             }}
-            disabled={isPublishing}
           >
             {isPublishing ? <Spinner /> : "Publish"}
           </Button>
