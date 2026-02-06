@@ -54,7 +54,7 @@ export default function MultipleChoiceBlock({
   }, [block.config.label, isEditing]);
 
   return (
-    <div className="shadow-sm rounded-md p-4">
+    <div className=" p-4">
       {/* Label */}
       {isEditing ? (
         <input
@@ -80,7 +80,19 @@ export default function MultipleChoiceBlock({
           onClick={() => setIsEditing(true)}
         >
           {block.config.label}
-          {block.required && <span className="text-red-500 ml-1">*</span>}
+          <span
+            onClick={(e) => {
+              e.stopPropagation();
+              onUpdateMeta(block.id, { required: !block.required });
+            }}
+            className={`ml-1 cursor-pointer transition ${
+              block.required
+                ? "text-red-500 hover:text-red-600"
+                : "text-neutral-300 hover:text-neutral-500"
+            }`}
+          >
+            *
+          </span>
         </p>
       )}
 
@@ -102,7 +114,7 @@ export default function MultipleChoiceBlock({
                   ),
                 }))
               }
-              className="border rounded px-2 py-1 text-sm w-full cursor-pointer"
+              className="border border-gray-300 hover:shadow-md shadow-sm rounded-md px-2 py-1 text-sm w-full cursor-pointer"
             />
             <div className="hover:bg-gray-100 text-neutral-400  hover:text-neutral-600  rounded px-1">
               <button
@@ -116,7 +128,7 @@ export default function MultipleChoiceBlock({
                         : config.options.filter((o) => o.id !== option.id),
                   }))
                 }
-                className=" cursor-pointer"
+                className="cursor-pointer"
               >
                 ✕
               </button>
@@ -158,12 +170,6 @@ export default function MultipleChoiceBlock({
         />
         Allow multiple selections
       </label>
-
-      {/* Required toggle */}
-      <RequiredToggle
-        required={block.required}
-        onChange={(required) => onUpdateMeta(block.id, { required })}
-      />
     </div>
   );
 }

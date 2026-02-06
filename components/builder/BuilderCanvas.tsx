@@ -109,7 +109,7 @@ export default function BuilderCanvas({
                     onUpdateLogicJump={onUpdateLogicJump}
                   >
                     {/* Actions + handle */}
-                    <div className="absolute left-2 top-[40%] flex items-center">
+                    <div className="absolute left-2 top-[20%] flex items-center">
                       {/* Delete */}
                       <Tooltip>
                         <TooltipTrigger asChild>

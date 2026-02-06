@@ -1,6 +1,6 @@
 import { ShortTextBlock as ShortTextBlockType } from "@/lib/forms/types";
 import { useEffect, useRef, useState } from "react";
-import RequiredToggle from "./controls/RequiredToggle";
+import { Minus } from "lucide-react";
 
 type Props = {
   block: ShortTextBlockType;
@@ -55,7 +55,7 @@ export default function ShortTextBlock({
   }, [block.config.label, isEditing]);
 
   return (
-    <div className="shadow-sm rounded-md p-4">
+    <div className="p-4">
       {/* Label */}
       {isEditing ? (
         <input
@@ -81,22 +81,34 @@ export default function ShortTextBlock({
           onClick={() => setIsEditing(true)}
         >
           {block.config.label}
-          {block.required && <span className="text-red-500 ml-1">*</span>}
+          <span
+            onClick={(e) => {
+              e.stopPropagation();
+              onUpdateMeta(block.id, { required: !block.required });
+            }}
+            className={`ml-1 cursor-pointer transition ${
+              block.required
+                ? "text-red-500 hover:text-red-600"
+                : "text-neutral-300 hover:text-neutral-500"
+            }`}
+          >
+            *
+          </span>
         </p>
       )}
 
-      {/* Disable input preview */}
-      <input
-        disabled
-        placeholder={block.config.placeholder}
-        className="w-full border rounded px-2 py-1 mb-2"
-      />
-
-      {/* Required toggle */}
-      <RequiredToggle
-        required={block.required}
-        onChange={(required) => onUpdateMeta(block.id, { required })}
-      />
+      {/* Input preview with right icon */}
+      <div className="relative mb-2">
+        <input
+          disabled
+          placeholder="Short answer"
+          className="w-full shadow-sm hover:shadow-md border border-gray-300 rounded-md px-2 py-1 pr-8 text-sm bg-white"
+        />
+        <Minus
+          size={16}
+          className="absolute right-2 top-1/2 -translate-y-1/2 text-neutral-400 pointer-events-none"
+        />
+      </div>
     </div>
   );
 }

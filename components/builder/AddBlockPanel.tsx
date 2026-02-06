@@ -78,10 +78,6 @@ export default function AddBlockPanel({
           </PopoverContent>
         </Popover>
       </motion.div>
-      <div className="w-fit items-center flex gap-2 cursor-pointer text-neutral-400 rounded-md hover:text-neutral-600 hover:bg-gray-100 p-1">
-        <PanelsTopLeft size={18} />
-        <span className="font-semibold">Use this templet</span>
-      </div>
     </div>
   );
 }

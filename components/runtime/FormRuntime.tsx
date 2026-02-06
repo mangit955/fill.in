@@ -7,6 +7,7 @@ import { isBlockVisible } from "@/lib/forms/visibility";
 import { useRouter } from "next/navigation";
 import Lottie from "lottie-react";
 import successAnimation from "@/public/lottie/Success.json";
+import { supabase } from "@/lib/supabase/client";
 
 type Props = {
   form: Form;
@@ -18,6 +19,7 @@ export default function FormRuntime({ form }: Props) {
     form.blocks[0]?.id ?? null
   );
   const [answers, setAnswers] = useState<Record<string, unknown>>({});
+  const [submitting, setSubmitting] = useState(false);
 
   // Skip hidden blocks automatically
   useEffect(() => {
@@ -58,16 +60,74 @@ export default function FormRuntime({ form }: Props) {
     );
   }
 
-  const block = form.blocks.find((b) => b.id === currentBlockId);
-  if (!block) return <div>Invalid block</div>;
+  const foundBlock = form.blocks.find((b) => b.id === currentBlockId);
+  if (!foundBlock) return <div>Invalid block</div>;
+  const block = foundBlock;
 
-  function submitAnswer(value: unknown) {
+  async function submitForm(finalAnswers: Record<string, unknown>) {
+    const filtered: Record<string, unknown> = {};
+
+    if (submitting) return;
+    setSubmitting(true);
+
+    for (const block of form.blocks) {
+      if (!isBlockVisible(block.id, finalAnswers, form)) continue;
+      if (finalAnswers[block.id] === undefined) continue;
+
+      filtered[block.id] = finalAnswers[block.id];
+    }
+
+    const { error } = await supabase.from("responses").insert({
+      form_id: form.id,
+      answers: filtered,
+    });
+
+    if (error) {
+      console.error("Submit failed:", error);
+      alert("Submission failed. Please try again.");
+      setSubmitting(false);
+      return;
+    }
+  }
+
+  async function submitAnswer(value: unknown) {
+    if (submitting) return;
+
     const nextAnswers = {
       ...answers,
       [currentBlockId!]: value,
     };
 
     const next = getNextBlockId(currentBlockId!, nextAnswers, form);
+
+    const isEmpty =
+      value === null ||
+      value === undefined ||
+      value === "" ||
+      (Array.isArray(value) && value.length === 0);
+
+    if (block.required && isEmpty) {
+      alert("This question is required");
+      return;
+    }
+
+    if (block.required) {
+      const isEmptyString =
+        typeof value === "string" && value.trim().length === 0;
+      const isEmptyArray = Array.isArray(value) && value.length === 0;
+      const isNullish = value === null || value === undefined;
+
+      if (isNullish || isEmptyString || isEmptyArray) {
+        return;
+      }
+    }
+
+    if (!next) {
+      await submitForm(nextAnswers);
+      setCurrentBlockId(null);
+      setAnswers({});
+      return;
+    }
 
     setAnswers(nextAnswers);
     setCurrentBlockId(next);
@@ -95,6 +155,7 @@ export default function FormRuntime({ form }: Props) {
             }
             onKeyDown={(e) => {
               if (e.key === "Enter") {
+                e.preventDefault();
                 submitAnswer(e.currentTarget.value);
               }
             }}

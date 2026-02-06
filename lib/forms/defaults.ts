@@ -64,7 +64,7 @@ export function createShortTextBlock(): ShortTextBlock {
   return {
     id: generateId("short_text"),
     type: "short_text",
-    required: false,
+    required: true,
     config: createShortTextConfig(),
   };
 }
@@ -73,7 +73,7 @@ export function createLongTextBlock(): LongTextBlock {
   return {
     id: generateId("long_text"),
     type: "long_text",
-    required: false,
+    required: true,
     config: createLongTextConfig(),
   };
 }
@@ -82,7 +82,7 @@ export function createMultipleChoiceBlock(): MultipleChoiceBlock {
   return {
     id: generateId("multiple_choice"),
     type: "multiple_choice",
-    required: false,
+    required: true,
     config: createMultipleChoiceConfig(),
   };
 }
