@@ -149,7 +149,7 @@ export default function FormRuntime({ form }: Props) {
           {block.config.label}
           {block.required && (
             <TooltipHint label="Required">
-              <span className="text-gray-700 text-xl leading-none cursor-pointer">
+              <span className="text-gray-700 text-3xl leading-none cursor-pointer">
                 *
               </span>
             </TooltipHint>
@@ -228,7 +228,7 @@ export default function FormRuntime({ form }: Props) {
 
         {block.type === "long_text" && (
           <button
-            className="px-2 py-1 border bg-black text-white hover:bg-neutral-700 rounded-md  cursor-pointer"
+            className="px-2 py-1 border bg-black text-white hover:bg-neutral-700 rounded-md  cursor-pointer font-semibold"
             onClick={() => submitAnswer(answers[block.id])}
           >
             Next →
@@ -236,7 +236,7 @@ export default function FormRuntime({ form }: Props) {
         )}
         {block.type === "short_text" && (
           <button
-            className="px-2 py-1 border bg-black text-white hover:bg-neutral-700 rounded-md  cursor-pointer"
+            className="px-2 py-1 border bg-black text-white hover:bg-neutral-700 rounded-md  cursor-pointer font-semibold"
             onClick={() => submitAnswer(answers[block.id])}
           >
             Next →

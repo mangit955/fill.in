@@ -87,7 +87,7 @@ export default function BuilderCanvas({
         items={blocks.map((b) => b.id)}
         strategy={verticalListSortingStrategy}
       >
-        <div className="space-y-4 ">
+        <div>
           {blocks.map((block) => (
             <SortableBlockItem id={block.id} key={block.id}>
               {({ setNodeRef, attributes, listeners, style, isDragging }) => (
@@ -109,7 +109,7 @@ export default function BuilderCanvas({
                     onUpdateLogicJump={onUpdateLogicJump}
                   >
                     {/* Actions + handle */}
-                    <div className="absolute left-2 top-[20%] flex items-center">
+                    <div className="absolute left-2 top-[30%] flex items-center">
                       {/* Delete */}
                       <Tooltip>
                         <TooltipTrigger asChild>

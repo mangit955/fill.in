@@ -41,12 +41,14 @@ export const NavbarApp = ({ onPublish, isPublishing }: Props) => {
           </Button>
           <Button
             variant="default"
-            className="hidden md:inline-flex cursor-pointer"
+            className="hidden md:inline-flex cursor-pointer min-w-[100px] justify-center"
             onClick={() => {
               if (onPublish) onPublish();
             }}
           >
-            {isPublishing ? <Spinner /> : "Publish"}
+            <span className="flex items-center justify-center w-full">
+              {isPublishing ? <Spinner /> : "Publish"}
+            </span>
           </Button>
         </div>
       </nav>

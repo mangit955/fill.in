@@ -89,7 +89,7 @@ export default function LongTextBlock({
                 e.stopPropagation();
                 onUpdateMeta(block.id, { required: !block.required });
               }}
-              className={`ml-1 cursor-pointer transition ${
+              className={`ml-1 text-2xl cursor-pointer transition ${
                 block.required
                   ? "text-red-500 hover:text-red-600"
                   : "text-neutral-300 hover:text-neutral-500"
@@ -109,6 +109,7 @@ export default function LongTextBlock({
           placeholder="Long Answer"
           className="w-full shadow-sm hover:shadow-md  border-gray-300 rounded-md border px-2 py-1"
         />
+
         <AlignLeft
           size={16}
           className="absolute right-2 top-1/2 -translate-y-1/2 text-neutral-400 pointer-events-none"

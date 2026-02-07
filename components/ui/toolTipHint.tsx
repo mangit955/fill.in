@@ -10,7 +10,11 @@ type Props = {
 
 export default function TooltipHint({ label, children, className }: Props) {
   return (
-    <span className={`relative inline-flex group ${className ?? ""}`}>
+    <span
+      className={`relative inline-flex items-center justify-center align-middle leading-none group ${
+        className ?? ""
+      }`}
+    >
       {children}
 
       <span

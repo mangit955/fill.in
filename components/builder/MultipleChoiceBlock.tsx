@@ -88,7 +88,7 @@ export default function MultipleChoiceBlock({
                 e.stopPropagation();
                 onUpdateMeta(block.id, { required: !block.required });
               }}
-              className={`ml-1 cursor-pointer transition ${
+              className={`ml-1 text-2xl cursor-pointer transition ${
                 block.required
                   ? "text-red-500 hover:text-red-600"
                   : "text-neutral-300 hover:text-neutral-500"
