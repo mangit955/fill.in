@@ -1,6 +1,7 @@
 import { LongTextBlock as LongTextBlockType } from "@/lib/forms/types";
 import { useEffect, useRef, useState } from "react";
 import { AlignLeft } from "lucide-react";
+import TooltipHint from "../ui/toolTipHint";
 
 type Props = {
   block: LongTextBlockType;
@@ -82,19 +83,21 @@ export default function LongTextBlock({
           onClick={() => setIsEditing(true)}
         >
           {block.config.label}
-          <span
-            onClick={(e) => {
-              e.stopPropagation();
-              onUpdateMeta(block.id, { required: !block.required });
-            }}
-            className={`ml-1 cursor-pointer transition ${
-              block.required
-                ? "text-red-500 hover:text-red-600"
-                : "text-neutral-300 hover:text-neutral-500"
-            }`}
-          >
-            *
-          </span>
+          <TooltipHint label="Required">
+            <span
+              onClick={(e) => {
+                e.stopPropagation();
+                onUpdateMeta(block.id, { required: !block.required });
+              }}
+              className={`ml-1 cursor-pointer transition ${
+                block.required
+                  ? "text-red-500 hover:text-red-600"
+                  : "text-neutral-300 hover:text-neutral-500"
+              }`}
+            >
+              *
+            </span>
+          </TooltipHint>
         </p>
       )}
 
@@ -103,7 +106,7 @@ export default function LongTextBlock({
         <textarea
           disabled
           rows={block.config.rows}
-          placeholder={block.config.placeholder}
+          placeholder="Long Answer"
           className="w-full shadow-sm hover:shadow-md  border-gray-300 rounded-md border px-2 py-1"
         />
         <AlignLeft

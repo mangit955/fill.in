@@ -15,12 +15,12 @@ export default function TooltipHint({ label, children, className }: Props) {
 
       <span
         className="
-          absolute bottom-full left-1/2 -translate-x-1/2 mb-1
-          whitespace-nowrap rounded bg-black px-2 py-1 text-xs text-white
-          opacity-0 translate-y-1 pointer-events-none
-          transition-all duration-200 ease-out
-          group-hover:opacity-100 group-hover:translate-y-0
-        "
+  absolute bottom-full left-1/2 -translate-x-1/2 mb-1
+  whitespace-nowrap rounded bg-black px-2 py-1 text-xs font-semibold text-white
+  opacity-0 translate-y-1 pointer-events-none
+  transition-all duration-200 ease-out
+  group-hover:opacity-100 group-hover:translate-y-0 z-50
+"
       >
         {label}
       </span>

@@ -30,7 +30,7 @@ function generateId(prefix: string) {
 function createShortTextConfig(): ShortTextConfig {
   return {
     label: "",
-    placeholder: "Type your answer here",
+    placeholder: "Type your answer",
     maxLength: 100,
   };
 }

@@ -1,6 +1,7 @@
 import { ShortTextBlock as ShortTextBlockType } from "@/lib/forms/types";
 import { useEffect, useRef, useState } from "react";
 import { Minus } from "lucide-react";
+import TooltipHint from "../ui/toolTipHint";
 
 type Props = {
   block: ShortTextBlockType;
@@ -78,23 +79,25 @@ export default function ShortTextBlock({
         />
       ) : (
         <p
-          className="text-xl  mb-2 font-medium cursor-pointer"
+          className="text-xl  mb-2 font-medium cursor-pointer "
           onClick={() => setIsEditing(true)}
         >
           {block.config.label}
-          <span
-            onClick={(e) => {
-              e.stopPropagation();
-              onUpdateMeta(block.id, { required: !block.required });
-            }}
-            className={`ml-1 cursor-pointer transition ${
-              block.required
-                ? "text-red-500 hover:text-red-600"
-                : "text-neutral-300 hover:text-neutral-500"
-            }`}
-          >
-            *
-          </span>
+          <TooltipHint label="Required">
+            <span
+              onClick={(e) => {
+                e.stopPropagation();
+                onUpdateMeta(block.id, { required: !block.required });
+              }}
+              className={`ml-1 cursor-pointer transition ${
+                block.required
+                  ? "text-red-500 hover:text-red-600"
+                  : "text-neutral-300 hover:text-neutral-500"
+              }`}
+            >
+              *
+            </span>
+          </TooltipHint>
         </p>
       )}
 

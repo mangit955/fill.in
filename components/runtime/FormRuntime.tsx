@@ -9,7 +9,7 @@ import Lottie from "lottie-react";
 import successAnimation from "@/public/lottie/Success.json";
 import { supabase } from "@/lib/supabase/client";
 import Link from "next/link";
-import TooltipHint from "../ui/RequiredAsterisk";
+import TooltipHint from "../ui/toolTipHint";
 
 type Props = {
   form: Form;
