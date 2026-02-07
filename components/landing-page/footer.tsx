@@ -11,7 +11,7 @@ export default function Footer() {
         <div className="space-y-4 max-w-md ">
           <Link href="/" className="flex items-center gap-2 ">
             <Image
-              src="/logo.svg" // or /logo.png — put your file inside the public/ folder
+              src="/vilvaLogo.png" // or /logo.png — put your file inside the public/ folder
               alt="Fill.in logo"
               width={150} // adjust as needed
               height={150}
