@@ -14,6 +14,7 @@ import { NavbarApp } from "@/components/navbar/navbarApp";
 import { useDebouncedEffect } from "../hooks/useDebouncedEffect";
 import { Copy, Check } from "lucide-react";
 import { toast } from "sonner";
+import { Preview } from "@/components/builder/PreviewDialog";
 
 type Props = {
   initialForm: Form;
@@ -24,6 +25,7 @@ export default function FormEditorClient({ initialForm }: Props) {
   const [mode, setMode] = useState<"editor" | "published">("editor");
   const [publishedUrl, setPublishedUrl] = useState<string | null>(null);
   const [isPublishing, setIsPublishing] = useState(false);
+  const [previewOpen, setPreviewOpen] = useState(false);
   const [activeBlockId, setActiveBlockId] = useState<string | null>(null);
   const [hasUnsavedChanges, setHasUnsavedChanges] = useState(false);
   const [copied, setCopied] = useState(false);
@@ -92,9 +94,9 @@ export default function FormEditorClient({ initialForm }: Props) {
 
           <button
             onClick={() => setMode("editor")}
-            className="text-sm underline cursor-pointer text-muted-foreground hover:text-foreground"
+            className="text-sm border rounded-md px-2 py-1  cursor-pointer font-semibold text-neutral-500 hover:text-neutral-600 hover:bg-neutral-100 focus:ring-4 ring-blue-300 ˂"
           >
-            Back to editor
+            ← Back to editor
           </button>
         </div>
       </div>
@@ -119,6 +121,7 @@ export default function FormEditorClient({ initialForm }: Props) {
             setIsPublishing(false);
           }
         }}
+        onPreview={async () => setPreviewOpen(true)}
       />
 
       <div className="max-w-3xl mx-auto py-10">
@@ -152,6 +155,12 @@ export default function FormEditorClient({ initialForm }: Props) {
           onAddLogicJump={editor.addLogicJump}
           onRemoveLogicJump={editor.removeLogicJump}
           onUpdateLogicJump={editor.updateLogicJump}
+        />
+
+        <Preview
+          form={editor.form}
+          open={previewOpen}
+          onOpenChange={setPreviewOpen}
         />
       </div>
     </div>

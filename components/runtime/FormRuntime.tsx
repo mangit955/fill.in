@@ -13,9 +13,10 @@ import TooltipHint from "../ui/toolTipHint";
 
 type Props = {
   form: Form;
+  preview?: boolean;
 };
 
-export default function FormRuntime({ form }: Props) {
+export default function FormRuntime({ form, preview }: Props) {
   const router = useRouter();
   const [currentBlockId, setCurrentBlockId] = useState<string | null>(
     form.blocks[0]?.id ?? null
@@ -23,16 +24,38 @@ export default function FormRuntime({ form }: Props) {
   const [answers, setAnswers] = useState<Record<string, unknown>>({});
   const [submitting, setSubmitting] = useState(false);
 
+  // Reset runtime when preview opens so it always starts from first block
+  useEffect(() => {
+    if (preview) {
+      setCurrentBlockId(form.blocks[0]?.id ?? null);
+      setAnswers({});
+    }
+  }, [preview, form.id, form.blocks]);
+
   // Skip hidden blocks automatically
   useEffect(() => {
     if (!currentBlockId) return;
+
+    // 🔑 Prevent preview from skipping first question on mount
+    if (preview && Object.keys(answers).length === 0) return;
 
     const visible = isBlockVisible(currentBlockId, answers, form);
     if (!visible) {
       const next = getNextBlockId(currentBlockId, answers, form);
       setCurrentBlockId(next);
     }
-  }, [currentBlockId, answers, form]);
+  }, [currentBlockId, answers, form, preview]);
+
+  // Preview with no questions: show empty state only
+  if (preview && form.blocks.length === 0) {
+    return (
+      <div className="min-h-screen w-full flex items-center justify-center text-center">
+        <p className="text-lg text-neutral-600">
+          Add at least one question to your form to see the preview.
+        </p>
+      </div>
+    );
+  }
 
   if (!currentBlockId) {
     return (
@@ -52,7 +75,9 @@ export default function FormRuntime({ form }: Props) {
             Made with Fill.in, the simplest way to create forms for free.
           </h2>
           <button
-            onClick={() => router.push("/create")}
+            onClick={() => {
+              if (!preview) router.push("/create");
+            }}
             className="border hover:outline  text-lg rounded-md px-2 py-1 font-medium text-blue-600 hover:text-blue-500 hover:shadow-md cursor-pointer"
           >
             Create your own form
@@ -67,6 +92,12 @@ export default function FormRuntime({ form }: Props) {
   const block = foundBlock;
 
   async function submitForm(finalAnswers: Record<string, unknown>) {
+    if (preview) {
+      setCurrentBlockId(null);
+      setAnswers({});
+      return;
+    }
+
     const filtered: Record<string, unknown> = {};
 
     if (submitting) return;
@@ -144,7 +175,9 @@ export default function FormRuntime({ form }: Props) {
           {form.title}
         </h1>
       </div>
-      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-full max-w-xl space-y-6 px-4">
+      <div
+        className={`absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-full max-w-xl space-y-6 px-4 ${preview ? "pointer-events-none select-none" : ""}`}
+      >
         <div className="text-xl font-semibold mt-4 flex items-center gap-1">
           {block.config.label}
           {block.required && (
@@ -243,7 +276,7 @@ export default function FormRuntime({ form }: Props) {
           </button>
         )}
       </div>
-      <Link href={"/"}>
+      <Link href={"/"} className={preview ? "pointer-events-none" : ""}>
         <button className="border border-gray-300 hover:ring-1 hover:ring-gray-300 rounded-md px-2 py-1 text-blue-600 font-semibold cursor-pointer hover:shadow-md hover:text-blue-500 bottom-4 right-4 fixed">
           Made with Fill.in
         </button>
