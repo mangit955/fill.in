@@ -73,11 +73,11 @@ export default function MultipleChoiceBlock({
               setIsEditing(false);
             }
           }}
-          className="placeholder:text-neutral-300 placeholder:font-semibold placeholder:text-2xl w-full rounded px-2 py-1 text-sm mb-2 border-none bg-transparent outline-none"
+          className="placeholder:text-neutral-300 placeholder:font-semibold placeholder:text-2xl w-full rounded px-2 py-1 text-xl font-medium mb-2 border-none bg-transparent outline-none"
         />
       ) : (
         <p
-          className="text-sm font-medium mb-2 cursor-pointer"
+          className="text-xl font-medium mb-2 cursor-pointer"
           onClick={() => setIsEditing(true)}
         >
           {block.config.label}

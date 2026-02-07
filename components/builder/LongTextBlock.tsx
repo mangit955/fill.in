@@ -74,11 +74,11 @@ export default function LongTextBlock({
               setIsEditing(false);
             }
           }}
-          className="w-full placeholder:text-neutral-300 placeholder:font-semibold placeholder:text-2xl px-2 py-1 text-sm mb-2 border-none bg-transparent outline-none"
+          className="w-full font-medium placeholder:text-neutral-300 placeholder:font-semibold placeholder:text-2xl px-2 py-1 text-xl mb-2 border-none bg-transparent outline-none"
         />
       ) : (
         <p
-          className="text-sm mb-2 font-medium cursor-pointer"
+          className="text-xl mb-2 font-medium cursor-pointer"
           onClick={() => setIsEditing(true)}
         >
           {block.config.label}

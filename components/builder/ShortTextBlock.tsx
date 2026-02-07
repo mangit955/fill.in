@@ -74,11 +74,11 @@ export default function ShortTextBlock({
               setIsEditing(false);
             }
           }}
-          className="w-full placeholder:text-neutral-300 placeholder:font-bold placeholder:text-2xl rounded mb-2 px-2 py-1 bg-transparent outline-none text-sm"
+          className="w-full font-medium placeholder:text-neutral-300 placeholder:font-bold placeholder:text-2xl rounded mb-2 px-2 py-1 bg-transparent outline-none text-xl"
         />
       ) : (
         <p
-          className="text-sm mb-2 font-medium cursor-pointer"
+          className="text-xl  mb-2 font-medium cursor-pointer"
           onClick={() => setIsEditing(true)}
         >
           {block.config.label}

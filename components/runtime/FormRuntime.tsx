@@ -8,6 +8,8 @@ import { useRouter } from "next/navigation";
 import Lottie from "lottie-react";
 import successAnimation from "@/public/lottie/Success.json";
 import { supabase } from "@/lib/supabase/client";
+import Link from "next/link";
+import TooltipHint from "../ui/RequiredAsterisk";
 
 type Props = {
   form: Form;
@@ -143,7 +145,16 @@ export default function FormRuntime({ form }: Props) {
         </h1>
       </div>
       <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-full max-w-xl space-y-6 px-4">
-        <div className="text-xl font-semibold mt-4">{block.config.label}</div>
+        <div className="text-xl font-semibold mt-4 flex items-center gap-1">
+          {block.config.label}
+          {block.required && (
+            <TooltipHint label="Required">
+              <span className="text-gray-700 text-xl leading-none cursor-pointer">
+                *
+              </span>
+            </TooltipHint>
+          )}
+        </div>
 
         {/* Placeholder answer button */}
         {block.type === "short_text" && (
@@ -181,6 +192,7 @@ export default function FormRuntime({ form }: Props) {
                   type={block.config.allowMultiple ? "checkbox" : "radio"}
                   name={block.id}
                   value={opt.id}
+                  className="cursor-pointer"
                   checked={
                     block.config.allowMultiple
                       ? selected.includes(opt.id)
@@ -231,6 +243,11 @@ export default function FormRuntime({ form }: Props) {
           </button>
         )}
       </div>
+      <Link href={"/"}>
+        <button className="border border-gray-300 hover:ring-1 hover:ring-gray-300 rounded-md px-2 py-1 text-blue-600 font-semibold cursor-pointer hover:shadow-md hover:text-blue-500 bottom-4 right-4 fixed">
+          Made with Fill.in
+        </button>
+      </Link>
     </div>
   );
 }
