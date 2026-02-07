@@ -4,6 +4,7 @@ import Link from "next/link";
 import { Button } from "@/components/ui/button"; // assuming you already have your button component
 import Image from "next/image";
 import { Spinner } from "@/components/ui/spinner";
+import { FillinLogo } from "../ui/svg/logo";
 
 type Props = {
   onPublish?: () => void;
@@ -17,13 +18,7 @@ export const NavbarApp = ({ onPublish, isPublishing, onPreview }: Props) => {
       <nav className="mx-auto flex flex-end justify-between px-4 py-1 ">
         {/* Left: Logo or site name */}
         <Link href="/" className="flex items-center gap-2">
-          <Image
-            src="/favicon.ico" // or /logo.png — put your file inside the public/ folder
-            alt="Fill.in logo"
-            width={30} // adjust as needed
-            height={30}
-            className="rounded-sm" // optional: or remove
-          />
+          <FillinLogo />
         </Link>
 
         {/* Right: Nav actions */}

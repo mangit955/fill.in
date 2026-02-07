@@ -10,6 +10,7 @@ import successAnimation from "@/public/lottie/Success.json";
 import { supabase } from "@/lib/supabase/client";
 import Link from "next/link";
 import TooltipHint from "../ui/toolTipHint";
+import { FillinLogo } from "../ui/svg/logo";
 
 type Props = {
   form: Form;
@@ -78,9 +79,10 @@ export default function FormRuntime({ form, preview }: Props) {
             onClick={() => {
               if (!preview) router.push("/create");
             }}
-            className="border hover:outline  text-lg rounded-md px-2 py-1 font-medium text-blue-600 hover:text-blue-500 hover:shadow-md cursor-pointer"
+            className="mx-auto border flex gap-2 items-center hover:outline text-lg rounded-md px-2 py-1 font-medium text-blue-600 hover:text-blue-500 hover:shadow-md cursor-pointer"
           >
-            Create your own form
+            <FillinLogo size={18} />
+            <span>Create your own form</span>
           </button>
         </div>
       </div>
@@ -176,7 +178,9 @@ export default function FormRuntime({ form, preview }: Props) {
         </h1>
       </div>
       <div
-        className={`absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-full max-w-xl space-y-6 px-4 ${preview ? "pointer-events-none select-none" : ""}`}
+        className={`absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-full max-w-xl space-y-6 px-4 ${
+          preview ? "pointer-events-none select-none" : ""
+        }`}
       >
         <div className="text-xl font-semibold mt-4 flex items-center gap-1">
           {block.config.label}
@@ -277,8 +281,9 @@ export default function FormRuntime({ form, preview }: Props) {
         )}
       </div>
       <Link href={"/"} className={preview ? "pointer-events-none" : ""}>
-        <button className="border border-gray-300 hover:ring-1 hover:ring-gray-300 rounded-md px-2 py-1 text-blue-600 font-semibold cursor-pointer hover:shadow-md hover:text-blue-500 bottom-4 right-4 fixed">
-          Made with Fill.in
+        <button className="border border-gray-300 hover:ring-1 hover:ring-gray-300 rounded-md px-3 py-1 text-blue-600 font-semibold cursor-pointer hover:shadow-md hover:text-blue-500 bottom-4 right-4 fixed flex items-center gap-2">
+          <span>Made with Fill.in</span>
+          <FillinLogo size={18} />
         </button>
       </Link>
     </div>
