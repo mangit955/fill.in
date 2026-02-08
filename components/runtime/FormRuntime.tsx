@@ -13,6 +13,16 @@ import TooltipHint from "../ui/toolTipHint";
 import { FillinLogo } from "../ui/svg/logo";
 import { motion, AnimatePresence } from "framer-motion";
 import { Spinner } from "../ui/spinner";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogOverlay,
+} from "@/components/ui/alert-dialog";
 
 type Props = {
   form: Form;
@@ -27,6 +37,7 @@ export default function FormRuntime({ form, preview }: Props) {
   const [answers, setAnswers] = useState<Record<string, unknown>>({});
   const [submitting, setSubmitting] = useState(false);
   const [history, setHistory] = useState<string[]>([]);
+  const [showRequiredAlert, setShowRequiredAlert] = useState(false);
 
   // Reset runtime when preview opens so it always starts from first block
   useEffect(() => {
@@ -145,7 +156,7 @@ export default function FormRuntime({ form, preview }: Props) {
       (Array.isArray(value) && value.length === 0);
 
     if (block.required && isEmpty) {
-      alert("This question is required");
+      setShowRequiredAlert(true);
       return;
     }
 
@@ -405,6 +416,26 @@ export default function FormRuntime({ form, preview }: Props) {
           <FillinLogo size={18} />
         </button>
       </Link>
+
+      <AlertDialog open={showRequiredAlert} onOpenChange={setShowRequiredAlert}>
+        <AlertDialogOverlay className="bg-black/10 backdrop-blur" />
+        <AlertDialogContent className="border shadow-lg">
+          <AlertDialogHeader>
+            <AlertDialogTitle>This question is required</AlertDialogTitle>
+            <AlertDialogDescription>
+              Please answer before Proceding further.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogAction
+              className="cursor-pointer"
+              onClick={() => setShowRequiredAlert(false)}
+            >
+              Continue
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </div>
   );
 }
