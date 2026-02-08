@@ -1,7 +1,6 @@
+import TooltipHint from "@/components/ui/toolTipHint";
 import { MultipleChoiceBlock as MultipleChoiceBlockType } from "@/lib/forms/types";
-import RequiredToggle from "./controls/RequiredToggle";
 import { useEffect, useRef, useState } from "react";
-import TooltipHint from "../ui/toolTipHint";
 
 type Props = {
   block: MultipleChoiceBlockType;

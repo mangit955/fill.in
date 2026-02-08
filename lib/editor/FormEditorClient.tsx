@@ -4,6 +4,7 @@ import { useFormEditor } from "@/lib/editor/useFormEditor";
 import BuilderCanvas from "@/components/builder/BuilderCanvas";
 import AddBlockPanel from "@/components/builder/AddBlockPanel";
 import {
+  createEmailBlock,
   createLongTextBlock,
   createMultipleChoiceBlock,
   createShortTextBlock,
@@ -157,6 +158,7 @@ export default function FormEditorClient({ initialForm }: Props) {
           onAddShortText={() => addAndFocus(createShortTextBlock)}
           onAddLongText={() => addAndFocus(createLongTextBlock)}
           onAddMultipleChoice={() => addAndFocus(createMultipleChoiceBlock)}
+          onAddEmail={() => addAndFocus(createEmailBlock)}
         />
 
         <BuilderCanvas

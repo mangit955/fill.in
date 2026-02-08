@@ -1,4 +1,5 @@
 import {
+  EmailBlock,
   Form,
   LongTextBlock,
   LongTextConfig,
@@ -84,6 +85,18 @@ export function createMultipleChoiceBlock(): MultipleChoiceBlock {
     type: "multiple_choice",
     required: true,
     config: createMultipleChoiceConfig(),
+  };
+}
+
+export function createEmailBlock(): EmailBlock {
+  return {
+    id: crypto.randomUUID(),
+    type: "email",
+    required: true,
+    config: {
+      label: "Email",
+      placeholder: "Enter your email",
+    },
   };
 }
 

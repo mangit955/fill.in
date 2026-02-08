@@ -3,10 +3,12 @@ import {
   LongTextBlock as LongTextBlockType,
   MultipleChoiceBlock as MultipleChoiceBlockType,
   ShortTextBlock as ShortTextBlockType,
+  EmailBlock as EmailBlockType,
 } from "../../lib/forms/types";
-import LongTextBlock from "./LongTextBlock";
-import MultipleChoiceBlock from "./MultipleChoiceBlock";
-import ShortTextBlock from "./ShortTextBlock";
+import EmailBlock from "./Blocks/EmailBlock";
+import LongTextBlock from "./Blocks/LongTextBlock";
+import MultipleChoiceBlock from "./Blocks/MultipleChoiceBlock";
+import ShortTextBlock from "./Blocks/ShortTextBlock";
 
 type BlockRendererProps = {
   block: FormBlock;
@@ -57,6 +59,18 @@ export default function BlockRenderer({
           onUpdateMeta={onUpdateMeta}
           onUpdateConfig={(id, updater) =>
             onUpdateConfig<MultipleChoiceBlockType>(id, updater)
+          }
+        />
+      );
+
+    case "email":
+      return (
+        <EmailBlock
+          block={block}
+          autoFocus={autoFocus}
+          onUpdateMeta={onUpdateMeta}
+          onUpdateConfig={(id, updater) =>
+            onUpdateConfig<EmailBlockType>(id, updater)
           }
         />
       );

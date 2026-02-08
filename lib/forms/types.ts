@@ -43,6 +43,16 @@ export type MultipleChoiceConfig = {
   allowMultiple: boolean;
 };
 
+export type EmailBlock = {
+  id: string;
+  type: "email";
+  required?: boolean;
+  config: {
+    label: string;
+    placeholder?: string;
+  };
+};
+
 //block types
 
 export type BaseBlock = {
@@ -74,7 +84,11 @@ export type MultipleChoiceBlock = BaseBlock & {
   config: MultipleChoiceConfig;
 };
 
-export type FormBlock = ShortTextBlock | LongTextBlock | MultipleChoiceBlock;
+export type FormBlock =
+  | ShortTextBlock
+  | LongTextBlock
+  | MultipleChoiceBlock
+  | EmailBlock;
 
 //Form
 

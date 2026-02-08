@@ -22,7 +22,10 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
   AlertDialogOverlay,
+  AlertDialogMedia,
 } from "@/components/ui/alert-dialog";
+import { toast } from "sonner";
+import { TriangleAlert } from "lucide-react";
 
 type Props = {
   form: Form;
@@ -65,8 +68,8 @@ export default function FormRuntime({ form, preview }: Props) {
   if (preview && form.blocks.length === 0) {
     return (
       <div className="min-h-screen w-full flex items-center justify-center text-center">
-        <p className="text-lg text-neutral-600">
-          Add at least one question to your form to see the preview.
+        <p className="text-lg font-semibold text-neutral-600">
+          + Add at least one question to your form to see the preview.
         </p>
       </div>
     );
@@ -147,6 +150,23 @@ export default function FormRuntime({ form, preview }: Props) {
       [currentBlockId!]: value,
     };
 
+    // EMAIL VALIDATION
+    if (block.type === "email") {
+      const email = String(value ?? "").trim();
+
+      // If email is empty and NOT required → skip validation and continue
+      if (!block.required && email.length === 0) {
+        // allow moving to next question
+      } else {
+        const isValid = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+
+        if (!isValid) {
+          toast.error("Please enter a valid email address");
+          return;
+        }
+      }
+    }
+
     const next = getNextBlockId(currentBlockId!, nextAnswers, form);
 
     const isEmpty =
@@ -220,7 +240,7 @@ export default function FormRuntime({ form, preview }: Props) {
             exit={{ opacity: 0, y: -20 }}
             transition={{ duration: 0.15, ease: "easeInOut" }}
           >
-            <div className="text-xl font-semibold mt-4 flex items-center gap-1">
+            <div className="text-xl font-semibold mt-4 mb-4 flex items-center gap-1">
               {block.config.label}
               {block.required && (
                 <TooltipHint label="Required">
@@ -232,6 +252,7 @@ export default function FormRuntime({ form, preview }: Props) {
             </div>
 
             {/* Placeholder answer button */}
+
             {block.type === "short_text" && (
               <>
                 <input
@@ -262,7 +283,7 @@ export default function FormRuntime({ form, preview }: Props) {
                       )}
 
                       <button
-                        className={`px-2 py-1 border text-white rounded-md cursor-pointer font-semibold disabled:opacity-40 disabled:cursor-not-allowed ${
+                        className={`px-2 py-1 border text-white rounded-md cursor-pointer font-semibold  disabled:cursor-not-allowed ${
                           nextId
                             ? "bg-black hover:bg-neutral-700"
                             : "bg-primary hover:bg-primary/90 focus:ring-4 ring-blue-300"
@@ -271,7 +292,7 @@ export default function FormRuntime({ form, preview }: Props) {
                         disabled={submitting}
                       >
                         {submitting ? (
-                          <span className="flex items-center justify-center w-full">
+                          <span className="flex items-center min-w-[100px] justify-center w-full">
                             <Spinner height={20} width={20} strokeWidth={3} />
                           </span>
                         ) : nextId ? (
@@ -289,7 +310,7 @@ export default function FormRuntime({ form, preview }: Props) {
             {block.type === "long_text" && (
               <>
                 <textarea
-                  className="w-full border border-gray-300 rounded-md shadow-sm px-3 py-2"
+                  className="w-full border border-gray-300 rounded-md shadow-sm px-3 py-2 "
                   rows={block.config.rows}
                   value={(answers[block.id] as string) ?? ""}
                   onChange={(e) =>
@@ -311,7 +332,7 @@ export default function FormRuntime({ form, preview }: Props) {
                       )}
 
                       <button
-                        className={`px-2 py-1 border text-white rounded-md cursor-pointer font-semibold disabled:opacity-40 disabled:cursor-not-allowed ${
+                        className={`px-2 py-1 border text-white rounded-md cursor-pointer font-semibold  disabled:cursor-not-allowed ${
                           nextId
                             ? "bg-black hover:bg-neutral-700"
                             : "bg-primary hover:bg-primary/90 focus:ring-4 ring-blue-300"
@@ -320,7 +341,63 @@ export default function FormRuntime({ form, preview }: Props) {
                         disabled={submitting}
                       >
                         {submitting ? (
-                          <span className="flex items-center justify-center w-full">
+                          <span className="flex items-center min-w-[100px] justify-center w-full">
+                            <Spinner height={20} width={20} strokeWidth={3} />
+                          </span>
+                        ) : nextId ? (
+                          "Next →"
+                        ) : (
+                          "Submit"
+                        )}
+                      </button>
+                    </div>
+                  );
+                })()}
+              </>
+            )}
+
+            {block.type === "email" && (
+              <>
+                <input
+                  type="email"
+                  className="w-full border border-gray-300 rounded-md shadow-sm px-3 py-2"
+                  value={(answers[block.id] as string) ?? ""}
+                  onChange={(e) =>
+                    setAnswers({ ...answers, [block.id]: e.target.value })
+                  }
+                  onKeyDown={(e) => {
+                    if (e.key === "Enter") {
+                      e.preventDefault();
+                      submitAnswer(e.currentTarget.value);
+                    }
+                  }}
+                  placeholder="Enter your email"
+                />
+                {(() => {
+                  const nextId = getNextBlockId(currentBlockId!, answers, form);
+                  return (
+                    <div className="mt-4 flex gap-2">
+                      {history.length > 0 && (
+                        <button
+                          type="button"
+                          onClick={goBack}
+                          className="px-2 cursor-pointer font-bold hover:bg-neutral-100 py-1 border rounded-md text-md text-neutral-500 hover:text-neutral-600"
+                        >
+                          ←
+                        </button>
+                      )}
+
+                      <button
+                        className={`px-2 py-1 border text-white rounded-md cursor-pointer font-semibold  disabled:cursor-not-allowed ${
+                          nextId
+                            ? "bg-black hover:bg-neutral-700"
+                            : "bg-primary hover:bg-primary/90 focus:ring-4 ring-blue-300"
+                        }`}
+                        onClick={() => submitAnswer(answers[block.id])}
+                        disabled={submitting}
+                      >
+                        {submitting ? (
+                          <span className="flex items-center min-w-[100px] justify-center w-full">
                             <Spinner height={20} width={20} strokeWidth={3} />
                           </span>
                         ) : nextId ? (
@@ -385,7 +462,7 @@ export default function FormRuntime({ form, preview }: Props) {
                           submitting ||
                           (block.required && answers[block.id] === undefined)
                         }
-                        className={`px-2 py-1 border min-w-[100px] text-white rounded-md font-semibold cursor-pointer disabled:opacity-40 disabled:cursor-not-allowed ${
+                        className={`px-2 py-1 border min-w-[100px] text-white rounded-md font-semibold cursor-pointer disabled:cursor-not-allowed ${
                           nextId
                             ? "bg-black hover:bg-neutral-700"
                             : "bg-primary hover:bg-primary/90 focus:ring-4 ring-blue-300"
@@ -393,7 +470,7 @@ export default function FormRuntime({ form, preview }: Props) {
                         onClick={() => submitAnswer(answers[block.id])}
                       >
                         {submitting ? (
-                          <span className="flex items-center justify-center w-full">
+                          <span className="flex items-center min-w-[100px] justify-center w-full">
                             <Spinner height={20} width={20} strokeWidth={3} />
                           </span>
                         ) : nextId ? (
@@ -417,13 +494,17 @@ export default function FormRuntime({ form, preview }: Props) {
         </button>
       </Link>
 
+      {/* Required field alert */}
       <AlertDialog open={showRequiredAlert} onOpenChange={setShowRequiredAlert}>
         <AlertDialogOverlay className="bg-black/10 backdrop-blur" />
         <AlertDialogContent className="border shadow-lg">
           <AlertDialogHeader>
-            <AlertDialogTitle>This question is required</AlertDialogTitle>
+            <AlertDialogMedia>
+              <TriangleAlert />
+            </AlertDialogMedia>
+            <AlertDialogTitle>This question is required !</AlertDialogTitle>
             <AlertDialogDescription>
-              Please answer before Proceding further.
+              Please answer it before Proceding further.
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>

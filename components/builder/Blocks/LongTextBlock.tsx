@@ -1,21 +1,21 @@
-import { ShortTextBlock as ShortTextBlockType } from "@/lib/forms/types";
+import { LongTextBlock as LongTextBlockType } from "@/lib/forms/types";
 import { useEffect, useRef, useState } from "react";
-import { Minus } from "lucide-react";
-import TooltipHint from "../ui/toolTipHint";
+import { AlignLeft } from "lucide-react";
+import TooltipHint from "@/components/ui/toolTipHint";
 
 type Props = {
-  block: ShortTextBlockType;
+  block: LongTextBlockType;
   autoFocus?: boolean;
   onUpdateMeta: (blockId: string, updates: { required?: boolean }) => void;
   onUpdateConfig: (
     blockId: string,
     updater: (
-      config: ShortTextBlockType["config"]
-    ) => ShortTextBlockType["config"]
+      config: LongTextBlockType["config"]
+    ) => LongTextBlockType["config"]
   ) => void;
 };
 
-export default function ShortTextBlock({
+export default function LongTextBlock({
   block,
   autoFocus,
   onUpdateConfig,
@@ -75,11 +75,11 @@ export default function ShortTextBlock({
               setIsEditing(false);
             }
           }}
-          className="w-full font-medium placeholder:text-neutral-300 placeholder:font-bold placeholder:text-2xl rounded mb-2 px-2 py-1 bg-transparent outline-none text-xl"
+          className="w-full font-medium placeholder:text-neutral-300 placeholder:font-semibold placeholder:text-2xl px-2 py-1 text-xl mb-2 border-none bg-transparent outline-none"
         />
       ) : (
         <p
-          className="text-xl  mb-2 font-medium cursor-pointer "
+          className="text-xl mb-2 font-medium cursor-pointer"
           onClick={() => setIsEditing(true)}
         >
           {block.config.label}
@@ -101,16 +101,18 @@ export default function ShortTextBlock({
         </p>
       )}
 
-      {/* Input preview with right icon */}
+      {/* Disable text-input box preview */}
       <div className="relative mb-2">
-        <input
+        <textarea
           disabled
-          placeholder="Short answer"
-          className="w-full shadow-sm hover:shadow-md border border-gray-300 rounded-md px-2 py-1 pr-8 text-sm bg-white"
+          rows={block.config.rows}
+          placeholder="Long Answer"
+          className="w-full shadow-sm hover:shadow-md  border-gray-300 rounded-md border px-2 py-1"
         />
-        <Minus
+
+        <AlignLeft
           size={16}
-          className="absolute right-2 top-1/2 -translate-y-1/2 text-neutral-400 "
+          className="absolute right-2 top-1/2 -translate-y-1/2 text-neutral-400 pointer-events-none"
         />
       </div>
     </div>
