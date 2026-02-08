@@ -5,6 +5,7 @@ import {
   LongTextConfig,
   MultipleChoiceBlock,
   MultipleChoiceConfig,
+  PhoneBlock,
   ShortTextBlock,
   ShortTextConfig,
 } from "./types";
@@ -65,7 +66,7 @@ export function createShortTextBlock(): ShortTextBlock {
   return {
     id: generateId("short_text"),
     type: "short_text",
-    required: true,
+    required: false,
     config: createShortTextConfig(),
   };
 }
@@ -74,7 +75,7 @@ export function createLongTextBlock(): LongTextBlock {
   return {
     id: generateId("long_text"),
     type: "long_text",
-    required: true,
+    required: false,
     config: createLongTextConfig(),
   };
 }
@@ -96,6 +97,18 @@ export function createEmailBlock(): EmailBlock {
     config: {
       label: "Email",
       placeholder: "Enter your email",
+    },
+  };
+}
+
+export function createPhoneBlock(): PhoneBlock {
+  return {
+    id: crypto.randomUUID(),
+    type: "phone",
+    required: true,
+    config: {
+      label: "",
+      placeholder: "Enter your phone number",
     },
   };
 }

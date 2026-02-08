@@ -7,6 +7,7 @@ import {
   createEmailBlock,
   createLongTextBlock,
   createMultipleChoiceBlock,
+  createPhoneBlock,
   createShortTextBlock,
 } from "@/lib/forms/defaults";
 import { useEffect, useState, useRef } from "react";
@@ -159,6 +160,7 @@ export default function FormEditorClient({ initialForm }: Props) {
           onAddLongText={() => addAndFocus(createLongTextBlock)}
           onAddMultipleChoice={() => addAndFocus(createMultipleChoiceBlock)}
           onAddEmail={() => addAndFocus(createEmailBlock)}
+          onAddPhone={() => addAndFocus(createPhoneBlock)}
         />
 
         <BuilderCanvas

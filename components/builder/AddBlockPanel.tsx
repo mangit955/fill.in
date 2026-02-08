@@ -1,7 +1,7 @@
 "use client";
 import { motion } from "framer-motion";
 import { BlockButton } from "../ui/blockButton";
-import { AtSign, CircleCheckBig, Rows2, Rows3 } from "lucide-react";
+import { AtSign, CircleCheckBig, Phone, Rows2, Rows3 } from "lucide-react";
 import { Popover, PopoverContent, PopoverTrigger } from "../ui/popover";
 import { ScrollArea } from "../ui/scroll-area";
 
@@ -10,6 +10,7 @@ type Props = {
   onAddLongText: () => void;
   onAddMultipleChoice: () => void;
   onAddEmail: () => void;
+  onAddPhone: () => void;
 };
 
 export default function AddBlockPanel({
@@ -17,6 +18,7 @@ export default function AddBlockPanel({
   onAddShortText,
   onAddMultipleChoice,
   onAddEmail,
+  onAddPhone,
 }: Props) {
   return (
     <div className="rounded-md p-6 space-y-2">
@@ -66,9 +68,9 @@ export default function AddBlockPanel({
                     <AtSign />
                     Email
                   </BlockButton>
-                  <BlockButton onClick={onAddLongText}>
-                    <Rows3 />
-                    Long text
+                  <BlockButton onClick={onAddPhone}>
+                    <Phone />
+                    Phone
                   </BlockButton>
                   <BlockButton onClick={onAddMultipleChoice}>
                     <CircleCheckBig />

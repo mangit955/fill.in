@@ -53,6 +53,16 @@ export type EmailBlock = {
   };
 };
 
+export type PhoneBlock = {
+  id: string;
+  type: "phone";
+  required?: boolean;
+  config: {
+    label: string;
+    placeholder?: string;
+  };
+};
+
 //block types
 
 export type BaseBlock = {
@@ -88,7 +98,8 @@ export type FormBlock =
   | ShortTextBlock
   | LongTextBlock
   | MultipleChoiceBlock
-  | EmailBlock;
+  | EmailBlock
+  | PhoneBlock;
 
 //Form
 

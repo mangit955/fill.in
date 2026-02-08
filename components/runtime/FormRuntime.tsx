@@ -150,18 +150,56 @@ export default function FormRuntime({ form, preview }: Props) {
       [currentBlockId!]: value,
     };
 
-    // EMAIL VALIDATION
+    // EMAIL VALIDATION (stronger)
     if (block.type === "email") {
-      const email = String(value ?? "").trim();
+      const email = String(value ?? "")
+        .trim()
+        .toLowerCase();
 
-      // If email is empty and NOT required → skip validation and continue
+      // allow skip if optional and empty
       if (!block.required && email.length === 0) {
-        // allow moving to next question
+        // skip validation
       } else {
-        const isValid = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+        // stricter RFC-style check
+        const strictEmailRegex =
+          /^[a-z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-z0-9-]+(?:\.[a-z0-9-]+)+$/i;
 
-        if (!isValid) {
-          toast.error("Please enter a valid email address");
+        if (!strictEmailRegex.test(email)) {
+          toast.error("Enter a valid email address");
+          return;
+        }
+
+        // prevent obvious fake domains
+        const blockedDomains = ["test.com", "example.com", "mailinator.com"];
+        const domain = email.split("@")[1];
+
+        if (blockedDomains.includes(domain)) {
+          toast.warning("Please use a real email address");
+          return;
+        }
+      }
+    }
+
+    // PHONE VALIDATION (strict)
+    if (block.type === "phone") {
+      const raw = String(value ?? "").trim();
+
+      // allow skip if optional and empty
+      if (!block.required && raw.length === 0) {
+        // skip validation
+      } else {
+        // must be digits only (you already strip non-digits in input)
+        const digitsOnly = raw.replace(/\D/g, "");
+
+        // length rules: 7–15 digits (international safe range)
+        if (digitsOnly.length < 7 || digitsOnly.length > 15) {
+          toast.warning("Enter a valid phone number");
+          return;
+        }
+
+        // prevent obviously fake numbers like all same digit
+        if (/^(\d)\1+$/.test(digitsOnly)) {
+          toast.warning("Enter a real phone number");
           return;
         }
       }
@@ -178,17 +216,6 @@ export default function FormRuntime({ form, preview }: Props) {
     if (block.required && isEmpty) {
       setShowRequiredAlert(true);
       return;
-    }
-
-    if (block.required) {
-      const isEmptyString =
-        typeof value === "string" && value.trim().length === 0;
-      const isEmptyArray = Array.isArray(value) && value.length === 0;
-      const isNullish = value === null || value === undefined;
-
-      if (isNullish || isEmptyString || isEmptyArray) {
-        return;
-      }
     }
 
     if (!next) {
@@ -412,10 +439,70 @@ export default function FormRuntime({ form, preview }: Props) {
               </>
             )}
 
+            {block.type === "phone" && (
+              <>
+                <input
+                  type="tel"
+                  inputMode="numeric"
+                  pattern="[0-9]*"
+                  className="w-full border border-gray-300 rounded-md shadow-sm px-3 py-2"
+                  value={(answers[block.id] as string) ?? ""}
+                  onChange={(e) => {
+                    const onlyDigits = e.target.value.replace(/\D/g, "");
+                    setAnswers({ ...answers, [block.id]: onlyDigits });
+                  }}
+                  onKeyDown={(e) => {
+                    if (e.key === "Enter") {
+                      e.preventDefault();
+                      submitAnswer(e.currentTarget.value);
+                    }
+                  }}
+                  placeholder="Enter your phone number"
+                />
+
+                {(() => {
+                  const nextId = getNextBlockId(currentBlockId!, answers, form);
+                  return (
+                    <div className="mt-4 flex gap-2">
+                      {history.length > 0 && (
+                        <button
+                          type="button"
+                          onClick={goBack}
+                          className="px-2 cursor-pointer font-bold hover:bg-neutral-100 py-1 border rounded-md text-md text-neutral-500 hover:text-neutral-600"
+                        >
+                          ←
+                        </button>
+                      )}
+
+                      <button
+                        className={`px-2 py-1 border text-white rounded-md cursor-pointer font-semibold ${
+                          nextId
+                            ? "bg-black hover:bg-neutral-700"
+                            : "bg-primary hover:bg-primary/90 focus:ring-4 ring-blue-300"
+                        }`}
+                        onClick={() => submitAnswer(answers[block.id])}
+                        disabled={submitting}
+                      >
+                        {submitting ? (
+                          <span className="flex items-center min-w-[100px] justify-center w-full">
+                            <Spinner height={20} width={20} strokeWidth={3} />
+                          </span>
+                        ) : nextId ? (
+                          "Next →"
+                        ) : (
+                          "Submit"
+                        )}
+                      </button>
+                    </div>
+                  );
+                })()}
+              </>
+            )}
+
             {block.type === "multiple_choice" && (
               <div className="space-y-2 ">
                 {block.config.options.map((opt) => (
-                  <label key={opt.id} className="flex items-center gap-2">
+                  <div key={opt.id} className="flex items-center gap-2">
                     <input
                       type={block.config.allowMultiple ? "checkbox" : "radio"}
                       name={block.id}
@@ -439,8 +526,8 @@ export default function FormRuntime({ form, preview }: Props) {
                         }
                       }}
                     />
-                    {opt.label}
-                  </label>
+                    <span className="select-none">{opt.label}</span>
+                  </div>
                 ))}
 
                 {(() => {
