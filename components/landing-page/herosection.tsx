@@ -59,7 +59,7 @@ export const Herosection = () => {
         <Button
           onClick={() => router.push("/create")}
           variant="default"
-          className=" cursor-pointer font-semibold gap-2"
+          className=" cursor-pointer focus:ring-4 ring-blue-300 font-semibold gap-2"
         >
           Create a free form
           <ArrowRight className="size-4 translate-y-2px font-bold" />

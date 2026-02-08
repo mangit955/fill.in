@@ -26,7 +26,16 @@ export function Preview({ form, open, onOpenChange }: Props) {
           <DialogTitle>Form preview</DialogTitle>
         </VisuallyHidden>
 
-        <div className="w-full h-full overflow-y-auto p-6 [scrollbar-width:none] [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden">
+        <div
+          className="
+    w-full h-full overflow-y-auto p-6
+    [&::-webkit-scrollbar]:w-2
+    [&::-webkit-scrollbar-track]:bg-transparent
+    [&::-webkit-scrollbar-thumb]:bg-neutral-300
+    [&::-webkit-scrollbar-thumb]:rounded-full
+    [&::-webkit-scrollbar-thumb]:hover:bg-neutral-400
+  "
+        >
           <FormRuntime key={`${form.id}-${instanceKey}`} form={form} preview />
         </div>
       </DialogContent>

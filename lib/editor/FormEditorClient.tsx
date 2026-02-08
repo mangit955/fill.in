@@ -8,7 +8,7 @@ import {
   createMultipleChoiceBlock,
   createShortTextBlock,
 } from "@/lib/forms/defaults";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import { Form, FormBlock } from "@/lib/forms/types";
 import { NavbarApp } from "@/components/navbar/navbarApp";
 import { useDebouncedEffect } from "../hooks/useDebouncedEffect";
@@ -29,6 +29,7 @@ export default function FormEditorClient({ initialForm }: Props) {
   const [activeBlockId, setActiveBlockId] = useState<string | null>(null);
   const [hasUnsavedChanges, setHasUnsavedChanges] = useState(false);
   const [copied, setCopied] = useState(false);
+  const descRef = useRef<HTMLTextAreaElement | null>(null);
 
   function addAndFocus(create: () => FormBlock) {
     const block = create();
@@ -57,6 +58,13 @@ export default function FormEditorClient({ initialForm }: Props) {
     if (mode === "published") return;
     setPublishedUrl(null);
   }, [editor.form]);
+
+  useEffect(() => {
+    if (!descRef.current) return;
+    const el = descRef.current;
+    el.style.height = "auto";
+    el.style.height = el.scrollHeight + "px";
+  }, [editor.form.description]);
 
   if (mode === "published" && publishedUrl) {
     return (
@@ -131,6 +139,19 @@ export default function FormEditorClient({ initialForm }: Props) {
           placeholder="Form Title"
           className="text-6xl md:text-8xl font-bold text-neutral-700 placeholder:text-neutral-300 mb-6 w-full bg-transparent outline-none border-none"
         ></input>
+        <textarea
+          ref={descRef}
+          value={editor.form.description}
+          onChange={(e) => {
+            editor.updateFormMeta({ description: e.target.value });
+            const el = e.currentTarget;
+            el.style.height = "auto";
+            el.style.height = el.scrollHeight + "px";
+          }}
+          placeholder="Description"
+          rows={1}
+          className="text-xl md:text-2xl font-medium text-neutral-500 placeholder:text-neutral-300 mb-6 w-full bg-transparent outline-none border-none resize-none overflow-hidden"
+        />
 
         <AddBlockPanel
           onAddShortText={() => addAndFocus(createShortTextBlock)}

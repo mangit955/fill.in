@@ -11,6 +11,8 @@ import { supabase } from "@/lib/supabase/client";
 import Link from "next/link";
 import TooltipHint from "../ui/toolTipHint";
 import { FillinLogo } from "../ui/svg/logo";
+import { motion, AnimatePresence } from "framer-motion";
+import { Spinner } from "../ui/spinner";
 
 type Props = {
   form: Form;
@@ -24,6 +26,7 @@ export default function FormRuntime({ form, preview }: Props) {
   );
   const [answers, setAnswers] = useState<Record<string, unknown>>({});
   const [submitting, setSubmitting] = useState(false);
+  const [history, setHistory] = useState<string[]>([]);
 
   // Reset runtime when preview opens so it always starts from first block
   useEffect(() => {
@@ -164,124 +167,240 @@ export default function FormRuntime({ form, preview }: Props) {
       return;
     }
 
-    setAnswers(nextAnswers);
+    setHistory((h) => [...h, currentBlockId!]);
     setCurrentBlockId(next);
   }
 
-  const selected = (answers[block.id] as string[]) ?? [];
+  function goBack() {
+    if (history.length === 0) return;
+    const prev = history[history.length - 1];
+    setHistory((h) => h.slice(0, -1));
+    setCurrentBlockId(prev);
+  }
+
+  const rawValue = answers[block.id];
+
+  const selectedArray: string[] = Array.isArray(rawValue) ? rawValue : [];
+  const selectedSingle: string | undefined =
+    typeof rawValue === "string" ? rawValue : undefined;
 
   return (
-    <div className="min-h-screen w-full relative ">
-      <div className="fixed top-6 left-1/2 -translate-x-1/2 w-full max-w-xl px-4 pointer-events-none">
+    <div className="min-h-screen w-full relative mb-8 ">
+      <div className="w-full max-w-xl mx-auto px-4 pt-16">
         <h1 className="text-5xl text-neutral-700 font-bold text-left">
           {form.title}
         </h1>
+        {form.description && (
+          <h2 className="text-md text-neutral-700  text-left mt-6 leading-relaxed">
+            {form.description}
+          </h2>
+        )}
       </div>
       <div
-        className={`absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-full max-w-xl space-y-6 px-4 ${
+        className={`w-full max-w-xl mx-auto space-y-6 px-4 mt-12 ${
           preview ? "pointer-events-none select-none" : ""
         }`}
       >
-        <div className="text-xl font-semibold mt-4 flex items-center gap-1">
-          {block.config.label}
-          {block.required && (
-            <TooltipHint label="Required">
-              <span className="text-gray-700 text-3xl leading-none cursor-pointer">
-                *
-              </span>
-            </TooltipHint>
-          )}
-        </div>
+        <AnimatePresence mode="wait">
+          <motion.div
+            key={block.id}
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -20 }}
+            transition={{ duration: 0.15, ease: "easeInOut" }}
+          >
+            <div className="text-xl font-semibold mt-4 flex items-center gap-1">
+              {block.config.label}
+              {block.required && (
+                <TooltipHint label="Required">
+                  <span className="text-gray-700 text-3xl leading-none cursor-pointer">
+                    *
+                  </span>
+                </TooltipHint>
+              )}
+            </div>
 
-        {/* Placeholder answer button */}
-        {block.type === "short_text" && (
-          <input
-            className="w-full border border-gray-300 rounded-md shadow-sm px-3 py-2"
-            value={(answers[block.id] as string) ?? ""}
-            onChange={(e) =>
-              setAnswers({ ...answers, [block.id]: e.target.value })
-            }
-            onKeyDown={(e) => {
-              if (e.key === "Enter") {
-                e.preventDefault();
-                submitAnswer(e.currentTarget.value);
-              }
-            }}
-          />
-        )}
-
-        {block.type === "long_text" && (
-          <textarea
-            className="w-full border border-gray-300 rounded-md shadow-sm px-3 py-2"
-            rows={block.config.rows}
-            value={(answers[block.id] as string) ?? ""}
-            onChange={(e) =>
-              setAnswers({ ...answers, [block.id]: e.target.value })
-            }
-          />
-        )}
-
-        {block.type === "multiple_choice" && (
-          <div className="space-y-2 ">
-            {block.config.options.map((opt) => (
-              <label key={opt.id} className="flex items-center gap-2">
+            {/* Placeholder answer button */}
+            {block.type === "short_text" && (
+              <>
                 <input
-                  type={block.config.allowMultiple ? "checkbox" : "radio"}
-                  name={block.id}
-                  value={opt.id}
-                  className="cursor-pointer"
-                  checked={
-                    block.config.allowMultiple
-                      ? selected.includes(opt.id)
-                      : (answers[block.id] ?? "") === opt.id
+                  className="w-full border border-gray-300 rounded-md shadow-sm px-3 py-2"
+                  value={(answers[block.id] as string) ?? ""}
+                  onChange={(e) =>
+                    setAnswers({ ...answers, [block.id]: e.target.value })
                   }
-                  onChange={(e) => {
-                    if (block.config.allowMultiple) {
-                      const prev = (answers[block.id] as string[]) ?? [];
-                      const next = e.target.checked
-                        ? [...prev, opt.id]
-                        : prev.filter((id) => id !== opt.id);
-
-                      setAnswers({ ...answers, [block.id]: next });
-                    } else {
-                      submitAnswer(opt.id);
+                  onKeyDown={(e) => {
+                    if (e.key === "Enter") {
+                      e.preventDefault();
+                      submitAnswer(e.currentTarget.value);
                     }
                   }}
                 />
-                {opt.label}
-              </label>
-            ))}
+                {(() => {
+                  const nextId = getNextBlockId(currentBlockId!, answers, form);
+                  return (
+                    <div className="mt-4 flex gap-2">
+                      {history.length > 0 && (
+                        <button
+                          type="button"
+                          onClick={goBack}
+                          className="px-2 cursor-pointer font-bold hover:bg-neutral-100  py-1 border rounded-md text-md text-neutral-500 hover:text-neutral-600"
+                        >
+                          ←
+                        </button>
+                      )}
 
-            {block.config.allowMultiple && (
-              <button
-                className="px-2 py-1 border bg-black text-white rounded-md cursor-pointer font-semibold"
-                onClick={() => submitAnswer(answers[block.id])}
-              >
-                Next →
-              </button>
+                      <button
+                        className={`px-2 py-1 border text-white rounded-md cursor-pointer font-semibold disabled:opacity-40 disabled:cursor-not-allowed ${
+                          nextId
+                            ? "bg-black hover:bg-neutral-700"
+                            : "bg-primary hover:bg-primary/90 focus:ring-4 ring-blue-300"
+                        }`}
+                        onClick={() => submitAnswer(answers[block.id])}
+                        disabled={submitting}
+                      >
+                        {submitting ? (
+                          <span className="flex items-center justify-center w-full">
+                            <Spinner height={20} width={20} strokeWidth={3} />
+                          </span>
+                        ) : nextId ? (
+                          "Next →"
+                        ) : (
+                          "Submit"
+                        )}
+                      </button>
+                    </div>
+                  );
+                })()}
+              </>
             )}
-          </div>
-        )}
 
-        {block.type === "long_text" && (
-          <button
-            className="px-2 py-1 border bg-black text-white hover:bg-neutral-700 rounded-md  cursor-pointer font-semibold"
-            onClick={() => submitAnswer(answers[block.id])}
-          >
-            Next →
-          </button>
-        )}
-        {block.type === "short_text" && (
-          <button
-            className="px-2 py-1 border bg-black text-white hover:bg-neutral-700 rounded-md  cursor-pointer font-semibold"
-            onClick={() => submitAnswer(answers[block.id])}
-          >
-            Next →
-          </button>
-        )}
+            {block.type === "long_text" && (
+              <>
+                <textarea
+                  className="w-full border border-gray-300 rounded-md shadow-sm px-3 py-2"
+                  rows={block.config.rows}
+                  value={(answers[block.id] as string) ?? ""}
+                  onChange={(e) =>
+                    setAnswers({ ...answers, [block.id]: e.target.value })
+                  }
+                />
+                {(() => {
+                  const nextId = getNextBlockId(currentBlockId!, answers, form);
+                  return (
+                    <div className="mt-4 flex gap-2">
+                      {history.length > 0 && (
+                        <button
+                          type="button"
+                          onClick={goBack}
+                          className="px-2 cursor-pointer font-bold hover:bg-neutral-100  py-1 border rounded-md text-md text-neutral-500 hover:text-neutral-600"
+                        >
+                          ←
+                        </button>
+                      )}
+
+                      <button
+                        className={`px-2 py-1 border text-white rounded-md cursor-pointer font-semibold disabled:opacity-40 disabled:cursor-not-allowed ${
+                          nextId
+                            ? "bg-black hover:bg-neutral-700"
+                            : "bg-primary hover:bg-primary/90 focus:ring-4 ring-blue-300"
+                        }`}
+                        onClick={() => submitAnswer(answers[block.id])}
+                        disabled={submitting}
+                      >
+                        {submitting ? (
+                          <span className="flex items-center justify-center w-full">
+                            <Spinner height={20} width={20} strokeWidth={3} />
+                          </span>
+                        ) : nextId ? (
+                          "Next →"
+                        ) : (
+                          "Submit"
+                        )}
+                      </button>
+                    </div>
+                  );
+                })()}
+              </>
+            )}
+
+            {block.type === "multiple_choice" && (
+              <div className="space-y-2 ">
+                {block.config.options.map((opt) => (
+                  <label key={opt.id} className="flex items-center gap-2">
+                    <input
+                      type={block.config.allowMultiple ? "checkbox" : "radio"}
+                      name={block.id}
+                      value={opt.id}
+                      className="cursor-pointer"
+                      checked={
+                        block.config.allowMultiple
+                          ? selectedArray.includes(opt.id)
+                          : selectedSingle === opt.id
+                      }
+                      onChange={(e) => {
+                        if (block.config.allowMultiple) {
+                          const prev = (answers[block.id] as string[]) ?? [];
+                          const next = e.target.checked
+                            ? [...prev, opt.id]
+                            : prev.filter((id) => id !== opt.id);
+
+                          setAnswers({ ...answers, [block.id]: next });
+                        } else {
+                          setAnswers({ ...answers, [block.id]: opt.id });
+                        }
+                      }}
+                    />
+                    {opt.label}
+                  </label>
+                ))}
+
+                {(() => {
+                  const nextId = getNextBlockId(currentBlockId!, answers, form);
+                  return (
+                    <div className="mt-4 flex gap-2">
+                      {history.length > 0 && (
+                        <button
+                          type="button"
+                          onClick={goBack}
+                          className="px-2 cursor-pointer font-bold hover:bg-neutral-100  py-1 border rounded-md text-md text-neutral-500 hover:text-neutral-600"
+                        >
+                          ←
+                        </button>
+                      )}
+
+                      <button
+                        disabled={
+                          submitting ||
+                          (block.required && answers[block.id] === undefined)
+                        }
+                        className={`px-2 py-1 border min-w-[100px] text-white rounded-md font-semibold cursor-pointer disabled:opacity-40 disabled:cursor-not-allowed ${
+                          nextId
+                            ? "bg-black hover:bg-neutral-700"
+                            : "bg-primary hover:bg-primary/90 focus:ring-4 ring-blue-300"
+                        }`}
+                        onClick={() => submitAnswer(answers[block.id])}
+                      >
+                        {submitting ? (
+                          <span className="flex items-center justify-center w-full">
+                            <Spinner height={20} width={20} strokeWidth={3} />
+                          </span>
+                        ) : nextId ? (
+                          "Next →"
+                        ) : (
+                          "Submit"
+                        )}
+                      </button>
+                    </div>
+                  );
+                })()}
+              </div>
+            )}
+          </motion.div>
+        </AnimatePresence>
       </div>
       <Link href={"/"} className={preview ? "pointer-events-none" : ""}>
-        <button className="border border-gray-300 hover:ring-1 hover:ring-gray-300 rounded-md px-3 py-1 text-blue-600 font-semibold cursor-pointer hover:shadow-md hover:text-blue-500 bottom-4 right-4 fixed flex items-center gap-2">
+        <button className="border backdrop-blur border-gray-300 hover:ring-1 hover:ring-gray-300 rounded-md px-3 py-1 text-blue-600 font-semibold cursor-pointer hover:shadow-md hover:text-blue-500 bottom-4 right-4 fixed flex items-center gap-2">
           <span>Made with Fill.in</span>
           <FillinLogo size={18} />
         </button>
