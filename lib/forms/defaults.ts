@@ -1,11 +1,16 @@
 import {
+  DateBlock,
   EmailBlock,
+  FileUploadBlock,
   Form,
+  LinkBlock,
   LongTextBlock,
   LongTextConfig,
   MultipleChoiceBlock,
   MultipleChoiceConfig,
+  NumberBlock,
   PhoneBlock,
+  RatingBlock,
   ShortTextBlock,
   ShortTextConfig,
 } from "./types";
@@ -109,6 +114,68 @@ export function createPhoneBlock(): PhoneBlock {
     config: {
       label: "",
       placeholder: "Enter your phone number",
+    },
+  };
+}
+
+export function createDateBlock(): DateBlock {
+  return {
+    id: crypto.randomUUID(),
+    type: "date",
+    required: false,
+    config: {
+      label: "",
+      placeholder: "Pick a date",
+    },
+  };
+}
+
+export function createLinkBlock(): LinkBlock {
+  return {
+    id: crypto.randomUUID(),
+    type: "link",
+    required: false,
+    config: {
+      label: "",
+      placeholder: "https://fillin.com",
+    },
+  };
+}
+
+export function createNumberBlock(): NumberBlock {
+  return {
+    id: crypto.randomUUID(),
+    type: "number",
+    required: false,
+    config: {
+      label: "",
+      placeholder: "Enter a number",
+    },
+  };
+}
+
+export function createRatingBlock(): RatingBlock {
+  return {
+    id: crypto.randomUUID(),
+    type: "rating",
+    required: false,
+    config: {
+      label: "",
+      max: 5,
+    },
+  };
+}
+
+export function createFileUploadBlock(): FileUploadBlock {
+  return {
+    id: crypto.randomUUID(),
+    type: "fileUpload",
+    required: true,
+    config: {
+      label: "",
+      multiple: false,
+      accept: "*",
+      maxSizeMB: 25,
     },
   };
 }

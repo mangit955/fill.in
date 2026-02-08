@@ -63,6 +63,16 @@ export type PhoneBlock = {
   };
 };
 
+export type DateBlock = {
+  id: string;
+  type: "date";
+  required?: boolean;
+  config: {
+    label: string;
+    placeholder?: string;
+  };
+};
+
 //block types
 
 export type BaseBlock = {
@@ -94,12 +104,61 @@ export type MultipleChoiceBlock = BaseBlock & {
   config: MultipleChoiceConfig;
 };
 
+export type LinkBlock = {
+  id: string;
+  type: "link";
+  required: boolean;
+  config: {
+    label: string;
+    placeholder?: string;
+  };
+};
+
+export type NumberBlock = {
+  id: string;
+  type: "number";
+  required?: boolean;
+  config: {
+    label: string;
+    placeholder?: string;
+    min?: number;
+    max?: number;
+  };
+};
+
+export type RatingBlock = {
+  id: string;
+  type: "rating";
+  required?: boolean;
+  config: {
+    label: string;
+    max?: number; // default 5
+  };
+};
+
+export type FileUploadBlock = {
+  id: string;
+  type: "fileUpload";
+  required?: boolean;
+  config: {
+    label: string;
+    multiple?: boolean;
+    accept?: string; // "image/*" | ".pdf" etc
+    maxSizeMB?: number;
+  };
+};
+
 export type FormBlock =
   | ShortTextBlock
   | LongTextBlock
   | MultipleChoiceBlock
   | EmailBlock
-  | PhoneBlock;
+  | PhoneBlock
+  | DateBlock
+  | LinkBlock
+  | NumberBlock
+  | RatingBlock
+  | FileUploadBlock;
 
 //Form
 

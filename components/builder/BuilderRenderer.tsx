@@ -5,11 +5,21 @@ import {
   ShortTextBlock as ShortTextBlockType,
   EmailBlock as EmailBlockType,
   PhoneBlock as PhoneBlockType,
+  DateBlock as DateBlockType,
+  LinkBlock as LinkBlockType,
+  NumberBlock as NumberBlockType,
+  RatingBlock as RatingBlockType,
+  FileUploadBlock as FileUploadBlockType,
 } from "../../lib/forms/types";
+import DateBlock from "./Blocks/DateBlock";
 import EmailBlock from "./Blocks/EmailBlock";
+import FileUploadBlock from "./Blocks/FileUploadBlock";
+import LinkBlock from "./Blocks/LinkBlock";
 import LongTextBlock from "./Blocks/LongTextBlock";
 import MultipleChoiceBlock from "./Blocks/MultipleChoiceBlock";
+import NumberBlock from "./Blocks/NumberBlock";
 import PhoneBlock from "./Blocks/PhoneBlock";
+import RatingBlock from "./Blocks/RatingBlock";
 import ShortTextBlock from "./Blocks/ShortTextBlock";
 
 type BlockRendererProps = {
@@ -85,6 +95,66 @@ export default function BlockRenderer({
           onUpdateMeta={onUpdateMeta}
           onUpdateConfig={(id, updater) =>
             onUpdateConfig<PhoneBlockType>(id, updater)
+          }
+        />
+      );
+
+    case "date":
+      return (
+        <DateBlock
+          block={block}
+          autoFocus={autoFocus}
+          onUpdateMeta={onUpdateMeta}
+          onUpdateConfig={(id, updater) =>
+            onUpdateConfig<DateBlockType>(id, updater)
+          }
+        />
+      );
+
+    case "link":
+      return (
+        <LinkBlock
+          block={block}
+          autoFocus={autoFocus}
+          onUpdateMeta={onUpdateMeta}
+          onUpdateConfig={(id, updater) =>
+            onUpdateConfig<LinkBlockType>(id, updater)
+          }
+        />
+      );
+
+    case "number":
+      return (
+        <NumberBlock
+          block={block}
+          autoFocus={autoFocus}
+          onUpdateMeta={onUpdateMeta}
+          onUpdateConfig={(id, updater) =>
+            onUpdateConfig<NumberBlockType>(id, updater)
+          }
+        />
+      );
+
+    case "rating":
+      return (
+        <RatingBlock
+          block={block}
+          autoFocus={autoFocus}
+          onUpdateMeta={onUpdateMeta}
+          onUpdateConfig={(id, updater) =>
+            onUpdateConfig<RatingBlockType>(id, updater)
+          }
+        />
+      );
+
+    case "fileUpload":
+      return (
+        <FileUploadBlock
+          block={block}
+          autoFocus={autoFocus}
+          onUpdateMeta={onUpdateMeta}
+          onUpdateConfig={(id, updater) =>
+            onUpdateConfig<FileUploadBlockType>(id, updater)
           }
         />
       );

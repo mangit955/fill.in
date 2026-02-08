@@ -25,7 +25,9 @@ import {
   AlertDialogMedia,
 } from "@/components/ui/alert-dialog";
 import { toast } from "sonner";
-import { TriangleAlert } from "lucide-react";
+import { Star, Trash2, TriangleAlert, Upload } from "lucide-react";
+import { isValidUrl } from "@/lib/forms/helpers";
+import Image from "next/image";
 
 type Props = {
   form: Form;
@@ -41,6 +43,10 @@ export default function FormRuntime({ form, preview }: Props) {
   const [submitting, setSubmitting] = useState(false);
   const [history, setHistory] = useState<string[]>([]);
   const [showRequiredAlert, setShowRequiredAlert] = useState(false);
+  const [ratingHover, setRatingHover] = useState<number | null>(null);
+  const [uploadingByBlock, setUploadingByBlock] = useState<
+    Record<string, boolean>
+  >({});
 
   // Reset runtime when preview opens so it always starts from first block
   useEffect(() => {
@@ -205,6 +211,90 @@ export default function FormRuntime({ form, preview }: Props) {
       }
     }
 
+    //Date Validation
+    if (block.type === "date") {
+      const val = String(value ?? "").trim();
+
+      if (block.required && !val) {
+        toast.warning("Please select a date");
+        return;
+      }
+    }
+
+    // LINK VALIDATION
+    if (block.type === "link") {
+      let v = String(value ?? "").trim();
+
+      // optional + empty → allow skip
+      if (!block.required && v.length === 0) {
+        // do nothing
+      } else {
+        if (block.required && v.length === 0) {
+          toast.error("Please enter a link");
+          return;
+        }
+
+        //  AUTO ADD https://
+        if (v && !v.startsWith("http")) {
+          v = "https://" + v;
+        }
+
+        // validate final URL
+        if (v.length > 0 && !isValidUrl(v)) {
+          toast.error("Enter a valid URL");
+          return;
+        }
+
+        // store the normalized version
+        nextAnswers[currentBlockId!] = v;
+      }
+    }
+
+    // NUMBER VALIDATION
+    if (block.type === "number") {
+      const raw = value;
+
+      if (
+        !block.required &&
+        (raw === "" || raw === null || raw === undefined)
+      ) {
+        // allow skip
+      } else {
+        const num = Number(raw);
+
+        if (isNaN(num)) {
+          toast.error("Enter a valid number");
+          return;
+        }
+
+        if (block.config.min !== undefined && num < block.config.min) {
+          toast.error(`Number must be ≥ ${block.config.min}`);
+          return;
+        }
+
+        if (block.config.max !== undefined && num > block.config.max) {
+          toast.error(`Number must be ≤ ${block.config.max}`);
+          return;
+        }
+      }
+    }
+
+    //rating validation
+    if (block.type === "rating") {
+      if (block.required && !value) {
+        toast.error("Please select a rating");
+        return;
+      }
+    }
+
+    //file upload validation
+    if (block.type === "fileUpload") {
+      if (block.required && (!value || (value as string[]).length === 0)) {
+        toast.error("Please upload a file");
+        return;
+      }
+    }
+
     const next = getNextBlockId(currentBlockId!, nextAnswers, form);
 
     const isEmpty =
@@ -241,6 +331,13 @@ export default function FormRuntime({ form, preview }: Props) {
   const selectedArray: string[] = Array.isArray(rawValue) ? rawValue : [];
   const selectedSingle: string | undefined =
     typeof rawValue === "string" ? rawValue : undefined;
+
+  const url = String(answers[block.id] ?? "");
+  const domain = url
+    .replace(/^https?:\/\//, "")
+    .split("/")[0]
+    .trim();
+  const cleanDomain = domain.trim();
 
   return (
     <div className="min-h-screen w-full relative mb-8 ">
@@ -283,7 +380,7 @@ export default function FormRuntime({ form, preview }: Props) {
             {block.type === "short_text" && (
               <>
                 <input
-                  className="w-full border border-gray-300 rounded-md shadow-sm px-3 py-2"
+                  className="w-full focus:outline-none focus:ring-4 focus:ring-blue-300 border border-gray-300 rounded-md shadow-sm px-3 py-2"
                   value={(answers[block.id] as string) ?? ""}
                   onChange={(e) =>
                     setAnswers({ ...answers, [block.id]: e.target.value })
@@ -319,13 +416,13 @@ export default function FormRuntime({ form, preview }: Props) {
                         disabled={submitting}
                       >
                         {submitting ? (
-                          <span className="flex items-center min-w-[100px] justify-center w-full">
+                          <span className="flex items-center min-w-[80px] justify-center w-full">
                             <Spinner height={20} width={20} strokeWidth={3} />
                           </span>
                         ) : nextId ? (
                           "Next →"
                         ) : (
-                          "Submit"
+                          "Submit →"
                         )}
                       </button>
                     </div>
@@ -337,7 +434,7 @@ export default function FormRuntime({ form, preview }: Props) {
             {block.type === "long_text" && (
               <>
                 <textarea
-                  className="w-full border border-gray-300 rounded-md shadow-sm px-3 py-2 "
+                  className="w-full focus:outline-none focus:ring-4 focus:ring-blue-300 border border-gray-300 rounded-md shadow-sm px-3 py-2 "
                   rows={block.config.rows}
                   value={(answers[block.id] as string) ?? ""}
                   onChange={(e) =>
@@ -368,13 +465,13 @@ export default function FormRuntime({ form, preview }: Props) {
                         disabled={submitting}
                       >
                         {submitting ? (
-                          <span className="flex items-center min-w-[100px] justify-center w-full">
+                          <span className="flex items-center min-w-[80px] justify-center w-full">
                             <Spinner height={20} width={20} strokeWidth={3} />
                           </span>
                         ) : nextId ? (
                           "Next →"
                         ) : (
-                          "Submit"
+                          "Submit →"
                         )}
                       </button>
                     </div>
@@ -387,7 +484,7 @@ export default function FormRuntime({ form, preview }: Props) {
               <>
                 <input
                   type="email"
-                  className="w-full border border-gray-300 rounded-md shadow-sm px-3 py-2"
+                  className="w-full focus:outline-none focus:ring-4 focus:ring-blue-300 border border-gray-300 rounded-md shadow-sm px-3 py-2"
                   value={(answers[block.id] as string) ?? ""}
                   onChange={(e) =>
                     setAnswers({ ...answers, [block.id]: e.target.value })
@@ -424,13 +521,13 @@ export default function FormRuntime({ form, preview }: Props) {
                         disabled={submitting}
                       >
                         {submitting ? (
-                          <span className="flex items-center min-w-[100px] justify-center w-full">
+                          <span className="flex items-center min-w-[80px] justify-center w-full">
                             <Spinner height={20} width={20} strokeWidth={3} />
                           </span>
                         ) : nextId ? (
                           "Next →"
                         ) : (
-                          "Submit"
+                          "Submit →"
                         )}
                       </button>
                     </div>
@@ -445,7 +542,7 @@ export default function FormRuntime({ form, preview }: Props) {
                   type="tel"
                   inputMode="numeric"
                   pattern="[0-9]*"
-                  className="w-full border border-gray-300 rounded-md shadow-sm px-3 py-2"
+                  className="w-full focus:outline-none focus:ring-4 focus:ring-blue-300 border border-gray-300 rounded-md shadow-sm px-3 py-2"
                   value={(answers[block.id] as string) ?? ""}
                   onChange={(e) => {
                     const onlyDigits = e.target.value.replace(/\D/g, "");
@@ -484,13 +581,148 @@ export default function FormRuntime({ form, preview }: Props) {
                         disabled={submitting}
                       >
                         {submitting ? (
-                          <span className="flex items-center min-w-[100px] justify-center w-full">
+                          <span className="flex items-center min-w-[80px] justify-center w-full">
                             <Spinner height={20} width={20} strokeWidth={3} />
                           </span>
                         ) : nextId ? (
                           "Next →"
                         ) : (
-                          "Submit"
+                          "Submit →"
+                        )}
+                      </button>
+                    </div>
+                  );
+                })()}
+              </>
+            )}
+
+            {block.type === "date" && (
+              <>
+                <input
+                  type="date"
+                  className="w-full border focus:outline-none focus:ring-4 focus:ring-blue-300 border-gray-300 rounded-md shadow-sm px-3 py-2"
+                  value={(answers[block.id] as string) ?? ""}
+                  onChange={(e) =>
+                    setAnswers({ ...answers, [block.id]: e.target.value })
+                  }
+                  onKeyDown={(e) => {
+                    if (e.key === "Enter") {
+                      e.preventDefault();
+                      submitAnswer(e.currentTarget.value);
+                    }
+                  }}
+                />
+
+                {(() => {
+                  const nextId = getNextBlockId(currentBlockId!, answers, form);
+                  return (
+                    <div className="mt-4 flex gap-2">
+                      {history.length > 0 && (
+                        <button
+                          type="button"
+                          onClick={goBack}
+                          className="px-2 cursor-pointer font-bold hover:bg-neutral-100 py-1 border rounded-md text-md text-neutral-500 hover:text-neutral-600"
+                        >
+                          ←
+                        </button>
+                      )}
+
+                      <button
+                        className={`px-2 py-1 border text-white rounded-md cursor-pointer font-semibold disabled:cursor-not-allowed ${
+                          nextId
+                            ? "bg-black hover:bg-neutral-700"
+                            : "bg-primary hover:bg-primary/90 focus:ring-4 ring-blue-300"
+                        }`}
+                        onClick={() => submitAnswer(answers[block.id])}
+                        disabled={submitting}
+                      >
+                        {submitting ? (
+                          <span className="flex items-center min-w-[80px] justify-center w-full">
+                            <Spinner height={20} width={20} strokeWidth={3} />
+                          </span>
+                        ) : nextId ? (
+                          "Next →"
+                        ) : (
+                          "Submit →"
+                        )}
+                      </button>
+                    </div>
+                  );
+                })()}
+              </>
+            )}
+
+            {block.type === "link" && (
+              <>
+                <input
+                  type="url"
+                  placeholder={block.config.placeholder || "https://fillin.com"}
+                  className="w-full border focus:outline-none focus:ring-4 focus:ring-blue-300 border-gray-300 rounded-md shadow-sm px-3 py-2"
+                  onBlur={(e) => {
+                    let v = e.target.value.trim();
+                    if (v && !v.startsWith("http")) {
+                      v = "https://" + v;
+                      setAnswers({ ...answers, [block.id]: v });
+                    }
+                  }}
+                  value={(answers[block.id] as string) ?? ""}
+                  onChange={(e) =>
+                    setAnswers({ ...answers, [block.id]: e.target.value })
+                  }
+                  onKeyDown={(e) => {
+                    if (e.key === "Enter") {
+                      e.preventDefault();
+                      submitAnswer(e.currentTarget.value);
+                    }
+                  }}
+                />
+
+                {url && (
+                  <div className="text-xs mt-1 text-neutral-500 flex items-center gap-2">
+                    <Image
+                      src={`https://www.google.com/s2/favicons?domain=${encodeURIComponent(
+                        cleanDomain
+                      )}`}
+                      alt="preview"
+                      width={20}
+                      height={20}
+                    />
+                    {domain}
+                  </div>
+                )}
+
+                {(() => {
+                  const nextId = getNextBlockId(currentBlockId!, answers, form);
+
+                  return (
+                    <div className="mt-4 flex gap-2">
+                      {history.length > 0 && (
+                        <button
+                          type="button"
+                          onClick={goBack}
+                          className="px-2 cursor-pointer font-bold hover:bg-neutral-100 py-1 border rounded-md text-md text-neutral-500 hover:text-neutral-600"
+                        >
+                          ←
+                        </button>
+                      )}
+
+                      <button
+                        className={`px-2 py-1 border text-white rounded-md cursor-pointer font-semibold disabled:cursor-not-allowed ${
+                          nextId
+                            ? "bg-black hover:bg-neutral-700"
+                            : "bg-primary hover:bg-primary/90 focus:ring-4 ring-blue-300"
+                        }`}
+                        onClick={() => submitAnswer(answers[block.id])}
+                        disabled={submitting}
+                      >
+                        {submitting ? (
+                          <span className="flex items-center min-w-[80px] justify-center w-full">
+                            <Spinner height={20} width={20} strokeWidth={3} />
+                          </span>
+                        ) : nextId ? (
+                          "Next →"
+                        ) : (
+                          "Submit →"
                         )}
                       </button>
                     </div>
@@ -549,7 +781,7 @@ export default function FormRuntime({ form, preview }: Props) {
                           submitting ||
                           (block.required && answers[block.id] === undefined)
                         }
-                        className={`px-2 py-1 border min-w-[100px] text-white rounded-md font-semibold cursor-pointer disabled:cursor-not-allowed ${
+                        className={`px-2 py-1 border min-w-[80px] text-white rounded-md font-semibold cursor-pointer disabled:cursor-not-allowed ${
                           nextId
                             ? "bg-black hover:bg-neutral-700"
                             : "bg-primary hover:bg-primary/90 focus:ring-4 ring-blue-300"
@@ -557,19 +789,442 @@ export default function FormRuntime({ form, preview }: Props) {
                         onClick={() => submitAnswer(answers[block.id])}
                       >
                         {submitting ? (
-                          <span className="flex items-center min-w-[100px] justify-center w-full">
+                          <span className="flex items-center min-w-[80px] justify-center w-full">
                             <Spinner height={20} width={20} strokeWidth={3} />
                           </span>
                         ) : nextId ? (
                           "Next →"
                         ) : (
-                          "Submit"
+                          "Submit →"
                         )}
                       </button>
                     </div>
                   );
                 })()}
               </div>
+            )}
+
+            {block.type === "number" && (
+              <>
+                <input
+                  type="number"
+                  inputMode="numeric"
+                  placeholder="Enter a number"
+                  pattern="[0-9]*"
+                  className="w-full focus:outline-none focus:ring-4 focus:ring-blue-300 border border-gray-300 rounded-md shadow-sm px-3 py-2"
+                  value={
+                    answers[block.id] === undefined ||
+                    answers[block.id] === null
+                      ? ""
+                      : String(answers[block.id])
+                  }
+                  onChange={(e) => {
+                    const raw = e.target.value;
+
+                    // allow empty
+                    if (raw === "") {
+                      setAnswers({ ...answers, [block.id]: "" });
+                      return;
+                    }
+
+                    // only allow digits
+                    if (!/^\d+$/.test(raw)) {
+                      return;
+                    }
+
+                    setAnswers({ ...answers, [block.id]: Number(raw) });
+                  }}
+                  onKeyDown={(e) => {
+                    if (e.key === "Enter") {
+                      e.preventDefault();
+                      submitAnswer(answers[block.id]);
+                    }
+                  }}
+                  min={block.config.min}
+                  max={block.config.max}
+                />
+
+                {(() => {
+                  const nextId = getNextBlockId(currentBlockId!, answers, form);
+                  return (
+                    <div className="mt-4 flex gap-2">
+                      {history.length > 0 && (
+                        <button
+                          type="button"
+                          onClick={goBack}
+                          className="px-2 cursor-pointer font-bold hover:bg-neutral-100 py-1 border rounded-md text-md text-neutral-500 hover:text-neutral-600"
+                        >
+                          ←
+                        </button>
+                      )}
+
+                      <button
+                        className={`px-2 py-1 border text-white rounded-md cursor-pointer font-semibold disabled:cursor-not-allowed ${
+                          nextId
+                            ? "bg-black hover:bg-neutral-700"
+                            : "bg-primary hover:bg-primary/90 focus:ring-4 ring-blue-300"
+                        }`}
+                        onClick={() => submitAnswer(answers[block.id])}
+                        disabled={submitting}
+                      >
+                        {submitting ? (
+                          <span className="flex items-center min-w-[80px] justify-center w-full">
+                            <Spinner height={20} width={20} strokeWidth={3} />
+                          </span>
+                        ) : nextId ? (
+                          "Next →"
+                        ) : (
+                          "Submit →"
+                        )}
+                      </button>
+                    </div>
+                  );
+                })()}
+              </>
+            )}
+
+            {block.type === "rating" && (
+              <>
+                <div
+                  className="flex gap-0.5"
+                  onMouseLeave={() => {
+                    const selectedValue =
+                      typeof answers[block.id] === "number"
+                        ? (answers[block.id] as number)
+                        : 0;
+                    if (!selectedValue) setRatingHover(null);
+                  }}
+                >
+                  {Array.from({ length: block.config.max ?? 5 }).map((_, i) => {
+                    const value = i + 1;
+                    const selectedValue =
+                      typeof answers[block.id] === "number"
+                        ? (answers[block.id] as number)
+                        : 0;
+                    const displayValue =
+                      selectedValue > 0 ? selectedValue : ratingHover ?? 0;
+                    const selected = value <= displayValue;
+
+                    return (
+                      <button
+                        key={i}
+                        type="button"
+                        className="cursor-pointer "
+                        onMouseEnter={() => {
+                          if (!selectedValue) setRatingHover(value);
+                        }}
+                        onMouseMove={() => {
+                          if (!selectedValue) setRatingHover(value);
+                        }}
+                        onClick={() => {
+                          setAnswers({ ...answers, [block.id]: value });
+                          setRatingHover(null);
+                        }}
+                      >
+                        <Star
+                          size={34}
+                          className={
+                            selected
+                              ? "fill-yellow-400 text-yellow-400"
+                              : "text-neutral-400 hover:text-yellow-400"
+                          }
+                        />
+                      </button>
+                    );
+                  })}
+                </div>
+
+                {(() => {
+                  const nextId = getNextBlockId(currentBlockId!, answers, form);
+                  return (
+                    <div className="mt-4 flex gap-2">
+                      {history.length > 0 && (
+                        <button
+                          type="button"
+                          onClick={goBack}
+                          className="px-2 cursor-pointer font-bold hover:bg-neutral-100 py-1 border rounded-md text-md text-neutral-500 hover:text-neutral-600"
+                        >
+                          ←
+                        </button>
+                      )}
+
+                      <button
+                        className={`px-2 py-1 border text-white rounded-md cursor-pointer font-semibold disabled:cursor-not-allowed ${
+                          nextId
+                            ? "bg-black hover:bg-neutral-700"
+                            : "bg-primary hover:bg-primary/90 focus:ring-4 ring-blue-300"
+                        }`}
+                        onClick={() => submitAnswer(answers[block.id])}
+                        disabled={submitting}
+                      >
+                        {submitting ? (
+                          <span className="flex items-center min-w-[80px] justify-center w-full">
+                            <Spinner height={20} width={20} strokeWidth={3} />
+                          </span>
+                        ) : nextId ? (
+                          "Next →"
+                        ) : (
+                          "Submit →"
+                        )}
+                      </button>
+                    </div>
+                  );
+                })()}
+              </>
+            )}
+
+            {block.type === "fileUpload" && (
+              <>
+                {/** Styled upload box */}
+                <label
+                  htmlFor={`runtime_file_${block.id}`}
+                  onClick={(e) => {
+                    // if clicking inside preview area, don't reopen file dialog
+                    const target = e.target as HTMLElement;
+                    if (target.closest("button")) return;
+                  }}
+                  className="mt-2 flex flex-col items-center justify-center text-center w-full border-2 border-dashed border-gray-300 rounded-lg px-6 py-8 cursor-pointer hover:border-gray-400 hover:shadow-md transition"
+                >
+                  <input
+                    id={`runtime_file_${block.id}`}
+                    type="file"
+                    multiple={block.config.multiple}
+                    accept={block.config.accept}
+                    className="hidden"
+                    onChange={async (e) => {
+                      const files = e.target.files;
+                      if (!files || files.length === 0) return;
+                      setUploadingByBlock((prev) => ({
+                        ...prev,
+                        [block.id]: true,
+                      }));
+
+                      const uploadedUrls: string[] = [];
+
+                      for (const file of Array.from(files)) {
+                        const sizeMB = file.size / 1024 / 1024;
+
+                        if (
+                          block.config.maxSizeMB &&
+                          sizeMB > block.config.maxSizeMB
+                        ) {
+                          toast.error(
+                            `Max file size is ${block.config.maxSizeMB}MB`
+                          );
+                          setUploadingByBlock((prev) => ({
+                            ...prev,
+                            [block.id]: false,
+                          }));
+                          return;
+                        }
+
+                        const filePath = `${form.id}/${
+                          block.id
+                        }/${crypto.randomUUID()}-${file.name}`;
+
+                        const { error } = await supabase.storage
+                          .from("uploads")
+                          .upload(filePath, file);
+
+                        if (error) {
+                          console.error("UPLOAD ERROR:", error);
+                          toast.error("Upload failed");
+                          setUploadingByBlock((prev) => ({
+                            ...prev,
+                            [block.id]: false,
+                          }));
+                          return;
+                        }
+
+                        const { data } = supabase.storage
+                          .from("uploads")
+                          .getPublicUrl(filePath);
+
+                        uploadedUrls.push(data.publicUrl);
+                      }
+
+                      // store uploaded URLs but do not submit yet
+                      setAnswers((prev) => ({
+                        ...prev,
+                        [block.id]: uploadedUrls,
+                      }));
+                      setUploadingByBlock((prev) => ({
+                        ...prev,
+                        [block.id]: false,
+                      }));
+                    }}
+                  />
+
+                  {/* Show spinner while uploading */}
+                  {uploadingByBlock[block.id] && (
+                    <div className="flex flex-col items-center justify-center py-6">
+                      <Spinner height={54} width={54} strokeWidth={2} />
+                      <div className="text-xs text-neutral-500 mt-2">
+                        Uploading...
+                      </div>
+                    </div>
+                  )}
+                  {!uploadingByBlock[block.id] &&
+                    (() => {
+                      const fileList = answers[block.id];
+                      const hasFiles =
+                        Array.isArray(fileList) && fileList.length > 0;
+                      return (
+                        <>
+                          {/* Preview in center */}
+                          {hasFiles && (
+                            <div className="mb-4 flex flex-col p-4 shadow-sm border rounded-md items-center justify-center  relative">
+                              {fileList.map((url: string, idx: number) => {
+                                const isImage =
+                                  /\.(jpg|jpeg|png|webp|gif)$/i.test(url);
+                                const isPdf = /\.pdf$/i.test(url);
+
+                                return (
+                                  <div
+                                    key={idx}
+                                    className="flex flex-col items-center w-full"
+                                  >
+                                    {isImage && (
+                                      <Image
+                                        src={url}
+                                        alt="preview"
+                                        width={160}
+                                        height={160}
+                                        className="rounded-md object-cover mb-3"
+                                      />
+                                    )}
+
+                                    {isPdf && (
+                                      <div className="w-full flex justify-center mb-3">
+                                        <iframe
+                                          src={url}
+                                          className="w-full h-56 border rounded-md"
+                                        />
+                                      </div>
+                                    )}
+
+                                    {!isImage && !isPdf && (
+                                      <a
+                                        href={url}
+                                        target="_blank"
+                                        className="text-sm text-blue-600 underline mb-3"
+                                      >
+                                        {url.split("/").pop()}
+                                      </a>
+                                    )}
+                                  </div>
+                                );
+                              })}
+
+                              {/* bottom divider line */}
+                              <div className="w-full border-t mt-2 pt-2 flex items-center justify-between">
+                                {/* File name on left */}
+                                <div className="text-xs text-neutral-600 truncate max-w-[70%]">
+                                  {(() => {
+                                    const urls = fileList;
+                                    if (!urls || urls.length === 0) return null;
+                                    const raw = urls[0].split("/").pop() || "";
+                                    // strip leading UUID (36 chars + dash) safely
+                                    const originalName = raw.replace(
+                                      /^[0-9a-f-]{36}-/i,
+                                      ""
+                                    );
+                                    return originalName;
+                                  })()}
+                                </div>
+
+                                {/* Trash on right */}
+                                <TooltipHint label="Delete">
+                                  <button
+                                    type="button"
+                                    onClick={(e) => {
+                                      e.preventDefault();
+                                      e.stopPropagation();
+
+                                      setAnswers((prev) => ({
+                                        ...prev,
+                                        [block.id]: [],
+                                      }));
+                                    }}
+                                    className="p-1 hover:bg-gray-100 rounded-md cursor-pointer"
+                                  >
+                                    <Trash2
+                                      size={18}
+                                      className="text-neutral-400 hover:text-neutral-600"
+                                    />
+                                  </button>
+                                </TooltipHint>
+                              </div>
+                            </div>
+                          )}
+
+                          {(() => {
+                            const fileValue = answers[block.id];
+                            return (
+                              !Array.isArray(fileValue) ||
+                              fileValue.length === 0
+                            );
+                          })() && (
+                            <>
+                              <div
+                                tabIndex={0}
+                                className="text-sm hover:text-neutral-900 rounded-md px-2 py-1
+             focus:outline-none focus:ring-4 focus:ring-blue-300
+             hover:bg-neutral-100
+             flex gap-2 items-center font-medium text-neutral-500"
+                              >
+                                <Upload size={16} />
+                                Click to upload file
+                              </div>
+
+                              {block.config.maxSizeMB && (
+                                <div className="text-xs text-neutral-400 mt-1">
+                                  Max size: {block.config.maxSizeMB}MB
+                                </div>
+                              )}
+                            </>
+                          )}
+                        </>
+                      );
+                    })()}
+                </label>
+
+                {(() => {
+                  const nextId = getNextBlockId(currentBlockId!, answers, form);
+                  return (
+                    <div className="mt-4 flex gap-2">
+                      {history.length > 0 && (
+                        <button
+                          onClick={goBack}
+                          className="px-2 py-1 border rounded-md text-neutral-600 hover:bg-neutral-100"
+                        >
+                          ←
+                        </button>
+                      )}
+
+                      <button
+                        className={`px-2 py-1 border text-white rounded-md cursor-pointer font-semibold disabled:cursor-not-allowed ${
+                          nextId
+                            ? "bg-black hover:bg-neutral-700"
+                            : "bg-primary hover:bg-primary/90 focus:ring-4 ring-blue-300"
+                        }`}
+                        onClick={() => submitAnswer(answers[block.id])}
+                        disabled={submitting}
+                      >
+                        {submitting ? (
+                          <span className="flex items-center min-w-[80px] justify-center w-full">
+                            <Spinner height={20} width={20} strokeWidth={3} />
+                          </span>
+                        ) : nextId ? (
+                          "Next →"
+                        ) : (
+                          "Submit →"
+                        )}
+                      </button>
+                    </div>
+                  );
+                })()}
+              </>
             )}
           </motion.div>
         </AnimatePresence>

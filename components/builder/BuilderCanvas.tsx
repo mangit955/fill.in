@@ -6,6 +6,7 @@ import { GripVertical, Plus, Trash2 } from "lucide-react";
 import { Tooltip, TooltipContent, TooltipTrigger } from "../ui/tooltip";
 import EmptyState from "./EmptyState";
 import { closestCenter, DndContext, DragEndEvent } from "@dnd-kit/core";
+import { useEffect } from "react";
 import {
   SortableContext,
   verticalListSortingStrategy,
@@ -36,6 +37,7 @@ type BuilderCanvasProps = {
     updates: Partial<Omit<LogicJump, "id">>
   ) => void;
   onRemoveLogicJump: (jumpId: string) => void;
+  onSetActive?: (blockId: string) => void;
 };
 
 export default function BuilderCanvas({
@@ -55,6 +57,7 @@ export default function BuilderCanvas({
   onAddLogicJump,
   onRemoveLogicJump,
   onUpdateLogicJump,
+  onSetActive,
 }: BuilderCanvasProps) {
   function handleDragEnd(event: DragEndEvent) {
     const { active, over } = event;
@@ -68,6 +71,55 @@ export default function BuilderCanvas({
     onReorder(oldIndex, newIndex);
     onConsumeFocus();
   }
+
+  useEffect(() => {
+    function handleKey(e: KeyboardEvent) {
+      if (!activeBlockId) return;
+
+      if (e.key === "Backspace") {
+        const activeEl = document.activeElement as HTMLElement | null;
+
+        // If user is typing inside an input/textarea/contenteditable
+        if (
+          activeEl &&
+          (activeEl.tagName === "INPUT" ||
+            activeEl.tagName === "TEXTAREA" ||
+            activeEl.isContentEditable)
+        ) {
+          const input = activeEl as HTMLInputElement | HTMLTextAreaElement;
+
+          const value = (input.value ?? "").toString();
+          const start = input.selectionStart ?? 0;
+          const end = input.selectionEnd ?? 0;
+
+          const isEmpty = value.length === 0;
+          const caretAtStart = start === 0 && end === 0;
+
+          // If there's still text → normal backspace
+          if (!isEmpty) return;
+
+          // If empty but cursor not at start → normal backspace
+          if (!caretAtStart) return;
+
+          // At this point:
+          // empty + caret at start → delete block
+          e.preventDefault();
+        }
+
+        const index = blocks.findIndex((b) => b.id === activeBlockId);
+        if (index === -1) return;
+
+        onRemove(activeBlockId);
+
+        const prev = blocks[index - 1];
+        if (prev) onSetActive?.(prev.id);
+        else onConsumeFocus();
+      }
+    }
+
+    window.addEventListener("keydown", handleKey);
+    return () => window.removeEventListener("keydown", handleKey);
+  }, [activeBlockId, onRemove, onConsumeFocus, blocks, onSetActive]);
 
   // 1️ Before hydration: render neutral shell
   if (!hydrated) {
@@ -87,14 +139,19 @@ export default function BuilderCanvas({
         items={blocks.map((b) => b.id)}
         strategy={verticalListSortingStrategy}
       >
-        <div>
+        <div className="space-y-3 transition-all duration-200">
           {blocks.map((block) => (
             <SortableBlockItem id={block.id} key={block.id}>
               {({ setNodeRef, attributes, listeners, style, isDragging }) => (
                 <div
                   ref={setNodeRef}
                   style={style}
-                  className={`relative ${isDragging ? "opacity-80" : ""}`}
+                  className={`relative transition-all duration-200 ease-out ${
+                    isDragging
+                      ? "opacity-80 scale-[0.98]"
+                      : "opacity-100 scale-100"
+                  }`}
+                  onClick={() => onSetActive?.(block.id)}
                 >
                   {" "}
                   <BlockShell
@@ -118,7 +175,7 @@ export default function BuilderCanvas({
                               onRemove(block.id);
                               onConsumeFocus();
                             }}
-                            className="cursor-pointer text-neutral-400 hover:text-neutral-600 hover:bg-gray-100 p-1 rounded"
+                            className="cursor-pointer text-neutral-400 hover:text-neutral-600 hover:bg-gray-100 p-1 rounded-md"
                           >
                             <Trash2 size={18} />
                           </button>
@@ -133,7 +190,7 @@ export default function BuilderCanvas({
                         <TooltipTrigger asChild>
                           <button
                             onClick={() => onDuplicate(block.id)}
-                            className="cursor-pointer text-neutral-400 hover:text-neutral-600 hover:bg-gray-100 p-1 rounded"
+                            className="cursor-pointer text-neutral-400 hover:text-neutral-600 hover:bg-gray-100 p-1 rounded-md"
                           >
                             <Plus size={18} />
                           </button>
@@ -149,7 +206,7 @@ export default function BuilderCanvas({
                           <div
                             {...attributes}
                             {...listeners}
-                            className="cursor-grab text-neutral-400 hover:text-neutral-600 hover:bg-gray-100 p-1 rounded"
+                            className="cursor-grab text-neutral-400 hover:text-neutral-600 hover:bg-gray-100 p-1 rounded-md"
                           >
                             <GripVertical size={16} />
                           </div>

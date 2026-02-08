@@ -1,7 +1,18 @@
 "use client";
 import { motion } from "framer-motion";
 import { BlockButton } from "../ui/blockButton";
-import { AtSign, CircleCheckBig, Phone, Rows2, Rows3 } from "lucide-react";
+import {
+  AtSign,
+  Calendar,
+  CircleCheckBig,
+  Hash,
+  Link,
+  Phone,
+  Rows2,
+  Rows3,
+  Star,
+  Upload,
+} from "lucide-react";
 import { Popover, PopoverContent, PopoverTrigger } from "../ui/popover";
 import { ScrollArea } from "../ui/scroll-area";
 
@@ -11,6 +22,11 @@ type Props = {
   onAddMultipleChoice: () => void;
   onAddEmail: () => void;
   onAddPhone: () => void;
+  onAddDate: () => void;
+  onAddLink: () => void;
+  onAddNumber: () => void;
+  onAddRating: () => void;
+  onAddFileUpload: () => void;
 };
 
 export default function AddBlockPanel({
@@ -19,6 +35,11 @@ export default function AddBlockPanel({
   onAddMultipleChoice,
   onAddEmail,
   onAddPhone,
+  onAddDate,
+  onAddLink,
+  onAddNumber,
+  onAddRating,
+  onAddFileUpload,
 }: Props) {
   return (
     <div className="rounded-md p-6 space-y-2">
@@ -72,9 +93,25 @@ export default function AddBlockPanel({
                     <Phone />
                     Phone
                   </BlockButton>
-                  <BlockButton onClick={onAddMultipleChoice}>
-                    <CircleCheckBig />
-                    Multiple choice
+                  <BlockButton onClick={onAddDate}>
+                    <Calendar />
+                    Date
+                  </BlockButton>
+                  <BlockButton onClick={onAddLink}>
+                    <Link />
+                    Link
+                  </BlockButton>
+                  <BlockButton onClick={onAddNumber}>
+                    <Hash />
+                    Number
+                  </BlockButton>
+                  <BlockButton onClick={onAddRating}>
+                    <Star />
+                    Rating
+                  </BlockButton>
+                  <BlockButton onClick={onAddFileUpload}>
+                    <Upload />
+                    File upload
                   </BlockButton>
                 </div>
               </motion.div>

@@ -157,3 +157,26 @@ export function getNextJumpOrder(
     ) + 1
   );
 }
+
+export function isValidUrl(str: string) {
+  try {
+    new URL(str);
+    return true;
+  } catch {
+    return false;
+  }
+}
+
+export function normalizeUrl(v: string) {
+  let out = v.trim();
+  if (out && !out.startsWith("http")) out = "https://" + out;
+  return out;
+}
+
+export function getDomain(url: string) {
+  try {
+    return new URL(url).hostname.replace("www.", "");
+  } catch {
+    return "";
+  }
+}

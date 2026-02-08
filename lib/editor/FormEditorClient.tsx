@@ -4,10 +4,15 @@ import { useFormEditor } from "@/lib/editor/useFormEditor";
 import BuilderCanvas from "@/components/builder/BuilderCanvas";
 import AddBlockPanel from "@/components/builder/AddBlockPanel";
 import {
+  createDateBlock,
   createEmailBlock,
+  createFileUploadBlock,
+  createLinkBlock,
   createLongTextBlock,
   createMultipleChoiceBlock,
+  createNumberBlock,
   createPhoneBlock,
+  createRatingBlock,
   createShortTextBlock,
 } from "@/lib/forms/defaults";
 import { useEffect, useState, useRef } from "react";
@@ -161,6 +166,11 @@ export default function FormEditorClient({ initialForm }: Props) {
           onAddMultipleChoice={() => addAndFocus(createMultipleChoiceBlock)}
           onAddEmail={() => addAndFocus(createEmailBlock)}
           onAddPhone={() => addAndFocus(createPhoneBlock)}
+          onAddDate={() => addAndFocus(createDateBlock)}
+          onAddLink={() => addAndFocus(createLinkBlock)}
+          onAddNumber={() => addAndFocus(createNumberBlock)}
+          onAddRating={() => addAndFocus(createRatingBlock)}
+          onAddFileUpload={() => addAndFocus(createFileUploadBlock)}
         />
 
         <BuilderCanvas
