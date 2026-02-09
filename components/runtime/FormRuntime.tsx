@@ -408,7 +408,7 @@ export default function FormRuntime({ form, preview }: Props) {
                         <button
                           type="button"
                           onClick={goBack}
-                          className="px-2 cursor-pointer font-bold hover:bg-neutral-100  py-1 border rounded-md text-md text-neutral-500 hover:text-neutral-600"
+                          className="px-2  font-bold hover:bg-neutral-100  py-1 border rounded-md text-md text-neutral-500 hover:text-neutral-600"
                         >
                           ←
                         </button>
@@ -457,7 +457,7 @@ export default function FormRuntime({ form, preview }: Props) {
                         <button
                           type="button"
                           onClick={goBack}
-                          className="px-2 cursor-pointer font-bold hover:bg-neutral-100  py-1 border rounded-md text-md text-neutral-500 hover:text-neutral-600"
+                          className="px-2  font-bold hover:bg-neutral-100  py-1 border rounded-md text-md text-neutral-500 hover:text-neutral-600"
                         >
                           ←
                         </button>
@@ -513,7 +513,7 @@ export default function FormRuntime({ form, preview }: Props) {
                         <button
                           type="button"
                           onClick={goBack}
-                          className="px-2 cursor-pointer font-bold hover:bg-neutral-100 py-1 border rounded-md text-md text-neutral-500 hover:text-neutral-600"
+                          className="px-2  font-bold hover:bg-neutral-100 py-1 border rounded-md text-md text-neutral-500 hover:text-neutral-600"
                         >
                           ←
                         </button>
@@ -573,7 +573,7 @@ export default function FormRuntime({ form, preview }: Props) {
                         <button
                           type="button"
                           onClick={goBack}
-                          className="px-2 cursor-pointer font-bold hover:bg-neutral-100 py-1 border rounded-md text-md text-neutral-500 hover:text-neutral-600"
+                          className="px-2  font-bold hover:bg-neutral-100 py-1 border rounded-md text-md text-neutral-500 hover:text-neutral-600"
                         >
                           ←
                         </button>
@@ -629,7 +629,7 @@ export default function FormRuntime({ form, preview }: Props) {
                         <button
                           type="button"
                           onClick={goBack}
-                          className="px-2 cursor-pointer font-bold hover:bg-neutral-100 py-1 border rounded-md text-md text-neutral-500 hover:text-neutral-600"
+                          className="px-2  font-bold hover:bg-neutral-100 py-1 border rounded-md text-md text-neutral-500 hover:text-neutral-600"
                         >
                           ←
                         </button>
@@ -708,7 +708,7 @@ export default function FormRuntime({ form, preview }: Props) {
                         <button
                           type="button"
                           onClick={goBack}
-                          className="px-2 cursor-pointer font-bold hover:bg-neutral-100 py-1 border rounded-md text-md text-neutral-500 hover:text-neutral-600"
+                          className="px-2  font-bold hover:bg-neutral-100 py-1 border rounded-md text-md text-neutral-500 hover:text-neutral-600"
                         >
                           ←
                         </button>
@@ -778,7 +778,7 @@ export default function FormRuntime({ form, preview }: Props) {
                         <button
                           type="button"
                           onClick={goBack}
-                          className="px-2 cursor-pointer font-bold hover:bg-neutral-100  py-1 border rounded-md text-md text-neutral-500 hover:text-neutral-600"
+                          className="px-2  font-bold hover:bg-neutral-100  py-1 border rounded-md text-md text-neutral-500 hover:text-neutral-600"
                         >
                           ←
                         </button>
@@ -860,7 +860,7 @@ export default function FormRuntime({ form, preview }: Props) {
                         <button
                           type="button"
                           onClick={goBack}
-                          className="px-2 cursor-pointer font-bold hover:bg-neutral-100 py-1 border rounded-md text-md text-neutral-500 hover:text-neutral-600"
+                          className="px-2  font-bold hover:bg-neutral-100 py-1 border rounded-md text-md text-neutral-500 hover:text-neutral-600"
                         >
                           ←
                         </button>
@@ -950,7 +950,7 @@ export default function FormRuntime({ form, preview }: Props) {
                         <button
                           type="button"
                           onClick={goBack}
-                          className="px-2 cursor-pointer font-bold hover:bg-neutral-100 py-1 border rounded-md text-md text-neutral-500 hover:text-neutral-600"
+                          className="px-2  font-bold hover:bg-neutral-100 py-1 border rounded-md text-md text-neutral-500 hover:text-neutral-600"
                         >
                           ←
                         </button>
@@ -1267,7 +1267,7 @@ export default function FormRuntime({ form, preview }: Props) {
                       <select
                         value={h ?? ""}
                         onChange={(e) => updateTime(e.target.value, m)}
-                        className="border border-neutral-300 shadow-sm hover:shadow-md rounded-md px-3 py-2 focus:outline-none focus:ring-4 focus:ring-blue-200 cursor-pointer"
+                        className="border border-neutral-300 shadow-sm  rounded-md px-3 py-2 focus:outline-none focus:ring-4 focus:ring-blue-200 cursor-pointer"
                       >
                         <option value="">Hour</option>
                         {hours.map((hr) => (
@@ -1283,7 +1283,7 @@ export default function FormRuntime({ form, preview }: Props) {
                       <select
                         value={m ?? ""}
                         onChange={(e) => updateTime(h, e.target.value)}
-                        className="border border-neutral-300 shadow-sm hover:shadow-md cursor-pointer rounded-md px-3 py-2 focus:outline-none focus:ring-4 focus:ring-blue-200"
+                        className="border border-neutral-300 shadow-sm  cursor-pointer rounded-md px-3 py-2 focus:outline-none focus:ring-4 focus:ring-blue-200"
                       >
                         <option value="">Minutes</option>
                         {minutes.map((min) => (

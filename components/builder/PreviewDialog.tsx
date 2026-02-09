@@ -1,5 +1,10 @@
 import { useEffect, useState } from "react";
-import { Dialog, DialogContent, DialogTitle } from "@/components/ui/dialog";
+import {
+  Dialog,
+  DialogContent,
+  DialogTitle,
+  DialogOverlay,
+} from "@/components/ui/dialog";
 import { Form } from "@/lib/forms/types";
 import FormRuntime from "../runtime/FormRuntime";
 import { VisuallyHidden } from "@radix-ui/react-visually-hidden";
@@ -21,7 +26,8 @@ export function Preview({ form, open, onOpenChange }: Props) {
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="w-[900px] max-w-[90vw] h-[80vh] p-0">
+      <DialogOverlay className="bg-black/10 backdrop-blur-sm" />
+      <DialogContent className="w-[900px] max-w-[90vw] h-[80vh] p-0 backdrop-blur">
         <VisuallyHidden>
           <DialogTitle>Form preview</DialogTitle>
         </VisuallyHidden>

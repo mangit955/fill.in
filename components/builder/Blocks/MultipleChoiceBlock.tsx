@@ -1,3 +1,8 @@
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
 import TooltipHint from "@/components/ui/toolTipHint";
 import { MultipleChoiceBlock as MultipleChoiceBlockType } from "@/lib/forms/types";
 import { useEffect, useRef, useState } from "react";
@@ -119,28 +124,33 @@ export default function MultipleChoiceBlock({
               }
               className="border border-gray-300 shadow-sm hover:shadow-md rounded-md px-2 py-1 text-sm w-full cursor-pointer"
             />
-            <div className="hover:bg-gray-100 text-neutral-400  hover:text-neutral-600  rounded-md px-1">
-              <button
-                disabled={block.config.options.length === 1}
-                onClick={() =>
-                  onUpdateConfig(block.id, (config) => ({
-                    ...config,
-                    options:
-                      config.options.length === 1
-                        ? config.options
-                        : config.options.filter((o) => o.id !== option.id),
-                  }))
-                }
-              >
-                ✕
-              </button>
-            </div>
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <div className="hover:bg-gray-100 text-neutral-400  hover:text-neutral-600  rounded-md px-1">
+                  <button
+                    disabled={block.config.options.length === 1}
+                    onClick={() =>
+                      onUpdateConfig(block.id, (config) => ({
+                        ...config,
+                        options:
+                          config.options.length === 1
+                            ? config.options
+                            : config.options.filter((o) => o.id !== option.id),
+                      }))
+                    }
+                  >
+                    ✕
+                  </button>
+                </div>
+              </TooltipTrigger>
+              <TooltipContent className="font-bold">Remove</TooltipContent>
+            </Tooltip>
           </div>
         ))}
       </div>
 
       {/* Add option */}
-      <div className="hover:bg-neutral-100 border  mb-2 mt-2 cursor-pointer  text-neutral-400 hover:text-neutral-600 w-fit rounded-md px-1">
+      <div className="hover:bg-neutral-100 font-semibold  mb-2 mt-2 cursor-pointer  text-neutral-400 hover:text-neutral-600 w-fit rounded-md px-1">
         <button
           className="text-sm cursor-pointer"
           onClick={() =>
