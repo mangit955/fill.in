@@ -9,7 +9,7 @@ type Props = {
   onUpdateMeta: (blockId: string, updates: { required?: boolean }) => void;
   onUpdateConfig: (
     blockId: string,
-    updater: (config: DateBlockType["config"]) => DateBlockType["config"]
+    updater: (config: DateBlockType["config"]) => DateBlockType["config"],
   ) => void;
 };
 
@@ -71,21 +71,23 @@ export default function DateBlock({
           onClick={() => setIsEditing(true)}
         >
           {block.config.label}
-          <TooltipHint label="Required">
-            <span
-              onClick={(e) => {
-                e.stopPropagation();
-                onUpdateMeta(block.id, { required: !block.required });
-              }}
-              className={`ml-1 text-2xl cursor-pointer ${
-                block.required
-                  ? "text-red-500"
-                  : "text-neutral-300 hover:text-neutral-500"
-              }`}
-            >
-              *
-            </span>
-          </TooltipHint>
+          <span className="inline-block ml-1 pointer-events-none">
+            <TooltipHint label="Required">
+              <span
+                onClick={(e) => {
+                  e.stopPropagation();
+                  onUpdateMeta(block.id, { required: !block.required });
+                }}
+                className={`text-2xl cursor-pointer pointer-events-auto ${
+                  block.required
+                    ? "text-red-500"
+                    : "text-neutral-300 hover:text-neutral-500"
+                }`}
+              >
+                *
+              </span>
+            </TooltipHint>
+          </span>
         </p>
       )}
 

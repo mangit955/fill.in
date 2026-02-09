@@ -73,7 +73,7 @@ export function createShortTextBlock(): ShortTextBlock {
   return {
     id: generateId("short_text"),
     type: "short_text",
-    required: false,
+    required: true,
     config: createShortTextConfig(),
   };
 }
@@ -82,7 +82,7 @@ export function createLongTextBlock(): LongTextBlock {
   return {
     id: generateId("long_text"),
     type: "long_text",
-    required: false,
+    required: true,
     config: createLongTextConfig(),
   };
 }
@@ -124,7 +124,7 @@ export function createDateBlock(): DateBlock {
   return {
     id: crypto.randomUUID(),
     type: "date",
-    required: false,
+    required: true,
     config: {
       label: "",
       placeholder: "Pick a date",
@@ -136,7 +136,7 @@ export function createLinkBlock(): LinkBlock {
   return {
     id: crypto.randomUUID(),
     type: "link",
-    required: false,
+    required: true,
     config: {
       label: "",
       placeholder: "https://fillin.com",
@@ -148,7 +148,7 @@ export function createNumberBlock(): NumberBlock {
   return {
     id: crypto.randomUUID(),
     type: "number",
-    required: false,
+    required: true,
     config: {
       label: "",
       placeholder: "Enter a number",
@@ -160,7 +160,7 @@ export function createRatingBlock(): RatingBlock {
   return {
     id: crypto.randomUUID(),
     type: "rating",
-    required: false,
+    required: true,
     config: {
       label: "",
       max: 5,
@@ -186,7 +186,7 @@ export function createTimeBlock(): TimeBlock {
   return {
     id: crypto.randomUUID(),
     type: "time",
-    required: false,
+    required: true,
     config: {
       label: "",
     },
@@ -197,7 +197,7 @@ export function createLinearScaleBlock(): LinearScaleBlock {
   return {
     id: crypto.randomUUID(),
     type: "linear_scale",
-    required: false,
+    required: true,
     config: {
       label: "",
       min: 1,

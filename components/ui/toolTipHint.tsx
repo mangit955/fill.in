@@ -11,7 +11,7 @@ type Props = {
 export default function TooltipHint({ label, children, className }: Props) {
   return (
     <span
-      className={`relative inline-flex items-center justify-center align-middle leading-none group ${
+      className={`relative inline-flex items-center justify-center align-middle leading-none group/tooltip-hint ${
         className ?? ""
       }`}
     >
@@ -23,7 +23,7 @@ export default function TooltipHint({ label, children, className }: Props) {
   whitespace-nowrap rounded bg-black px-2 py-1 text-xs font-semibold text-white
   opacity-0 translate-y-1 pointer-events-none
   transition-all duration-200 ease-out
-  group-hover:opacity-100 group-hover:translate-y-0 z-50
+  group-hover/tooltip-hint:opacity-100 group-hover/tooltip-hint:translate-y-0 z-50
 "
       >
         {label}

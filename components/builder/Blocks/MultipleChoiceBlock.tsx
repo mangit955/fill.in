@@ -9,8 +9,8 @@ type Props = {
   onUpdateConfig: (
     blockId: string,
     updater: (
-      config: MultipleChoiceBlockType["config"]
-    ) => MultipleChoiceBlockType["config"]
+      config: MultipleChoiceBlockType["config"],
+    ) => MultipleChoiceBlockType["config"],
   ) => void;
 };
 
@@ -113,13 +113,13 @@ export default function MultipleChoiceBlock({
                 onUpdateConfig(block.id, (config) => ({
                   ...config,
                   options: config.options.map((o) =>
-                    o.id === option.id ? { ...o, label: e.target.value } : o
+                    o.id === option.id ? { ...o, label: e.target.value } : o,
                   ),
                 }))
               }
               className="border border-gray-300 shadow-sm hover:shadow-md rounded-md px-2 py-1 text-sm w-full cursor-pointer"
             />
-            <div className="hover:bg-gray-100 text-neutral-400  hover:text-neutral-600  rounded px-1">
+            <div className="hover:bg-gray-100 text-neutral-400  hover:text-neutral-600  rounded-md px-1">
               <button
                 disabled={block.config.options.length === 1}
                 onClick={() =>
@@ -131,7 +131,6 @@ export default function MultipleChoiceBlock({
                         : config.options.filter((o) => o.id !== option.id),
                   }))
                 }
-                className=" cursor-pointer"
               >
                 ✕
               </button>
@@ -141,7 +140,7 @@ export default function MultipleChoiceBlock({
       </div>
 
       {/* Add option */}
-      <div className="hover:bg-gray-100 mb-2 mt-2 cursor-pointer  text-neutral-400 hover:text-neutral-600 w-fit rounded px-1">
+      <div className="hover:bg-neutral-100 border  mb-2 mt-2 cursor-pointer  text-neutral-400 hover:text-neutral-600 w-fit rounded-md px-1">
         <button
           className="text-sm cursor-pointer"
           onClick={() =>

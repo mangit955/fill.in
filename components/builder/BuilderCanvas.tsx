@@ -21,7 +21,7 @@ type BuilderCanvasProps = {
   onUpdateMeta: (blockId: string, updates: { required?: boolean }) => void;
   onUpdateConfig: <T extends FormBlock>(
     blockId: string,
-    updater: (config: T["config"]) => T["config"]
+    updater: (config: T["config"]) => T["config"],
   ) => void;
   onRemove: (blockId: string) => void;
   onConsumeFocus: () => void;
@@ -34,7 +34,7 @@ type BuilderCanvasProps = {
   onAddLogicJump: (jump: LogicJump) => void;
   onUpdateLogicJump: (
     jumpId: string,
-    updates: Partial<Omit<LogicJump, "id">>
+    updates: Partial<Omit<LogicJump, "id">>,
   ) => void;
   onRemoveLogicJump: (jumpId: string) => void;
   onSetActive?: (blockId: string) => void;
@@ -146,7 +146,7 @@ export default function BuilderCanvas({
                 <div
                   ref={setNodeRef}
                   style={style}
-                  className={`relative transition-all duration-200 ease-out ${
+                  className={`group relative transition-all duration-200 ease-out ${
                     isDragging
                       ? "opacity-80 scale-[0.98]"
                       : "opacity-100 scale-100"
@@ -166,7 +166,13 @@ export default function BuilderCanvas({
                     onUpdateLogicJump={onUpdateLogicJump}
                   >
                     {/* Actions + handle */}
-                    <div className="absolute left-2 top-[30%] flex items-center">
+                    <div
+                      className={`absolute left-2 top-[30%] flex items-center transition-opacity duration-150 ${
+                        activeBlockId === block.id
+                          ? "opacity-100"
+                          : "opacity-0 group-hover:opacity-100"
+                      }`}
+                    >
                       {/* Delete */}
                       <Tooltip>
                         <TooltipTrigger asChild>
