@@ -157,6 +157,19 @@ export type TimeBlock = {
   };
 };
 
+export type LinearScaleBlock = {
+  id: string;
+  type: "linear_scale";
+  required?: boolean;
+  config: {
+    label: string;
+    min: number;
+    max: number;
+    minLabel?: string;
+    maxLabel?: string;
+  };
+};
+
 export type FormBlock =
   | ShortTextBlock
   | LongTextBlock
@@ -168,7 +181,8 @@ export type FormBlock =
   | NumberBlock
   | RatingBlock
   | FileUploadBlock
-  | TimeBlock;
+  | TimeBlock
+  | LinearScaleBlock;
 
 //Form
 

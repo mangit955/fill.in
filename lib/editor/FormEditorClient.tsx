@@ -7,6 +7,7 @@ import {
   createDateBlock,
   createEmailBlock,
   createFileUploadBlock,
+  createLinearScaleBlock,
   createLinkBlock,
   createLongTextBlock,
   createMultipleChoiceBlock,
@@ -59,7 +60,7 @@ export default function FormEditorClient({ initialForm }: Props) {
       });
     },
     [hasUnsavedChanges, editor.form],
-    1500
+    1500,
   );
 
   useEffect(() => {
@@ -173,6 +174,7 @@ export default function FormEditorClient({ initialForm }: Props) {
           onAddRating={() => addAndFocus(createRatingBlock)}
           onAddFileUpload={() => addAndFocus(createFileUploadBlock)}
           onAddTime={() => addAndFocus(createTimeBlock)}
+          onAddLinearScale={() => addAndFocus(createLinearScaleBlock)}
         />
 
         <BuilderCanvas

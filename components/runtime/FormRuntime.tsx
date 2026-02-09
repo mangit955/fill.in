@@ -295,6 +295,14 @@ export default function FormRuntime({ form, preview }: Props) {
       }
     }
 
+    //linear scale validation
+    if (block.type === "linear_scale") {
+      if (block.required && answers[currentBlockId!] === undefined) {
+        toast.error("Please select a value");
+        return;
+      }
+    }
+
     const next = getNextBlockId(currentBlockId!, nextAnswers, form);
 
     const isEmpty =
@@ -1287,6 +1295,81 @@ export default function FormRuntime({ form, preview }: Props) {
                     </div>
                   );
                 })()}
+
+                {(() => {
+                  const nextId = getNextBlockId(currentBlockId!, answers, form);
+                  return (
+                    <div className="mt-4 flex gap-2">
+                      {history.length > 0 && (
+                        <button
+                          onClick={goBack}
+                          className="px-2 py-1 border rounded-md text-neutral-600 hover:bg-neutral-100"
+                        >
+                          ←
+                        </button>
+                      )}
+
+                      <button
+                        className={`px-2 py-1 border text-white rounded-md cursor-pointer font-semibold disabled:cursor-not-allowed ${
+                          nextId
+                            ? "bg-black hover:bg-neutral-700"
+                            : "bg-primary hover:bg-primary/90 focus:ring-4 ring-blue-300"
+                        }`}
+                        onClick={() => submitAnswer(answers[block.id])}
+                        disabled={submitting}
+                      >
+                        {submitting ? (
+                          <span className="flex items-center min-w-[80px] justify-center w-full">
+                            <Spinner height={20} width={20} strokeWidth={3} />
+                          </span>
+                        ) : nextId ? (
+                          "Next →"
+                        ) : (
+                          "Submit →"
+                        )}
+                      </button>
+                    </div>
+                  );
+                })()}
+              </>
+            )}
+
+            {block.type === "linear_scale" && (
+              <>
+                <div className="space-y-2 w-fit">
+                  <div className="flex items-center justify-between text-xs text-neutral-500">
+                    <span>{block.config.minLabel}</span>
+                    <span>{block.config.maxLabel}</span>
+                  </div>
+
+                  <div className="inline-flex gap-2 flex-wrap">
+                    {Array.from({
+                      length: block.config.max - block.config.min + 1,
+                    }).map((_, i) => {
+                      const v = block.config.min + i;
+                      const selected = answers[block.id] === v;
+
+                      return (
+                        <button
+                          key={v}
+                          type="button"
+                          onClick={() =>
+                            setAnswers({ ...answers, [block.id]: v })
+                          }
+                          className={`px-3 py-2 cursor-pointer border border-neutral-300 shadow-sm hover:shadow-md rounded-md min-w-[42px]
+                ${
+                  selected
+                    ? "bg-black text-white"
+                    : "bg-white text-neutral-500 hover:bg-neutral-100 hover:text-neutral-700"
+                }
+              `}
+                        >
+                          {v}
+                        </button>
+                      );
+                    })}
+                  </div>
+                </div>
 
                 {(() => {
                   const nextId = getNextBlockId(currentBlockId!, answers, form);

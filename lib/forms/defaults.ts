@@ -3,6 +3,7 @@ import {
   EmailBlock,
   FileUploadBlock,
   Form,
+  LinearScaleBlock,
   LinkBlock,
   LongTextBlock,
   LongTextConfig,
@@ -101,7 +102,7 @@ export function createEmailBlock(): EmailBlock {
     type: "email",
     required: true,
     config: {
-      label: "Email",
+      label: "",
       placeholder: "Enter your email",
     },
   };
@@ -188,6 +189,21 @@ export function createTimeBlock(): TimeBlock {
     required: false,
     config: {
       label: "",
+    },
+  };
+}
+
+export function createLinearScaleBlock(): LinearScaleBlock {
+  return {
+    id: crypto.randomUUID(),
+    type: "linear_scale",
+    required: false,
+    config: {
+      label: "",
+      min: 1,
+      max: 5,
+      minLabel: "Not satisfied",
+      maxLabel: "Very satisfied",
     },
   };
 }

@@ -6,6 +6,7 @@ import {
   Calendar,
   CircleCheckBig,
   Clock,
+  Ellipsis,
   Hash,
   Link,
   Phone,
@@ -29,6 +30,7 @@ type Props = {
   onAddRating: () => void;
   onAddFileUpload: () => void;
   onAddTime: () => void;
+  onAddLinearScale: () => void;
 };
 
 export default function AddBlockPanel({
@@ -43,6 +45,7 @@ export default function AddBlockPanel({
   onAddRating,
   onAddFileUpload,
   onAddTime,
+  onAddLinearScale,
 }: Props) {
   return (
     <div className="rounded-md p-6 space-y-2">
@@ -119,6 +122,10 @@ export default function AddBlockPanel({
                   <BlockButton onClick={onAddTime}>
                     <Clock />
                     Time
+                  </BlockButton>
+                  <BlockButton onClick={onAddLinearScale}>
+                    <Ellipsis />
+                    Linear scale
                   </BlockButton>
                 </div>
               </motion.div>

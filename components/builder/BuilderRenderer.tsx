@@ -11,10 +11,12 @@ import {
   RatingBlock as RatingBlockType,
   FileUploadBlock as FileUploadBlockType,
   TimeBlock as TimeBlockType,
+  LinearScaleBlock as LinearScaleBlockType,
 } from "../../lib/forms/types";
 import DateBlock from "./Blocks/DateBlock";
 import EmailBlock from "./Blocks/EmailBlock";
 import FileUploadBlock from "./Blocks/FileUploadBlock";
+import LinearScaleBlock from "./Blocks/LinearScaleBlock";
 import LinkBlock from "./Blocks/LinkBlock";
 import LongTextBlock from "./Blocks/LongTextBlock";
 import MultipleChoiceBlock from "./Blocks/MultipleChoiceBlock";
@@ -30,7 +32,7 @@ type BlockRendererProps = {
   onUpdateMeta: (blockId: string, updates: { required?: boolean }) => void;
   onUpdateConfig: <T extends FormBlock>(
     blockId: string,
-    updater: (config: T["config"]) => T["config"]
+    updater: (config: T["config"]) => T["config"],
   ) => void;
 };
 
@@ -169,6 +171,18 @@ export default function BlockRenderer({
           onUpdateMeta={onUpdateMeta}
           onUpdateConfig={(id, updater) =>
             onUpdateConfig<TimeBlockType>(id, updater)
+          }
+        />
+      );
+
+    case "linear_scale":
+      return (
+        <LinearScaleBlock
+          block={block}
+          autoFocus={autoFocus}
+          onUpdateMeta={onUpdateMeta}
+          onUpdateConfig={(id, updater) =>
+            onUpdateConfig<LinearScaleBlockType>(id, updater)
           }
         />
       );
