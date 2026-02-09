@@ -10,6 +10,7 @@ import {
   NumberBlock as NumberBlockType,
   RatingBlock as RatingBlockType,
   FileUploadBlock as FileUploadBlockType,
+  TimeBlock as TimeBlockType,
 } from "../../lib/forms/types";
 import DateBlock from "./Blocks/DateBlock";
 import EmailBlock from "./Blocks/EmailBlock";
@@ -21,6 +22,7 @@ import NumberBlock from "./Blocks/NumberBlock";
 import PhoneBlock from "./Blocks/PhoneBlock";
 import RatingBlock from "./Blocks/RatingBlock";
 import ShortTextBlock from "./Blocks/ShortTextBlock";
+import TimeBlock from "./Blocks/TimeBlock";
 
 type BlockRendererProps = {
   block: FormBlock;
@@ -155,6 +157,18 @@ export default function BlockRenderer({
           onUpdateMeta={onUpdateMeta}
           onUpdateConfig={(id, updater) =>
             onUpdateConfig<FileUploadBlockType>(id, updater)
+          }
+        />
+      );
+
+    case "time":
+      return (
+        <TimeBlock
+          block={block}
+          autoFocus={autoFocus}
+          onUpdateMeta={onUpdateMeta}
+          onUpdateConfig={(id, updater) =>
+            onUpdateConfig<TimeBlockType>(id, updater)
           }
         />
       );

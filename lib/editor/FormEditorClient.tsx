@@ -14,6 +14,7 @@ import {
   createPhoneBlock,
   createRatingBlock,
   createShortTextBlock,
+  createTimeBlock,
 } from "@/lib/forms/defaults";
 import { useEffect, useState, useRef } from "react";
 import { Form, FormBlock } from "@/lib/forms/types";
@@ -171,6 +172,7 @@ export default function FormEditorClient({ initialForm }: Props) {
           onAddNumber={() => addAndFocus(createNumberBlock)}
           onAddRating={() => addAndFocus(createRatingBlock)}
           onAddFileUpload={() => addAndFocus(createFileUploadBlock)}
+          onAddTime={() => addAndFocus(createTimeBlock)}
         />
 
         <BuilderCanvas

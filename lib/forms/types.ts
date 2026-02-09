@@ -148,6 +148,15 @@ export type FileUploadBlock = {
   };
 };
 
+export type TimeBlock = {
+  id: string;
+  type: "time";
+  required?: boolean;
+  config: {
+    label: string;
+  };
+};
+
 export type FormBlock =
   | ShortTextBlock
   | LongTextBlock
@@ -158,7 +167,8 @@ export type FormBlock =
   | LinkBlock
   | NumberBlock
   | RatingBlock
-  | FileUploadBlock;
+  | FileUploadBlock
+  | TimeBlock;
 
 //Form
 

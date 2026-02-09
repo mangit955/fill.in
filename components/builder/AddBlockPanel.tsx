@@ -5,6 +5,7 @@ import {
   AtSign,
   Calendar,
   CircleCheckBig,
+  Clock,
   Hash,
   Link,
   Phone,
@@ -27,6 +28,7 @@ type Props = {
   onAddNumber: () => void;
   onAddRating: () => void;
   onAddFileUpload: () => void;
+  onAddTime: () => void;
 };
 
 export default function AddBlockPanel({
@@ -40,6 +42,7 @@ export default function AddBlockPanel({
   onAddNumber,
   onAddRating,
   onAddFileUpload,
+  onAddTime,
 }: Props) {
   return (
     <div className="rounded-md p-6 space-y-2">
@@ -112,6 +115,10 @@ export default function AddBlockPanel({
                   <BlockButton onClick={onAddFileUpload}>
                     <Upload />
                     File upload
+                  </BlockButton>
+                  <BlockButton onClick={onAddTime}>
+                    <Clock />
+                    Time
                   </BlockButton>
                 </div>
               </motion.div>

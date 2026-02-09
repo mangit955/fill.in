@@ -37,7 +37,7 @@ type Props = {
 export default function FormRuntime({ form, preview }: Props) {
   const router = useRouter();
   const [currentBlockId, setCurrentBlockId] = useState<string | null>(
-    form.blocks[0]?.id ?? null
+    form.blocks[0]?.id ?? null,
   );
   const [answers, setAnswers] = useState<Record<string, unknown>>({});
   const [submitting, setSubmitting] = useState(false);
@@ -380,7 +380,7 @@ export default function FormRuntime({ form, preview }: Props) {
             {block.type === "short_text" && (
               <>
                 <input
-                  className="w-full focus:outline-none focus:ring-4 focus:ring-blue-300 border border-gray-300 rounded-md shadow-sm px-3 py-2"
+                  className="w-full focus:outline-none focus:ring-4 focus:ring-blue-200 border border-gray-300 rounded-md shadow-sm px-3 py-2"
                   value={(answers[block.id] as string) ?? ""}
                   onChange={(e) =>
                     setAnswers({ ...answers, [block.id]: e.target.value })
@@ -434,7 +434,7 @@ export default function FormRuntime({ form, preview }: Props) {
             {block.type === "long_text" && (
               <>
                 <textarea
-                  className="w-full focus:outline-none focus:ring-4 focus:ring-blue-300 border border-gray-300 rounded-md shadow-sm px-3 py-2 "
+                  className="w-full focus:outline-none focus:ring-4 focus:ring-blue-200 border border-gray-300 rounded-md shadow-sm px-3 py-2 "
                   rows={block.config.rows}
                   value={(answers[block.id] as string) ?? ""}
                   onChange={(e) =>
@@ -484,7 +484,7 @@ export default function FormRuntime({ form, preview }: Props) {
               <>
                 <input
                   type="email"
-                  className="w-full focus:outline-none focus:ring-4 focus:ring-blue-300 border border-gray-300 rounded-md shadow-sm px-3 py-2"
+                  className="w-full focus:outline-none focus:ring-4 focus:ring-blue-200 border border-gray-300 rounded-md shadow-sm px-3 py-2"
                   value={(answers[block.id] as string) ?? ""}
                   onChange={(e) =>
                     setAnswers({ ...answers, [block.id]: e.target.value })
@@ -542,7 +542,7 @@ export default function FormRuntime({ form, preview }: Props) {
                   type="tel"
                   inputMode="numeric"
                   pattern="[0-9]*"
-                  className="w-full focus:outline-none focus:ring-4 focus:ring-blue-300 border border-gray-300 rounded-md shadow-sm px-3 py-2"
+                  className="w-full focus:outline-none focus:ring-4 focus:ring-blue-200 border border-gray-300 rounded-md shadow-sm px-3 py-2"
                   value={(answers[block.id] as string) ?? ""}
                   onChange={(e) => {
                     const onlyDigits = e.target.value.replace(/\D/g, "");
@@ -600,7 +600,7 @@ export default function FormRuntime({ form, preview }: Props) {
               <>
                 <input
                   type="date"
-                  className="w-full border focus:outline-none focus:ring-4 focus:ring-blue-300 border-gray-300 rounded-md shadow-sm px-3 py-2"
+                  className="w-full border focus:outline-none focus:ring-4 focus:ring-blue-200 border-gray-300 rounded-md shadow-sm px-3 py-2"
                   value={(answers[block.id] as string) ?? ""}
                   onChange={(e) =>
                     setAnswers({ ...answers, [block.id]: e.target.value })
@@ -657,7 +657,7 @@ export default function FormRuntime({ form, preview }: Props) {
                 <input
                   type="url"
                   placeholder={block.config.placeholder || "https://fillin.com"}
-                  className="w-full border focus:outline-none focus:ring-4 focus:ring-blue-300 border-gray-300 rounded-md shadow-sm px-3 py-2"
+                  className="w-full border focus:outline-none focus:ring-4 focus:ring-blue-200 border-gray-300 rounded-md shadow-sm px-3 py-2"
                   onBlur={(e) => {
                     let v = e.target.value.trim();
                     if (v && !v.startsWith("http")) {
@@ -681,7 +681,7 @@ export default function FormRuntime({ form, preview }: Props) {
                   <div className="text-xs mt-1 text-neutral-500 flex items-center gap-2">
                     <Image
                       src={`https://www.google.com/s2/favicons?domain=${encodeURIComponent(
-                        cleanDomain
+                        cleanDomain,
                       )}`}
                       alt="preview"
                       width={20}
@@ -811,7 +811,7 @@ export default function FormRuntime({ form, preview }: Props) {
                   inputMode="numeric"
                   placeholder="Enter a number"
                   pattern="[0-9]*"
-                  className="w-full focus:outline-none focus:ring-4 focus:ring-blue-300 border border-gray-300 rounded-md shadow-sm px-3 py-2"
+                  className="w-full focus:outline-none focus:ring-4 focus:ring-blue-200 border border-gray-300 rounded-md shadow-sm px-3 py-2"
                   value={
                     answers[block.id] === undefined ||
                     answers[block.id] === null
@@ -902,7 +902,7 @@ export default function FormRuntime({ form, preview }: Props) {
                         ? (answers[block.id] as number)
                         : 0;
                     const displayValue =
-                      selectedValue > 0 ? selectedValue : ratingHover ?? 0;
+                      selectedValue > 0 ? selectedValue : (ratingHover ?? 0);
                     const selected = value <= displayValue;
 
                     return (
@@ -1009,7 +1009,7 @@ export default function FormRuntime({ form, preview }: Props) {
                           sizeMB > block.config.maxSizeMB
                         ) {
                           toast.error(
-                            `Max file size is ${block.config.maxSizeMB}MB`
+                            `Max file size is ${block.config.maxSizeMB}MB`,
                           );
                           setUploadingByBlock((prev) => ({
                             ...prev,
@@ -1127,7 +1127,7 @@ export default function FormRuntime({ form, preview }: Props) {
                                     // strip leading UUID (36 chars + dash) safely
                                     const originalName = raw.replace(
                                       /^[0-9a-f-]{36}-/i,
-                                      ""
+                                      "",
                                     );
                                     return originalName;
                                   })()}
@@ -1169,7 +1169,7 @@ export default function FormRuntime({ form, preview }: Props) {
                               <div
                                 tabIndex={0}
                                 className="text-sm hover:text-neutral-900 rounded-md px-2 py-1
-             focus:outline-none focus:ring-4 focus:ring-blue-300
+             focus:outline-none focus:ring-4 focus:ring-blue-200
              hover:bg-neutral-100
              flex gap-2 items-center font-medium text-neutral-500"
                               >
@@ -1188,6 +1188,105 @@ export default function FormRuntime({ form, preview }: Props) {
                       );
                     })()}
                 </label>
+
+                {(() => {
+                  const nextId = getNextBlockId(currentBlockId!, answers, form);
+                  return (
+                    <div className="mt-4 flex gap-2">
+                      {history.length > 0 && (
+                        <button
+                          onClick={goBack}
+                          className="px-2 py-1 border rounded-md text-neutral-600 hover:bg-neutral-100"
+                        >
+                          ←
+                        </button>
+                      )}
+
+                      <button
+                        className={`px-2 py-1 border text-white rounded-md cursor-pointer font-semibold disabled:cursor-not-allowed ${
+                          nextId
+                            ? "bg-black hover:bg-neutral-700"
+                            : "bg-primary hover:bg-primary/90 focus:ring-4 ring-blue-300"
+                        }`}
+                        onClick={() => submitAnswer(answers[block.id])}
+                        disabled={submitting}
+                      >
+                        {submitting ? (
+                          <span className="flex items-center min-w-[80px] justify-center w-full">
+                            <Spinner height={20} width={20} strokeWidth={3} />
+                          </span>
+                        ) : nextId ? (
+                          "Next →"
+                        ) : (
+                          "Submit →"
+                        )}
+                      </button>
+                    </div>
+                  );
+                })()}
+              </>
+            )}
+
+            {block.type === "time" && (
+              <>
+                {(() => {
+                  const current = (answers[block.id] as string) ?? "";
+                  const [h, m] = current.split(":");
+
+                  const hours = Array.from({ length: 24 }).map((_, i) =>
+                    String(i).padStart(2, "0"),
+                  );
+                  const minutes = Array.from({ length: 60 }).map((_, i) =>
+                    String(i).padStart(2, "0"),
+                  );
+
+                  function updateTime(nextHour?: string, nextMinute?: string) {
+                    const hour = nextHour ?? h ?? "";
+                    const minute = nextMinute ?? m ?? "";
+
+                    if (!hour && !minute) {
+                      setAnswers({ ...answers, [block.id]: "" });
+                      return;
+                    }
+
+                    const value = `${hour || "00"}:${minute || "00"}`;
+                    setAnswers({ ...answers, [block.id]: value });
+                  }
+
+                  return (
+                    <div className="flex items-center gap-2">
+                      {/* Hour dropdown */}
+                      <select
+                        value={h ?? ""}
+                        onChange={(e) => updateTime(e.target.value, m)}
+                        className="border border-neutral-300 shadow-sm hover:shadow-md rounded-md px-3 py-2 focus:outline-none focus:ring-4 focus:ring-blue-200 cursor-pointer"
+                      >
+                        <option value="">Hour</option>
+                        {hours.map((hr) => (
+                          <option key={hr} value={hr}>
+                            {hr}
+                          </option>
+                        ))}
+                      </select>
+
+                      <span className="text-lg font-semibold">:</span>
+
+                      {/* Minute dropdown */}
+                      <select
+                        value={m ?? ""}
+                        onChange={(e) => updateTime(h, e.target.value)}
+                        className="border border-neutral-300 shadow-sm hover:shadow-md cursor-pointer rounded-md px-3 py-2 focus:outline-none focus:ring-4 focus:ring-blue-200"
+                      >
+                        <option value="">Minutes</option>
+                        {minutes.map((min) => (
+                          <option key={min} value={min}>
+                            {min}
+                          </option>
+                        ))}
+                      </select>
+                    </div>
+                  );
+                })()}
 
                 {(() => {
                   const nextId = getNextBlockId(currentBlockId!, answers, form);

@@ -13,6 +13,7 @@ import {
   RatingBlock,
   ShortTextBlock,
   ShortTextConfig,
+  TimeBlock,
 } from "./types";
 
 //Id generator (centralized): did this to maintain consistency(not repeating the same logic again)
@@ -176,6 +177,17 @@ export function createFileUploadBlock(): FileUploadBlock {
       multiple: false,
       accept: "*",
       maxSizeMB: 25,
+    },
+  };
+}
+
+export function createTimeBlock(): TimeBlock {
+  return {
+    id: crypto.randomUUID(),
+    type: "time",
+    required: false,
+    config: {
+      label: "",
     },
   };
 }

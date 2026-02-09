@@ -1,21 +1,19 @@
-import { FileUploadBlock as FileUploadBlockType } from "@/lib/forms/types";
+import { TimeBlock as TimeBlockType } from "@/lib/forms/types";
 import { useEffect, useRef, useState } from "react";
-import { Upload } from "lucide-react";
+import { Clock } from "lucide-react";
 import TooltipHint from "@/components/ui/toolTipHint";
 
 type Props = {
-  block: FileUploadBlockType;
+  block: TimeBlockType;
   autoFocus?: boolean;
   onUpdateMeta: (blockId: string, updates: { required?: boolean }) => void;
   onUpdateConfig: (
     blockId: string,
-    updater: (
-      config: FileUploadBlockType["config"],
-    ) => FileUploadBlockType["config"],
+    updater: (config: TimeBlockType["config"]) => TimeBlockType["config"]
   ) => void;
 };
 
-export default function FileUploadBlock({
+export default function TimeBlock({
   block,
   autoFocus,
   onUpdateConfig,
@@ -38,21 +36,15 @@ export default function FileUploadBlock({
   }
 
   useEffect(() => {
-    if (autoFocus && isEditing) {
-      inputRef.current?.focus();
-    }
+    if (autoFocus && isEditing) inputRef.current?.focus();
   }, [autoFocus, isEditing]);
 
   useEffect(() => {
-    if (autoFocus) {
-      setIsEditing(true);
-    }
+    if (autoFocus) setIsEditing(true);
   }, [autoFocus]);
 
   useEffect(() => {
-    if (!isEditing) {
-      setValue(block.config.label);
-    }
+    if (!isEditing) setValue(block.config.label);
   }, [block.config.label, isEditing]);
 
   return (
@@ -70,10 +62,6 @@ export default function FileUploadBlock({
               e.preventDefault();
               save();
             }
-            if (e.key === "Escape") {
-              setValue(block.config.label);
-              setIsEditing(false);
-            }
           }}
           className="w-full font-medium text-xl bg-transparent outline-none mb-2"
         />
@@ -89,9 +77,9 @@ export default function FileUploadBlock({
                 e.stopPropagation();
                 onUpdateMeta(block.id, { required: !block.required });
               }}
-              className={`ml-1 text-2xl cursor-pointer transition ${
+              className={`ml-1 text-2xl cursor-pointer ${
                 block.required
-                  ? "text-red-500 hover:text-red-600"
+                  ? "text-red-500"
                   : "text-neutral-300 hover:text-neutral-500"
               }`}
             >
@@ -101,26 +89,18 @@ export default function FileUploadBlock({
         </p>
       )}
 
-      {/* Upload box */}
-      <label className="flex flex-col items-center justify-center gap-2 rounded-lg border border-dashed border-muted-foreground/40 px-4 py-6 text-center hover:border-gray-400  transition ">
-        <input className="hidden" />
-        <Upload className="h-6 w-6 text-muted-foreground" />
-
-        <div
-          tabIndex={0}
-          className="text-sm cursor-pointer
-             focus:ring-4 focus:ring-blue-200 focus:outline-none
-             hover:bg-gray-100 text-neutral-500 hover:text-neutral-700
-             px-2 py-1 rounded-md"
-        >
-          <span className="font-medium">Click to upload</span>
-          <span> or drag and drop</span>
-        </div>
-
-        <p className="text-xs text-muted-foreground">
-          Size limit: 25 MB. For file uploads upgrade.
-        </p>
-      </label>
+      {/* Preview */}
+      <div className="relative">
+        <input
+          disabled
+          type="time"
+          className="w-full border shadow-sm hover:shadow-md border-gray-300 rounded-md px-2 py-1 pr-8 text-sm bg-white"
+        />
+        <Clock
+          size={16}
+          className="absolute right-2 top-1/2 -translate-y-1/2 text-neutral-400"
+        />
+      </div>
     </div>
   );
 }
