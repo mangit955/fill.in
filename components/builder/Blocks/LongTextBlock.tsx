@@ -10,8 +10,8 @@ type Props = {
   onUpdateConfig: (
     blockId: string,
     updater: (
-      config: LongTextBlockType["config"]
-    ) => LongTextBlockType["config"]
+      config: LongTextBlockType["config"],
+    ) => LongTextBlockType["config"],
   ) => void;
 };
 

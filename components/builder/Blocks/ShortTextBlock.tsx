@@ -10,8 +10,8 @@ type Props = {
   onUpdateConfig: (
     blockId: string,
     updater: (
-      config: ShortTextBlockType["config"]
-    ) => ShortTextBlockType["config"]
+      config: ShortTextBlockType["config"],
+    ) => ShortTextBlockType["config"],
   ) => void;
 };
 

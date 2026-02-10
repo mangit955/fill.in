@@ -211,15 +211,25 @@ export default function AddBlockPanel({
       </motion.div>
 
       {/* Command dialog */}
-      <CommandDialog open={open} onOpenChange={setOpen}>
+      <CommandDialog
+        open={open}
+        onOpenChange={setOpen}
+        showCloseButton={false}
+        className="sm:max-w-sm"
+      >
         <Command>
-          <CommandInput placeholder="Search question type..." />
+          <div className="p-2 rounded-md">
+            <CommandInput
+              placeholder="Find question type, input fields..."
+              className="border border-gray-300 bg-gray-100 rounded-md focus-visible:ring-0"
+            />
+          </div>
           <CommandList>
             <CommandEmpty>No block found.</CommandEmpty>
 
             <CommandGroup heading="Basic">
               <CommandItem
-                className="cursor-pointer group"
+                className="cursor-pointer group py-1! px-2! rounded-md! "
                 onSelect={() => {
                   onAddShortText();
                   setOpen(false);
@@ -236,7 +246,7 @@ export default function AddBlockPanel({
               </CommandItem>
 
               <CommandItem
-                className="cursor-pointer group"
+                className="cursor-pointer group py-1! px-2! rounded-md!"
                 onSelect={() => {
                   onAddLongText();
                   setOpen(false);
@@ -253,7 +263,7 @@ export default function AddBlockPanel({
               </CommandItem>
 
               <CommandItem
-                className="cursor-pointer group"
+                className="cursor-pointer group py-1! px-2! rounded-md!"
                 onSelect={() => {
                   onAddMultipleChoice();
                   setOpen(false);
@@ -274,7 +284,7 @@ export default function AddBlockPanel({
 
             <CommandGroup heading="Contact">
               <CommandItem
-                className="cursor-pointer group"
+                className="cursor-pointer group py-1! px-2! rounded-md!"
                 onSelect={() => {
                   onAddEmail();
                   setOpen(false);
@@ -291,7 +301,7 @@ export default function AddBlockPanel({
               </CommandItem>
 
               <CommandItem
-                className="cursor-pointer group"
+                className="cursor-pointer group py-1! px-2! rounded-md!"
                 onSelect={() => {
                   onAddPhone();
                   setOpen(false);
@@ -312,7 +322,7 @@ export default function AddBlockPanel({
 
             <CommandGroup heading="Other">
               <CommandItem
-                className="cursor-pointer group"
+                className="cursor-pointer group py-1! px-2! rounded-md!"
                 onSelect={() => {
                   onAddDate();
                   setOpen(false);
@@ -329,7 +339,7 @@ export default function AddBlockPanel({
               </CommandItem>
 
               <CommandItem
-                className="cursor-pointer group"
+                className="cursor-pointer group py-1! px-2! rounded-md!"
                 onSelect={() => {
                   onAddTime();
                   setOpen(false);
@@ -346,7 +356,7 @@ export default function AddBlockPanel({
               </CommandItem>
 
               <CommandItem
-                className="cursor-pointer group"
+                className="cursor-pointer group py-1! px-2! rounded-md!"
                 onSelect={() => {
                   onAddNumber();
                   setOpen(false);
@@ -363,7 +373,7 @@ export default function AddBlockPanel({
               </CommandItem>
 
               <CommandItem
-                className="cursor-pointer group"
+                className="cursor-pointer group py-1! px-2! rounded-md!"
                 onSelect={() => {
                   onAddLink();
                   setOpen(false);
@@ -381,7 +391,7 @@ export default function AddBlockPanel({
               </CommandItem>
 
               <CommandItem
-                className="cursor-pointer group"
+                className="cursor-pointer group py-1! px-2! rounded-md!"
                 onSelect={() => {
                   onAddRating();
                   setOpen(false);
@@ -399,7 +409,7 @@ export default function AddBlockPanel({
               </CommandItem>
 
               <CommandItem
-                className="cursor-pointer group"
+                className="cursor-pointer group py-1! px-2! rounded-md!"
                 onSelect={() => {
                   onAddFileUpload();
                   setOpen(false);
@@ -416,7 +426,7 @@ export default function AddBlockPanel({
               </CommandItem>
 
               <CommandItem
-                className="cursor-pointer group"
+                className="cursor-pointer group py-1! px-2! rounded-md!"
                 onSelect={() => {
                   onAddLinearScale();
                   setOpen(false);

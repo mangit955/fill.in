@@ -9,7 +9,7 @@ type Props = {
   onUpdateMeta: (blockId: string, updates: { required?: boolean }) => void;
   onUpdateConfig: (
     blockId: string,
-    updater: (config: TimeBlockType["config"]) => TimeBlockType["config"]
+    updater: (config: TimeBlockType["config"]) => TimeBlockType["config"],
   ) => void;
 };
 
