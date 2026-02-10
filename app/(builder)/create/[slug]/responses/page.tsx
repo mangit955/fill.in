@@ -1,12 +1,16 @@
 import { createServerSupabase } from "@/lib/supabase/server";
 import { notFound } from "next/navigation";
+import { Form } from "@/lib/forms/types";
+import { FormBlock } from "@/lib/forms/types";
 
-export default async function Page({
-  params,
-}: {
-  params: Promise<{ slug: string }>;
-}) {
-  const { slug } = await params;
+type ResponseRow = {
+  id: string;
+  created_at: string;
+  answers: Record<string, unknown>;
+};
+
+export default async function Page({ params }: { params: { slug: string } }) {
+  const { slug } = params;
 
   const supabase = createServerSupabase();
 
@@ -21,17 +25,18 @@ export default async function Page({
     notFound();
   }
 
-  const form = formRow.schema;
+  const form = formRow.schema as Form;
   const formId = formRow.id;
 
   // Fetch responses
   const { data: responses } = await supabase
     .from("responses")
-    .select("*")
+    .select("id, created_at, answers")
     .eq("form_id", formId)
-    .order("created_at", { ascending: false });
+    .order("created_at", { ascending: false })
+    .limit(100);
 
-  const allResponses = responses ?? [];
+  const allResponses: ResponseRow[] = responses ?? [];
 
   return (
     <div className="max-w-6xl mx-auto py-10 px-4">
@@ -53,7 +58,7 @@ export default async function Page({
               <tr>
                 <th className="text-left px-3 py-2">Time</th>
 
-                {form.blocks.map((block: any) => (
+                {(form.blocks as FormBlock[]).map((block) => (
                   <th key={block.id} className="text-left px-3 py-2">
                     {block.config?.label || "Question"}
                   </th>
@@ -62,15 +67,18 @@ export default async function Page({
             </thead>
 
             <tbody>
-              {allResponses.map((response: any) => (
+              {allResponses.map((response) => (
                 <tr key={response.id} className="border-t">
                   {/* Time */}
                   <td className="px-3 py-2 whitespace-nowrap">
-                    {new Date(response.created_at).toLocaleString()}
+                    {new Date(response.created_at).toLocaleString("en-IN", {
+                      dateStyle: "medium",
+                      timeStyle: "short",
+                    })}
                   </td>
 
                   {/* Answers */}
-                  {form.blocks.map((block: any) => {
+                  {(form.blocks as FormBlock[]).map((block) => {
                     // answers might be stored with prefixed ids like "multiple_choice_<id>"
                     let value = response.answers?.[block.id];
 
@@ -90,7 +98,7 @@ export default async function Page({
                         if (obj) return obj.label ?? obj.value ?? optionId;
 
                         const objByValue = options.find(
-                          (o: any) => o.value === optionId
+                          (o: any) => o.value === optionId,
                         );
                         if (objByValue) return objByValue.label ?? optionId;
 
@@ -108,7 +116,7 @@ export default async function Page({
                       if (obj) display = obj.label ?? obj.value ?? value;
                       else {
                         const objByValue = options.find(
-                          (o: any) => o.value === value
+                          (o: any) => o.value === value,
                         );
                         if (objByValue) display = objByValue.label ?? value;
                         else display = value;

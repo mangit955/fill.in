@@ -1,6 +1,12 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { Calendar } from "@/components/ui/calendar";
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/ui/popover";
 import { Form } from "@/lib/forms/types";
 import { getNextBlockId } from "@/lib/forms/evaluate";
 import { isBlockVisible } from "@/lib/forms/visibility";
@@ -25,7 +31,13 @@ import {
   AlertDialogMedia,
 } from "@/components/ui/alert-dialog";
 import { toast } from "sonner";
-import { Star, Trash2, TriangleAlert, Upload } from "lucide-react";
+import {
+  ChevronDownIcon,
+  Star,
+  Trash2,
+  TriangleAlert,
+  Upload,
+} from "lucide-react";
 import { isValidUrl } from "@/lib/forms/helpers";
 import Image from "next/image";
 
@@ -47,6 +59,11 @@ export default function FormRuntime({ form, preview }: Props) {
   const [uploadingByBlock, setUploadingByBlock] = useState<
     Record<string, boolean>
   >({});
+  const [open, setOpen] = useState(false);
+  const [mounted, setMounted] = useState(false);
+  useEffect(() => {
+    setMounted(true);
+  }, []);
 
   // Reset runtime when preview opens so it always starts from first block
   useEffect(() => {
@@ -606,20 +623,75 @@ export default function FormRuntime({ form, preview }: Props) {
 
             {block.type === "date" && (
               <>
-                <input
-                  type="date"
-                  className="w-full border focus:outline-none focus:ring-4 focus:ring-blue-200 border-gray-300 rounded-md shadow-sm px-3 py-2"
-                  value={(answers[block.id] as string) ?? ""}
-                  onChange={(e) =>
-                    setAnswers({ ...answers, [block.id]: e.target.value })
+                {(() => {
+                  const value = answers[block.id] as string | undefined;
+                  const selectedDate = value ? new Date(value) : undefined;
+
+                  function format(d?: Date) {
+                    if (!d) return "Select date";
+                    return d.toLocaleDateString();
                   }
-                  onKeyDown={(e) => {
-                    if (e.key === "Enter") {
-                      e.preventDefault();
-                      submitAnswer(e.currentTarget.value);
-                    }
-                  }}
-                />
+
+                  return (
+                    <div className="w-fit">
+                      {!mounted ? (
+                        <button
+                          type="button"
+                          className="border border-gray-300 shadow-sm rounded-md px-3 py-2 text-left min-w-[180px]"
+                        >
+                          {format(selectedDate)}
+                        </button>
+                      ) : (
+                        <Popover open={open} onOpenChange={setOpen}>
+                          <PopoverTrigger asChild>
+                            <button
+                              type="button"
+                              className="border cursor-pointer border-gray-300 shadow-sm rounded-md px-3 py-2 hover:bg-neutral-50 focus:outline-none focus:ring-4 focus:ring-blue-200 text-left min-w-[180px] flex items-center justify-between"
+                            >
+                              <span>{format(selectedDate)}</span>
+                              <ChevronDownIcon className="ml-2 h-4 w-4 text-neutral-500" />
+                            </button>
+                          </PopoverTrigger>
+
+                          <PopoverContent
+                            className="w-auto overflow-hidden p-0"
+                            align="start"
+                          >
+                            <Calendar
+                              mode="single"
+                              selected={selectedDate}
+                              defaultMonth={selectedDate}
+                              captionLayout="dropdown"
+                              className="[&_button]:cursor-pointer [&_[role=gridcell]]:cursor-pointer [&_select]:cursor-pointer"
+                              onSelect={(d) => {
+                                if (!d) return;
+
+                                // fix timezone shift (toISOString converts to UTC which can subtract a day)
+                                const year = d.getFullYear();
+                                const month = String(d.getMonth() + 1).padStart(
+                                  2,
+                                  "0",
+                                );
+                                const day = String(d.getDate()).padStart(
+                                  2,
+                                  "0",
+                                );
+
+                                const localISO = `${year}-${month}-${day}`;
+
+                                setAnswers({
+                                  ...answers,
+                                  [block.id]: localISO,
+                                });
+                                setOpen(false);
+                              }}
+                            />
+                          </PopoverContent>
+                        </Popover>
+                      )}
+                    </div>
+                  );
+                })()}
 
                 {(() => {
                   const nextId = getNextBlockId(currentBlockId!, answers, form);
@@ -629,7 +701,7 @@ export default function FormRuntime({ form, preview }: Props) {
                         <button
                           type="button"
                           onClick={goBack}
-                          className="px-2  font-bold hover:bg-neutral-100 py-1 border rounded-md text-md text-neutral-500 hover:text-neutral-600"
+                          className="px-2 font-bold hover:bg-neutral-100 py-1 border rounded-md text-md text-neutral-500 hover:text-neutral-600"
                         >
                           ←
                         </button>

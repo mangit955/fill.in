@@ -153,9 +153,11 @@ export default function AddBlockPanel({
           break;
 
         case "r":
-          e.preventDefault();
-          onAddRating();
-          flash();
+          if (e.shiftKey) {
+            e.preventDefault();
+            onAddRating();
+            flash();
+          }
           break;
 
         case "u":
@@ -390,6 +392,7 @@ export default function AddBlockPanel({
                 <CommandShortcut>
                   <KbdGroup>
                     <Kbd className="transition group-hover:bg-white">⌘</Kbd>
+                    <Kbd className="transition group-hover:bg-white">⇧</Kbd>
                     <Kbd className="transition group-hover:bg-white">R</Kbd>
                   </KbdGroup>
                 </CommandShortcut>
