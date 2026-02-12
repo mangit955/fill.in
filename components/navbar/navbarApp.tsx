@@ -16,7 +16,10 @@ export const NavbarApp = ({ onPublish, isPublishing, onPreview }: Props) => {
     <header className="w-full fixed border-zinc-200 dark:border-zinc-800">
       <nav className="mx-auto  flex flex-end justify-between px-4 py-1 ">
         {/* Left: Logo or site name */}
-        <Link href="/dashboard" className="flex items-center gap-2">
+        <Link
+          href="/dashboard"
+          className="flex items-center hover:bg-gray-100 rounded-md p-1 focus:ring-3 focus:ring-blue-200 gap-2"
+        >
           <FillinLogo />
         </Link>
 
@@ -24,9 +27,6 @@ export const NavbarApp = ({ onPublish, isPublishing, onPreview }: Props) => {
         <div className="flex backdrop-blur rounded-md items-center gap-3">
           <Button asChild variant="ghost" className="text-neutral-500 hidden">
             <Link href="/dashboard">Home</Link>
-          </Button>
-          <Button variant="ghost" className="text-neutral-500">
-            Sign up
           </Button>
           <Button
             variant="ghost"

@@ -26,18 +26,24 @@ export const Navbar = () => {
           >
             Priceing
           </Button>
-          <Button
-            variant="ghost"
-            className="text-neutral-500 focus:ring-4 ring-blue-300 dark:text-gray-300 bg-white/60 dark:bg-zinc-900/60 backdrop-blur-md  dark:hover:bg-zinc-900/80 hover:text-black dark:hover:text-white transition-colors duration-200 border border-white/30 dark:border-white/10 rounded-full px-3 py-1.5 cursor-pointer"
-          >
-            Log in
-          </Button>
-          <Button
-            variant="ghost"
-            className="text-neutral-500 focus:ring-4 ring-blue-300 dark:text-gray-300 bg-white/60 dark:bg-zinc-900/60 backdrop-blur-md  dark:hover:bg-zinc-900/80 hover:text-black dark:hover:text-white transition-colors duration-200 border border-white/30 dark:border-white/10 rounded-full px-3 py-1.5 cursor-pointer"
-          >
-            Sign up
-          </Button>
+
+          <Link href="/login">
+            <Button
+              variant="ghost"
+              className="text-neutral-500 focus:ring-4 ring-blue-300 dark:text-gray-300 bg-white/60 dark:bg-zinc-900/60 backdrop-blur-md  dark:hover:bg-zinc-900/80 hover:text-black dark:hover:text-white transition-colors duration-200 border border-white/30 dark:border-white/10 rounded-full px-3 py-1.5 cursor-pointer"
+            >
+              Log in
+            </Button>
+          </Link>
+
+          <Link href="/signup">
+            <Button
+              variant="ghost"
+              className="text-neutral-500 focus:ring-4 ring-blue-300 dark:text-gray-300 bg-white/60 dark:bg-zinc-900/60 backdrop-blur-md  dark:hover:bg-zinc-900/80 hover:text-black dark:hover:text-white transition-colors duration-200 border border-white/30 dark:border-white/10 rounded-full px-3 py-1.5 cursor-pointer"
+            >
+              Sign up
+            </Button>
+          </Link>
           <Link href="/create">
             <Button
               variant="default"

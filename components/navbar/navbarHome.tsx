@@ -7,7 +7,6 @@ import { FillinLogo } from "../ui/svg/logo";
 import { Search, Settings } from "lucide-react";
 import { useEffect, useState } from "react";
 import { supabase } from "@/lib/supabase/client";
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -49,7 +48,10 @@ export const NavbarHome = () => {
     <header className="w-full fixed border-zinc-200 dark:border-zinc-800">
       <nav className="mx-auto  flex flex-end justify-between px-4 py-1">
         {/* Left: Logo or site name */}
-        <Link href="/" className="flex items-center gap-2">
+        <Link
+          href="/dashboard"
+          className="flex items-center hover:bg-gray-100 rounded-md p-1 focus:ring-3 focus:ring-blue-200 gap-2"
+        >
           <FillinLogo />
         </Link>
 

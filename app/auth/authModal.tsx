@@ -146,10 +146,9 @@ export default function AuthModal({ open, onOpenChange, onSuccess }: Props) {
             {/* Email login */}
             <div className="flex gap-2">
               <Input
-                placeholder="you@example.com"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
-                className="focus:ring-4! focus:ring-blue-200!"
+                className="focus:ring-4! focus:ring-blue-200! shadow-sm border border-gray-300"
               />
               <button
                 className="border rounded-md bg-black text-white px-2 py-1 font-semibold cursor-pointer hover:bg-black/80 "
@@ -157,7 +156,7 @@ export default function AuthModal({ open, onOpenChange, onSuccess }: Props) {
                 disabled={loading || cooldown > 0}
               >
                 {loading ? (
-                  <Spinner width={20} height={20} />
+                  <Spinner width={20} height={20} strokeWidth={3} />
                 ) : cooldown > 0 ? (
                   `Wait ${cooldown}s`
                 ) : (
