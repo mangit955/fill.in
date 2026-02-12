@@ -3,7 +3,7 @@ import { createServerSupabase } from "@/lib/supabase/server";
 import { redirect } from "next/navigation";
 
 export default async function CreatePage() {
-  const supabase = createServerSupabase();
+  const supabase = await createServerSupabase();
   const form = createEmptyForm();
 
   const { error } = await supabase.from("forms").insert({

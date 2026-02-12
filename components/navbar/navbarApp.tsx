@@ -16,22 +16,16 @@ export const NavbarApp = ({ onPublish, isPublishing, onPreview }: Props) => {
     <header className="w-full fixed border-zinc-200 dark:border-zinc-800">
       <nav className="mx-auto  flex flex-end justify-between px-4 py-1 ">
         {/* Left: Logo or site name */}
-        <Link href="/" className="flex items-center gap-2">
+        <Link href="/dashboard" className="flex items-center gap-2">
           <FillinLogo />
         </Link>
 
         {/* Right: Nav actions */}
         <div className="flex backdrop-blur rounded-md items-center gap-3">
-          <Button
-            variant="ghost"
-            className="text-neutral-500 hidden focus:ring-4 ring-blue-300 cursor-pointer"
-          >
-            Customize
+          <Button asChild variant="ghost" className="text-neutral-500 hidden">
+            <Link href="/dashboard">Home</Link>
           </Button>
-          <Button
-            variant="ghost"
-            className="text-neutral-500 cursor-pointer focus:ring-4 ring-blue-300"
-          >
+          <Button variant="ghost" className="text-neutral-500">
             Sign up
           </Button>
           <Button
@@ -39,13 +33,13 @@ export const NavbarApp = ({ onPublish, isPublishing, onPreview }: Props) => {
             onClick={() => {
               if (onPreview) onPreview();
             }}
-            className="text-neutral-500 cursor-pointer focus:ring-4 ring-blue-300"
+            className="text-neutral-500  "
           >
             Preview
           </Button>
           <Button
             variant="default"
-            className="hidden focus:ring-4 ring-blue-300 md:inline-flex cursor-pointer min-w-[100px] justify-center"
+            className="hidden  md:inline-flex  min-w-[100px] justify-center"
             onClick={() => {
               if (onPublish) onPublish();
             }}

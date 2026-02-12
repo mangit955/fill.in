@@ -9,10 +9,14 @@ type ResponseRow = {
   answers: Record<string, unknown>;
 };
 
-export default async function Page({ params }: { params: { slug: string } }) {
-  const { slug } = params;
+export default async function Page({
+  params,
+}: {
+  params: Promise<{ slug: string }>;
+}) {
+  const { slug } = await params;
 
-  const supabase = createServerSupabase();
+  const supabase = await createServerSupabase();
 
   // Fetch form
   const { data: formRow, error: formError } = await supabase

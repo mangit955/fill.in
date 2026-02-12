@@ -8,7 +8,7 @@ export default async function RuntimePage({
 }) {
   const { slug } = await params;
 
-  const supabase = createServerSupabase();
+  const supabase = await createServerSupabase();
 
   const { data } = await supabase
     .from("forms")

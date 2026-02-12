@@ -93,7 +93,7 @@ export function useFormEditor(initialForm?: Form) {
 
   function updateMeta(
     blockId: string,
-    updates: Partial<Pick<FormBlock, "required">>
+    updates: Partial<Pick<FormBlock, "required">>,
   ) {
     setForm((prev) => ({
       ...prev,
@@ -103,7 +103,7 @@ export function useFormEditor(initialForm?: Form) {
 
   function updateConfig<T extends FormBlock>(
     blockId: string,
-    updater: (config: T["config"]) => T["config"]
+    updater: (config: T["config"]) => T["config"],
   ) {
     setForm((prev) => ({
       ...prev,
@@ -130,7 +130,7 @@ export function useFormEditor(initialForm?: Form) {
       ...prev,
       visibilityRules: removeVisibilityRule(
         prev.visibilityRules,
-        targetBlockId
+        targetBlockId,
       ),
     }));
   }
@@ -180,15 +180,30 @@ export function useFormEditor(initialForm?: Form) {
 
     if (error) {
       alert("Save failed");
-      console.error(error);
+      console.error("SUPABASE ERROR:", error);
+      console.error("DETAILS:", JSON.stringify(error, null, 2));
       return;
     }
   }
 
   async function publish() {
+    // 1️⃣ get current user
+    const {
+      data: { user },
+    } = await supabase.auth.getUser();
+
+    if (!user) {
+      throw new Error("NOT_LOGGED_IN");
+    }
+
+    // 2️⃣ attach form to user + publish
     const { error } = await supabase
       .from("forms")
-      .update({ status: "published", schema: form })
+      .update({
+        status: "published",
+        schema: form,
+        user_id: user.id,
+      })
       .eq("id", form.id);
 
     if (error) throw error;
@@ -197,7 +212,7 @@ export function useFormEditor(initialForm?: Form) {
   }
 
   function updateFormMeta(
-    updates: Partial<Pick<Form, "title" | "description">>
+    updates: Partial<Pick<Form, "title" | "description">>,
   ) {
     setForm((prev) => ({
       ...prev,

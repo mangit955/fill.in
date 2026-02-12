@@ -177,7 +177,7 @@ export function createFileUploadBlock(): FileUploadBlock {
       label: "",
       multiple: false,
       accept: "*",
-      maxSizeMB: 25,
+      maxSizeMB: 10,
     },
   };
 }

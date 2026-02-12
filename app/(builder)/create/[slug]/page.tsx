@@ -8,7 +8,7 @@ export default async function Page({
 }) {
   const { slug } = await params;
 
-  const supabase = createServerSupabase();
+  const supabase = await createServerSupabase();
 
   const { data, error } = await supabase
     .from("forms")

@@ -144,7 +144,7 @@ export type FileUploadBlock = {
     label: string;
     multiple?: boolean;
     accept?: string; // "image/*" | ".pdf" etc
-    maxSizeMB?: number;
+    maxSizeMB?: 10;
   };
 };
 

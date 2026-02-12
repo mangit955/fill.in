@@ -24,6 +24,8 @@ import { useDebouncedEffect } from "../hooks/useDebouncedEffect";
 import { Copy, Check } from "lucide-react";
 import { toast } from "sonner";
 import { Preview } from "@/components/builder/PreviewDialog";
+import { supabase } from "../supabase/client";
+import AuthModal from "@/app/auth/authModal";
 
 type Props = {
   initialForm: Form;
@@ -38,6 +40,27 @@ export default function FormEditorClient({ initialForm }: Props) {
   const [activeBlockId, setActiveBlockId] = useState<string | null>(null);
   const [hasUnsavedChanges, setHasUnsavedChanges] = useState(false);
   const [copied, setCopied] = useState(false);
+  const [authOpen, setAuthOpen] = useState(false);
+
+  async function continuePublish() {
+    const {
+      data: { session },
+    } = await supabase.auth.getSession();
+
+    if (!session?.user) return;
+
+    try {
+      setIsPublishing(true);
+
+      const slug = await editor.publish();
+      const url = `${window.location.origin}/f/${slug}`;
+
+      setPublishedUrl(url);
+      setMode("published");
+    } finally {
+      setIsPublishing(false);
+    }
+  }
   const descRef = useRef<HTMLTextAreaElement | null>(null);
 
   function addAndFocus(create: () => FormBlock) {
@@ -62,6 +85,43 @@ export default function FormEditorClient({ initialForm }: Props) {
     [hasUnsavedChanges, editor.form],
     1500,
   );
+
+  // Resume publish after OAuth redirect
+  useEffect(() => {
+    const check = async () => {
+      const pending = localStorage.getItem("pendingPublish");
+      if (!pending) return;
+
+      const {
+        data: { session },
+      } = await supabase.auth.getSession();
+
+      if (session?.user) {
+        localStorage.removeItem("pendingPublish");
+        continuePublish();
+      }
+    };
+
+    check();
+  }, []);
+
+  useEffect(() => {
+    const { data: listener } = supabase.auth.onAuthStateChange(
+      async (event, session) => {
+        if (event === "SIGNED_IN" && authOpen) {
+          setAuthOpen(false);
+          localStorage.removeItem("pendingPublish");
+          setTimeout(() => {
+            continuePublish();
+          }, 200);
+        }
+      },
+    );
+
+    return () => {
+      listener.subscription.unsubscribe();
+    };
+  }, [authOpen]);
 
   useEffect(() => {
     if (mode === "published") return;
@@ -96,7 +156,7 @@ export default function FormEditorClient({ initialForm }: Props) {
                 navigator.clipboard.writeText(publishedUrl);
                 setCopied(true);
                 setTimeout(() => setCopied(false), 1500);
-                toast.success("Link has been copied!");
+                toast.success("Link has been copied!", { duration: 1500 });
               }}
               className=" flex items-center gap-2 px-3 py-2 text-md border font-semibold rounded-md cursor-pointer bg-black text-white hover:bg-neutral-700 whitespace-nowrap"
             >
@@ -125,18 +185,18 @@ export default function FormEditorClient({ initialForm }: Props) {
       <NavbarApp
         isPublishing={isPublishing}
         onPublish={async () => {
-          try {
-            setIsPublishing(true);
+          const {
+            data: { session },
+          } = await supabase.auth.getSession();
 
-            const slug = await editor.publish();
-
-            const url = `${window.location.origin}/f/${slug}`;
-
-            setPublishedUrl(url);
-            setMode("published");
-          } finally {
-            setIsPublishing(false);
+          if (!session?.user) {
+            // mark that user intended to publish before login
+            localStorage.setItem("pendingPublish", "true");
+            setAuthOpen(true);
+            return;
           }
+
+          await continuePublish();
         }}
         onPreview={async () => setPreviewOpen(true)}
       />
@@ -200,6 +260,19 @@ export default function FormEditorClient({ initialForm }: Props) {
           form={editor.form}
           open={previewOpen}
           onOpenChange={setPreviewOpen}
+        />
+
+        <AuthModal
+          open={authOpen}
+          onOpenChange={setAuthOpen}
+          onSuccess={async () => {
+            setAuthOpen(false);
+
+            // wait a moment for session to be available after OAuth redirect
+            setTimeout(() => {
+              continuePublish();
+            }, 200);
+          }}
         />
       </div>
     </div>

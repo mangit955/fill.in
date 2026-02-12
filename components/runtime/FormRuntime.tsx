@@ -1259,7 +1259,7 @@ export default function FormRuntime({ form, preview }: Props) {
 
                               {block.config.maxSizeMB && (
                                 <div className="text-xs text-neutral-400 mt-1">
-                                  Max size: {block.config.maxSizeMB}MB
+                                  Max size: 10 Mb
                                 </div>
                               )}
                             </>

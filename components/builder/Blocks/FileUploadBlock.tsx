@@ -118,7 +118,7 @@ export default function FileUploadBlock({
         </div>
 
         <p className="text-xs text-muted-foreground">
-          Size limit: 25 MB. For file uploads upgrade.
+          Size limit: 10 MB. For file uploads upgrade.
         </p>
       </label>
     </div>
