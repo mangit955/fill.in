@@ -157,15 +157,18 @@ export function useFormEditor(initialForm?: Form) {
   }
 
   async function saveDraft() {
-    console.log("saving draft", form);
+    const {
+      data: { user },
+    } = await supabase.auth.getUser();
 
+    // Don't overwrite status - just update the schema and metadata
     const payload = {
       id: form.id,
       slug: form.slug ?? form.id,
       title: form.title ?? "Untitled",
       description: form.description ?? "",
       schema: form,
-      status: "draft",
+      ...(user ? { user_id: user.id } : {}),
     };
 
     console.log("payload →", payload);
@@ -187,22 +190,24 @@ export function useFormEditor(initialForm?: Form) {
   }
 
   async function publish() {
-    // 1️⃣ get current user
     const {
       data: { user },
     } = await supabase.auth.getUser();
 
-    if (!user) {
-      throw new Error("NOT_LOGGED_IN");
-    }
+    if (!user) throw new Error("NOT_LOGGED_IN");
 
-    // 2️⃣ attach form to user + publish
+    const { data: existing } = await supabase
+      .from("forms")
+      .select("user_id")
+      .eq("id", form.id)
+      .single();
+
     const { error } = await supabase
       .from("forms")
       .update({
         status: "published",
         schema: form,
-        user_id: user.id,
+        user_id: existing?.user_id ?? user.id,
       })
       .eq("id", form.id);
 

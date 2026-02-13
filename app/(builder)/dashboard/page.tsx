@@ -36,17 +36,39 @@ export default async function DashboardPage() {
     redirect("/");
   }
 
-  const { data: forms } = await supabase
+  // --- OWNED FORMS ---
+  const { data: ownedForms } = await supabase
     .from("forms")
     .select("id, title, slug, status, created_at")
-    .eq("user_id", user.id)
-    .order("created_at", { ascending: false });
+    .eq("user_id", user.id);
+
+  // --- SHARED FORMS ---
+  const { data: memberForms } = await supabase
+    .from("form_members")
+    .select("form_id, forms(id, title, slug, status, created_at)")
+    .eq("user_id", user.id);
+
+  const sharedForms = (memberForms ?? [])
+    .map((m: any) => m.forms)
+    .filter(Boolean);
+
+  // merge owned + shared and REMOVE duplicates (can happen if owner is also in form_members)
+  const merged = [...(ownedForms ?? []), ...sharedForms];
+
+  const uniqueById = Array.from(
+    new Map(merged.map((f: any) => [f.id, f])).values(),
+  );
+
+  const allForms = uniqueById.sort(
+    (a: any, b: any) =>
+      new Date(b.created_at).getTime() - new Date(a.created_at).getTime(),
+  );
 
   const formsWithCounts = [];
 
-  if (!forms) return null;
+  if (!allForms) return null;
 
-  for (const form of forms ?? []) {
+  for (const form of allForms) {
     const { count } = await supabase
       .from("responses")
       .select("id", { count: "exact", head: true })

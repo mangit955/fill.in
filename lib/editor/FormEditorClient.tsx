@@ -26,12 +26,24 @@ import { toast } from "sonner";
 import { Preview } from "@/components/builder/PreviewDialog";
 import { supabase } from "../supabase/client";
 import AuthModal from "@/app/auth/authModal";
+import { NavbarHome } from "@/components/navbar/navbarHome";
+import InviteModal from "@/components/invite/InviteModal";
 
 type Props = {
   initialForm: Form;
+  formId: string;
+  collaborators: {
+    id: string;
+    email: string;
+    role: string;
+  }[];
 };
 
-export default function FormEditorClient({ initialForm }: Props) {
+export default function FormEditorClient({
+  initialForm,
+  formId,
+  collaborators,
+}: Props) {
   const editor = useFormEditor(initialForm);
   const [mode, setMode] = useState<"editor" | "published">("editor");
   const [publishedUrl, setPublishedUrl] = useState<string | null>(null);
@@ -41,22 +53,32 @@ export default function FormEditorClient({ initialForm }: Props) {
   const [hasUnsavedChanges, setHasUnsavedChanges] = useState(false);
   const [copied, setCopied] = useState(false);
   const [authOpen, setAuthOpen] = useState(false);
+  const [inviteOpen, setInviteOpen] = useState(false);
 
   async function continuePublish() {
+    console.log("[Publish Flow] continuePublish called");
     const {
       data: { session },
     } = await supabase.auth.getSession();
 
-    if (!session?.user) return;
+    if (!session?.user) {
+      console.log("[Publish Flow] No session, aborting");
+      return;
+    }
 
     try {
       setIsPublishing(true);
+      console.log("[Publish Flow] Calling editor.publish()...");
 
       const slug = await editor.publish();
+      console.log("[Publish Flow] Published! Slug:", slug);
       const url = `${window.location.origin}/f/${slug}`;
 
       setPublishedUrl(url);
       setMode("published");
+    } catch (error) {
+      console.error("[Publish Flow] Error:", error);
+      toast.error("Failed to publish form");
     } finally {
       setIsPublishing(false);
     }
@@ -90,15 +112,28 @@ export default function FormEditorClient({ initialForm }: Props) {
   useEffect(() => {
     const check = async () => {
       const pending = localStorage.getItem("pendingPublish");
+      console.log("[Publish Flow] Checking pendingPublish:", pending);
       if (!pending) return;
+
+      // Wait a bit for session to be fully established after OAuth redirect
+      await new Promise((resolve) => setTimeout(resolve, 300));
 
       const {
         data: { session },
       } = await supabase.auth.getSession();
+      console.log(
+        "[Publish Flow] Session:",
+        session?.user ? "User logged in" : "No user",
+      );
 
       if (session?.user) {
+        console.log("[Publish Flow] Resuming publish...");
         localStorage.removeItem("pendingPublish");
-        continuePublish();
+        await continuePublish();
+      } else {
+        console.log(
+          "[Publish Flow] No session yet, will retry via auth state change listener",
+        );
       }
     };
 
@@ -108,12 +143,23 @@ export default function FormEditorClient({ initialForm }: Props) {
   useEffect(() => {
     const { data: listener } = supabase.auth.onAuthStateChange(
       async (event, session) => {
-        if (event === "SIGNED_IN" && authOpen) {
-          setAuthOpen(false);
-          localStorage.removeItem("pendingPublish");
-          setTimeout(() => {
-            continuePublish();
-          }, 200);
+        console.log("[Publish Flow] Auth state changed:", event);
+        if (event === "SIGNED_IN") {
+          const pending = localStorage.getItem("pendingPublish");
+          console.log(
+            "[Publish Flow] SIGNED_IN event, pending:",
+            pending,
+            "authOpen:",
+            authOpen,
+          );
+
+          if (pending) {
+            setAuthOpen(false);
+            localStorage.removeItem("pendingPublish");
+            setTimeout(() => {
+              continuePublish();
+            }, 200);
+          }
         }
       },
     );
@@ -137,44 +183,47 @@ export default function FormEditorClient({ initialForm }: Props) {
 
   if (mode === "published" && publishedUrl) {
     return (
-      <div className="min-h-screen flex items-center justify-center">
-        <div className="w-full max-w-xl text-left space-y-6">
-          <h1 className="text-xl font-semibold">Share Link </h1>
-          <h2 className="text-muted-foreground">
-            Your form is now published and ready to be shared with the world!
-            Copy this link to share your form on social media, messaging apps or
-            via email.
-          </h2>
+      <div>
+        <NavbarHome />
+        <div className="min-h-screen flex items-center justify-center">
+          <div className="w-full max-w-xl text-left space-y-6">
+            <h1 className="text-xl font-semibold">Share Link </h1>
+            <h2 className="text-muted-foreground">
+              Your form is now published and ready to be shared with the world!
+              Copy this link to share your form on social media, messaging apps
+              or via email.
+            </h2>
 
-          <div className="flex w-full items-center gap-3">
-            <div className="flex-1 border border-gray-300 rounded-md shadow-sm px-3 py-2 text-md bg-white whitespace-nowrap overflow-hidden text-ellipsis">
-              {publishedUrl}
+            <div className="flex w-full items-center gap-3">
+              <div className="flex-1 border border-gray-300 rounded-md shadow-sm px-3 py-2 text-md bg-white whitespace-nowrap overflow-hidden text-ellipsis">
+                {publishedUrl}
+              </div>
+
+              <button
+                onClick={() => {
+                  navigator.clipboard.writeText(publishedUrl);
+                  setCopied(true);
+                  setTimeout(() => setCopied(false), 1500);
+                  toast.success("Link has been copied!", { duration: 1500 });
+                }}
+                className=" flex items-center gap-2 px-3 py-2 text-md border font-semibold rounded-md cursor-pointer bg-black text-white hover:bg-neutral-700 whitespace-nowrap"
+              >
+                {copied ? (
+                  <Check width={20} height={20} />
+                ) : (
+                  <Copy width={20} height={20} />
+                )}
+                Copy
+              </button>
             </div>
 
             <button
-              onClick={() => {
-                navigator.clipboard.writeText(publishedUrl);
-                setCopied(true);
-                setTimeout(() => setCopied(false), 1500);
-                toast.success("Link has been copied!", { duration: 1500 });
-              }}
-              className=" flex items-center gap-2 px-3 py-2 text-md border font-semibold rounded-md cursor-pointer bg-black text-white hover:bg-neutral-700 whitespace-nowrap"
+              onClick={() => setMode("editor")}
+              className="text-sm border rounded-md px-2 py-1  cursor-pointer font-semibold text-neutral-500 hover:text-neutral-600 hover:bg-neutral-100 focus:ring-4 ring-blue-300 ˂"
             >
-              {copied ? (
-                <Check width={20} height={20} />
-              ) : (
-                <Copy width={20} height={20} />
-              )}
-              Copy
+              ← Back to editor
             </button>
           </div>
-
-          <button
-            onClick={() => setMode("editor")}
-            className="text-sm border rounded-md px-2 py-1  cursor-pointer font-semibold text-neutral-500 hover:text-neutral-600 hover:bg-neutral-100 focus:ring-4 ring-blue-300 ˂"
-          >
-            ← Back to editor
-          </button>
         </div>
       </div>
     );
@@ -199,6 +248,7 @@ export default function FormEditorClient({ initialForm }: Props) {
           await continuePublish();
         }}
         onPreview={async () => setPreviewOpen(true)}
+        formId={formId}
       />
 
       <div className="max-w-3xl mx-auto py-10">
@@ -269,10 +319,13 @@ export default function FormEditorClient({ initialForm }: Props) {
             setAuthOpen(false);
 
             // wait a moment for session to be available after OAuth redirect
-            setTimeout(() => {
-              continuePublish();
-            }, 200);
           }}
+        />
+
+        <InviteModal
+          open={inviteOpen}
+          onOpenChange={setInviteOpen}
+          formId={formId}
         />
       </div>
     </div>

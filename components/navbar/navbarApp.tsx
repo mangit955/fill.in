@@ -1,17 +1,28 @@
 "use client";
 
+import { useState } from "react";
+
 import Link from "next/link";
 import { Button } from "@/components/ui/button"; // assuming you already have your button component
 import { Spinner } from "@/components/ui/spinner";
 import { FillinLogo } from "../ui/svg/logo";
+import InviteModal from "@/components/invite/InviteModal";
 
 type Props = {
   onPublish?: () => void;
   isPublishing?: boolean;
   onPreview?: () => void;
+  formId?: string;
 };
 
-export const NavbarApp = ({ onPublish, isPublishing, onPreview }: Props) => {
+export const NavbarApp = ({
+  onPublish,
+  isPublishing,
+  onPreview,
+  formId,
+}: Props) => {
+  const [inviteOpen, setInviteOpen] = useState(false);
+
   return (
     <header className="w-full fixed border-zinc-200 dark:border-zinc-800">
       <nav className="mx-auto  flex flex-end justify-between px-4 py-1 ">
@@ -27,6 +38,13 @@ export const NavbarApp = ({ onPublish, isPublishing, onPreview }: Props) => {
         <div className="flex backdrop-blur rounded-md items-center gap-3">
           <Button asChild variant="ghost" className="text-neutral-500 hidden">
             <Link href="/dashboard">Home</Link>
+          </Button>
+          <Button
+            variant="ghost"
+            className="text-neutral-500"
+            onClick={() => setInviteOpen(true)}
+          >
+            Share
           </Button>
           <Button
             variant="ghost"
@@ -54,6 +72,11 @@ export const NavbarApp = ({ onPublish, isPublishing, onPreview }: Props) => {
           </Button>
         </div>
       </nav>
+      <InviteModal
+        open={inviteOpen}
+        onOpenChange={setInviteOpen}
+        formId={formId ?? ""}
+      />
     </header>
   );
 };

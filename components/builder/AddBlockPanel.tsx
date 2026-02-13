@@ -59,6 +59,7 @@ export default function AddBlockPanel({
   onAddLinearScale,
 }: Props) {
   const [open, setOpen] = React.useState(false);
+  const [mounted, setMounted] = React.useState(false);
 
   function flash() {
     document.body.animate([{ opacity: 1 }, { opacity: 0.97 }, { opacity: 1 }], {
@@ -187,6 +188,10 @@ export default function AddBlockPanel({
     open,
   ]);
 
+  React.useEffect(() => {
+    setMounted(true);
+  }, []);
+
   return (
     <div className="rounded-md p-6 space-y-2">
       {/* Trigger button */}
@@ -211,241 +216,243 @@ export default function AddBlockPanel({
       </motion.div>
 
       {/* Command dialog */}
-      <CommandDialog
-        open={open}
-        onOpenChange={setOpen}
-        showCloseButton={false}
-        className="sm:max-w-sm"
-      >
-        <Command>
-          <div className="p-2 rounded-md">
-            <CommandInput
-              placeholder="Find question type, input fields..."
-              className="border border-gray-300 bg-gray-100 rounded-md focus-visible:ring-0"
-            />
-          </div>
-          <CommandList>
-            <CommandEmpty>No block found.</CommandEmpty>
+      {mounted && (
+        <CommandDialog
+          open={open}
+          onOpenChange={setOpen}
+          showCloseButton={false}
+          className="sm:max-w-sm"
+        >
+          <Command>
+            <div className="p-2 rounded-md">
+              <CommandInput
+                placeholder="Find question type, input fields..."
+                className="border border-gray-300 bg-gray-100 rounded-md focus-visible:ring-0"
+              />
+            </div>
+            <CommandList>
+              <CommandEmpty>No block found.</CommandEmpty>
 
-            <CommandGroup heading="Basic">
-              <CommandItem
-                className="cursor-pointer group py-1! px-2! rounded-md! "
-                onSelect={() => {
-                  onAddShortText();
-                  setOpen(false);
-                }}
-              >
-                <Rows2 className="text-neutral-400 group-hover:text-neutral-700" />
-                <span className="flex-1">Short text</span>
-                <CommandShortcut>
-                  <KbdGroup>
-                    <Kbd className="transition group-hover:bg-white">⌘</Kbd>
-                    <Kbd className="transition group-hover:bg-white">S</Kbd>
-                  </KbdGroup>
-                </CommandShortcut>
-              </CommandItem>
+              <CommandGroup heading="Basic">
+                <CommandItem
+                  className="cursor-pointer group py-1! px-2! rounded-md! "
+                  onSelect={() => {
+                    onAddShortText();
+                    setOpen(false);
+                  }}
+                >
+                  <Rows2 className="text-neutral-400 group-hover:text-neutral-700" />
+                  <span className="flex-1">Short text</span>
+                  <CommandShortcut>
+                    <KbdGroup>
+                      <Kbd className="transition group-hover:bg-white">⌘</Kbd>
+                      <Kbd className="transition group-hover:bg-white">S</Kbd>
+                    </KbdGroup>
+                  </CommandShortcut>
+                </CommandItem>
 
-              <CommandItem
-                className="cursor-pointer group py-1! px-2! rounded-md!"
-                onSelect={() => {
-                  onAddLongText();
-                  setOpen(false);
-                }}
-              >
-                <Rows3 className="text-neutral-400 group-hover:text-neutral-700" />
-                <span className="flex-1">Long text</span>
-                <CommandShortcut>
-                  <KbdGroup>
-                    <Kbd className="transition group-hover:bg-white">⌘</Kbd>
-                    <Kbd className="transition group-hover:bg-white">L</Kbd>
-                  </KbdGroup>
-                </CommandShortcut>
-              </CommandItem>
+                <CommandItem
+                  className="cursor-pointer group py-1! px-2! rounded-md!"
+                  onSelect={() => {
+                    onAddLongText();
+                    setOpen(false);
+                  }}
+                >
+                  <Rows3 className="text-neutral-400 group-hover:text-neutral-700" />
+                  <span className="flex-1">Long text</span>
+                  <CommandShortcut>
+                    <KbdGroup>
+                      <Kbd className="transition group-hover:bg-white">⌘</Kbd>
+                      <Kbd className="transition group-hover:bg-white">L</Kbd>
+                    </KbdGroup>
+                  </CommandShortcut>
+                </CommandItem>
 
-              <CommandItem
-                className="cursor-pointer group py-1! px-2! rounded-md!"
-                onSelect={() => {
-                  onAddMultipleChoice();
-                  setOpen(false);
-                }}
-              >
-                <CircleCheckBig className="text-neutral-400 group-hover:text-neutral-700" />
-                <span className="flex-1">Multiple choice</span>
-                <CommandShortcut>
-                  <KbdGroup>
-                    <Kbd className="transition group-hover:bg-white">⌘</Kbd>
-                    <Kbd className="transition group-hover:bg-white">M</Kbd>
-                  </KbdGroup>
-                </CommandShortcut>
-              </CommandItem>
-            </CommandGroup>
+                <CommandItem
+                  className="cursor-pointer group py-1! px-2! rounded-md!"
+                  onSelect={() => {
+                    onAddMultipleChoice();
+                    setOpen(false);
+                  }}
+                >
+                  <CircleCheckBig className="text-neutral-400 group-hover:text-neutral-700" />
+                  <span className="flex-1">Multiple choice</span>
+                  <CommandShortcut>
+                    <KbdGroup>
+                      <Kbd className="transition group-hover:bg-white">⌘</Kbd>
+                      <Kbd className="transition group-hover:bg-white">M</Kbd>
+                    </KbdGroup>
+                  </CommandShortcut>
+                </CommandItem>
+              </CommandGroup>
 
-            <CommandSeparator />
+              <CommandSeparator />
 
-            <CommandGroup heading="Contact">
-              <CommandItem
-                className="cursor-pointer group py-1! px-2! rounded-md!"
-                onSelect={() => {
-                  onAddEmail();
-                  setOpen(false);
-                }}
-              >
-                <AtSign className="text-neutral-400 group-hover:text-neutral-700" />
-                <span className="flex-1">Email</span>
-                <CommandShortcut>
-                  <KbdGroup>
-                    <Kbd className="transition group-hover:bg-white">⌘</Kbd>
-                    <Kbd className="transition group-hover:bg-white">E</Kbd>
-                  </KbdGroup>
-                </CommandShortcut>
-              </CommandItem>
+              <CommandGroup heading="Contact">
+                <CommandItem
+                  className="cursor-pointer group py-1! px-2! rounded-md!"
+                  onSelect={() => {
+                    onAddEmail();
+                    setOpen(false);
+                  }}
+                >
+                  <AtSign className="text-neutral-400 group-hover:text-neutral-700" />
+                  <span className="flex-1">Email</span>
+                  <CommandShortcut>
+                    <KbdGroup>
+                      <Kbd className="transition group-hover:bg-white">⌘</Kbd>
+                      <Kbd className="transition group-hover:bg-white">E</Kbd>
+                    </KbdGroup>
+                  </CommandShortcut>
+                </CommandItem>
 
-              <CommandItem
-                className="cursor-pointer group py-1! px-2! rounded-md!"
-                onSelect={() => {
-                  onAddPhone();
-                  setOpen(false);
-                }}
-              >
-                <Phone className="text-neutral-400 group-hover:text-neutral-700" />
-                <span className="flex-1">Phone</span>
-                <CommandShortcut>
-                  <KbdGroup>
-                    <Kbd className="transition group-hover:bg-white">⌘</Kbd>
-                    <Kbd className="transition group-hover:bg-white">P</Kbd>
-                  </KbdGroup>
-                </CommandShortcut>
-              </CommandItem>
-            </CommandGroup>
+                <CommandItem
+                  className="cursor-pointer group py-1! px-2! rounded-md!"
+                  onSelect={() => {
+                    onAddPhone();
+                    setOpen(false);
+                  }}
+                >
+                  <Phone className="text-neutral-400 group-hover:text-neutral-700" />
+                  <span className="flex-1">Phone</span>
+                  <CommandShortcut>
+                    <KbdGroup>
+                      <Kbd className="transition group-hover:bg-white">⌘</Kbd>
+                      <Kbd className="transition group-hover:bg-white">P</Kbd>
+                    </KbdGroup>
+                  </CommandShortcut>
+                </CommandItem>
+              </CommandGroup>
 
-            <CommandSeparator />
+              <CommandSeparator />
 
-            <CommandGroup heading="Other">
-              <CommandItem
-                className="cursor-pointer group py-1! px-2! rounded-md!"
-                onSelect={() => {
-                  onAddDate();
-                  setOpen(false);
-                }}
-              >
-                <Calendar className="text-neutral-400 group-hover:text-neutral-700" />
-                <span className="flex-1">Date</span>
-                <CommandShortcut>
-                  <KbdGroup>
-                    <Kbd className="transition group-hover:bg-white">⌘</Kbd>
-                    <Kbd className="transition group-hover:bg-white">D</Kbd>
-                  </KbdGroup>
-                </CommandShortcut>
-              </CommandItem>
+              <CommandGroup heading="Other">
+                <CommandItem
+                  className="cursor-pointer group py-1! px-2! rounded-md!"
+                  onSelect={() => {
+                    onAddDate();
+                    setOpen(false);
+                  }}
+                >
+                  <Calendar className="text-neutral-400 group-hover:text-neutral-700" />
+                  <span className="flex-1">Date</span>
+                  <CommandShortcut>
+                    <KbdGroup>
+                      <Kbd className="transition group-hover:bg-white">⌘</Kbd>
+                      <Kbd className="transition group-hover:bg-white">D</Kbd>
+                    </KbdGroup>
+                  </CommandShortcut>
+                </CommandItem>
 
-              <CommandItem
-                className="cursor-pointer group py-1! px-2! rounded-md!"
-                onSelect={() => {
-                  onAddTime();
-                  setOpen(false);
-                }}
-              >
-                <Clock className="text-neutral-400 group-hover:text-neutral-700" />
-                <span className="flex-1">Time</span>
-                <CommandShortcut>
-                  <KbdGroup>
-                    <Kbd className="transition group-hover:bg-white">⌘</Kbd>
-                    <Kbd className="transition group-hover:bg-white">T</Kbd>
-                  </KbdGroup>
-                </CommandShortcut>
-              </CommandItem>
+                <CommandItem
+                  className="cursor-pointer group py-1! px-2! rounded-md!"
+                  onSelect={() => {
+                    onAddTime();
+                    setOpen(false);
+                  }}
+                >
+                  <Clock className="text-neutral-400 group-hover:text-neutral-700" />
+                  <span className="flex-1">Time</span>
+                  <CommandShortcut>
+                    <KbdGroup>
+                      <Kbd className="transition group-hover:bg-white">⌘</Kbd>
+                      <Kbd className="transition group-hover:bg-white">T</Kbd>
+                    </KbdGroup>
+                  </CommandShortcut>
+                </CommandItem>
 
-              <CommandItem
-                className="cursor-pointer group py-1! px-2! rounded-md!"
-                onSelect={() => {
-                  onAddNumber();
-                  setOpen(false);
-                }}
-              >
-                <Hash className="text-neutral-400 group-hover:text-neutral-700" />
-                <span className="flex-1">Number</span>
-                <CommandShortcut>
-                  <KbdGroup>
-                    <Kbd className="transition group-hover:bg-white">⌘</Kbd>
-                    <Kbd className="transition group-hover:bg-white">N</Kbd>
-                  </KbdGroup>
-                </CommandShortcut>
-              </CommandItem>
+                <CommandItem
+                  className="cursor-pointer group py-1! px-2! rounded-md!"
+                  onSelect={() => {
+                    onAddNumber();
+                    setOpen(false);
+                  }}
+                >
+                  <Hash className="text-neutral-400 group-hover:text-neutral-700" />
+                  <span className="flex-1">Number</span>
+                  <CommandShortcut>
+                    <KbdGroup>
+                      <Kbd className="transition group-hover:bg-white">⌘</Kbd>
+                      <Kbd className="transition group-hover:bg-white">N</Kbd>
+                    </KbdGroup>
+                  </CommandShortcut>
+                </CommandItem>
 
-              <CommandItem
-                className="cursor-pointer group py-1! px-2! rounded-md!"
-                onSelect={() => {
-                  onAddLink();
-                  setOpen(false);
-                }}
-              >
-                <Link className="text-neutral-400 group-hover:text-neutral-700" />
-                <span className="flex-1">Link</span>
-                <CommandShortcut>
-                  <KbdGroup>
-                    <Kbd className="transition group-hover:bg-white">⌘</Kbd>
-                    <Kbd className="transition group-hover:bg-white">⇧</Kbd>
-                    <Kbd className="transition group-hover:bg-white">K</Kbd>
-                  </KbdGroup>
-                </CommandShortcut>
-              </CommandItem>
+                <CommandItem
+                  className="cursor-pointer group py-1! px-2! rounded-md!"
+                  onSelect={() => {
+                    onAddLink();
+                    setOpen(false);
+                  }}
+                >
+                  <Link className="text-neutral-400 group-hover:text-neutral-700" />
+                  <span className="flex-1">Link</span>
+                  <CommandShortcut>
+                    <KbdGroup>
+                      <Kbd className="transition group-hover:bg-white">⌘</Kbd>
+                      <Kbd className="transition group-hover:bg-white">⇧</Kbd>
+                      <Kbd className="transition group-hover:bg-white">K</Kbd>
+                    </KbdGroup>
+                  </CommandShortcut>
+                </CommandItem>
 
-              <CommandItem
-                className="cursor-pointer group py-1! px-2! rounded-md!"
-                onSelect={() => {
-                  onAddRating();
-                  setOpen(false);
-                }}
-              >
-                <Star className="text-neutral-400 group-hover:text-neutral-700" />
-                <span className="flex-1">Rating</span>
-                <CommandShortcut>
-                  <KbdGroup>
-                    <Kbd className="transition group-hover:bg-white">⌘</Kbd>
-                    <Kbd className="transition group-hover:bg-white">⇧</Kbd>
-                    <Kbd className="transition group-hover:bg-white">R</Kbd>
-                  </KbdGroup>
-                </CommandShortcut>
-              </CommandItem>
+                <CommandItem
+                  className="cursor-pointer group py-1! px-2! rounded-md!"
+                  onSelect={() => {
+                    onAddRating();
+                    setOpen(false);
+                  }}
+                >
+                  <Star className="text-neutral-400 group-hover:text-neutral-700" />
+                  <span className="flex-1">Rating</span>
+                  <CommandShortcut>
+                    <KbdGroup>
+                      <Kbd className="transition group-hover:bg-white">⌘</Kbd>
+                      <Kbd className="transition group-hover:bg-white">⇧</Kbd>
+                      <Kbd className="transition group-hover:bg-white">R</Kbd>
+                    </KbdGroup>
+                  </CommandShortcut>
+                </CommandItem>
 
-              <CommandItem
-                className="cursor-pointer group py-1! px-2! rounded-md!"
-                onSelect={() => {
-                  onAddFileUpload();
-                  setOpen(false);
-                }}
-              >
-                <Upload className="text-neutral-400 group-hover:text-neutral-700" />
-                <span className="flex-1">File upload</span>
-                <CommandShortcut>
-                  <KbdGroup>
-                    <Kbd className="transition group-hover:bg-white">⌘</Kbd>
-                    <Kbd className="transition group-hover:bg-white">U</Kbd>
-                  </KbdGroup>
-                </CommandShortcut>
-              </CommandItem>
+                <CommandItem
+                  className="cursor-pointer group py-1! px-2! rounded-md!"
+                  onSelect={() => {
+                    onAddFileUpload();
+                    setOpen(false);
+                  }}
+                >
+                  <Upload className="text-neutral-400 group-hover:text-neutral-700" />
+                  <span className="flex-1">File upload</span>
+                  <CommandShortcut>
+                    <KbdGroup>
+                      <Kbd className="transition group-hover:bg-white">⌘</Kbd>
+                      <Kbd className="transition group-hover:bg-white">U</Kbd>
+                    </KbdGroup>
+                  </CommandShortcut>
+                </CommandItem>
 
-              <CommandItem
-                className="cursor-pointer group py-1! px-2! rounded-md!"
-                onSelect={() => {
-                  onAddLinearScale();
-                  setOpen(false);
-                }}
-              >
-                <Ellipsis className="text-neutral-400 group-hover:text-neutral-700" />
-                <span className="flex-1">Linear scale</span>
-                <CommandShortcut>
-                  <KbdGroup>
-                    <Kbd className="transition group-hover:bg-white">⌘</Kbd>
-                    <Kbd className="transition group-hover:bg-white">⇧</Kbd>
-                    <Kbd className="transition group-hover:bg-white">L</Kbd>
-                  </KbdGroup>
-                </CommandShortcut>
-              </CommandItem>
-            </CommandGroup>
-          </CommandList>
-        </Command>
-      </CommandDialog>
+                <CommandItem
+                  className="cursor-pointer group py-1! px-2! rounded-md!"
+                  onSelect={() => {
+                    onAddLinearScale();
+                    setOpen(false);
+                  }}
+                >
+                  <Ellipsis className="text-neutral-400 group-hover:text-neutral-700" />
+                  <span className="flex-1">Linear scale</span>
+                  <CommandShortcut>
+                    <KbdGroup>
+                      <Kbd className="transition group-hover:bg-white">⌘</Kbd>
+                      <Kbd className="transition group-hover:bg-white">⇧</Kbd>
+                      <Kbd className="transition group-hover:bg-white">L</Kbd>
+                    </KbdGroup>
+                  </CommandShortcut>
+                </CommandItem>
+              </CommandGroup>
+            </CommandList>
+          </Command>
+        </CommandDialog>
+      )}
     </div>
   );
 }

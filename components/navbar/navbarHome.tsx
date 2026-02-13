@@ -6,6 +6,7 @@ import { Button } from "@/components/ui/button"; // assuming you already have yo
 import { FillinLogo } from "../ui/svg/logo";
 import { Search, Settings } from "lucide-react";
 import { useEffect, useState } from "react";
+import Image from "next/image";
 import { supabase } from "@/lib/supabase/client";
 import {
   DropdownMenu,
@@ -18,6 +19,7 @@ import { LogOutIcon, LayoutDashboardIcon, FileTextIcon } from "lucide-react";
 
 export const NavbarHome = () => {
   const [user, setUser] = useState<any>(null);
+  const [avatarError, setAvatarError] = useState(false);
 
   useEffect(() => {
     supabase.auth.getUser().then(({ data }) => {
@@ -41,8 +43,12 @@ export const NavbarHome = () => {
     window.location.reload();
   }
 
-  const avatarUrl =
-    user?.user_metadata?.avatar_url || user?.user_metadata?.picture || null;
+  const avatarUrl = user?.user_metadata?.avatar_url?.split("=")[0] || null;
+
+  // Reset avatar error when user changes
+  useEffect(() => {
+    setAvatarError(false);
+  }, [user?.id]);
 
   return (
     <header className="w-full fixed border-zinc-200 dark:border-zinc-800">
@@ -52,7 +58,7 @@ export const NavbarHome = () => {
           href="/dashboard"
           className="flex items-center hover:bg-gray-100 rounded-md p-1 focus:ring-3 focus:ring-blue-200 gap-2"
         >
-          <FillinLogo />
+          <FillinLogo className="text-neutral-500 hover:text-neutral-600" />
         </Link>
 
         {/* Right: Nav actions */}
@@ -72,15 +78,18 @@ export const NavbarHome = () => {
           {user && (
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
-                <button className="h-8 w-8 rounded-full overflow-hidden border cursor-pointer">
-                  {avatarUrl ? (
-                    <img
+                <button className="h-8 w-8 rounded-full overflow-hidden border cursor-pointer bg-gray-100">
+                  {avatarUrl && !avatarError ? (
+                    <Image
                       src={avatarUrl}
                       alt="avatar"
+                      width={32}
+                      height={32}
                       className="h-full w-full object-cover"
+                      onError={() => setAvatarError(true)}
                     />
                   ) : (
-                    <div className="h-full w-full flex items-center justify-center text-sm">
+                    <div className="h-full w-full flex items-center justify-center text-sm font-semibold text-neutral-600">
                       {user.email?.[0]?.toUpperCase()}
                     </div>
                   )}
