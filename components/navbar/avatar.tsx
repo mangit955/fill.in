@@ -12,11 +12,10 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { LogOutIcon, LayoutDashboardIcon, FileTextIcon } from "lucide-react";
 import { useState } from "react";
+import type { User } from "@supabase/supabase-js";
 
 type Props = {
-  user: any;
-  avatarError: boolean;
-  setAvatarError: React.Dispatch<React.SetStateAction<boolean>>;
+  user: User;
 };
 
 export function NavbarAvatar({ user }: Props) {

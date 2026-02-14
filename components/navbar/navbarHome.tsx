@@ -7,10 +7,10 @@ import { Search, Settings } from "lucide-react";
 import { useEffect, useState } from "react";
 import { supabase } from "@/lib/supabase/client";
 import { NavbarAvatar } from "@/components/navbar/avatar";
+import type { User } from "@supabase/supabase-js";
 
 export const NavbarHome = () => {
-  const [user, setUser] = useState<any>(null);
-  const [avatarError, setAvatarError] = useState(false);
+  const [user, setUser] = useState<User | null>(null);
 
   useEffect(() => {
     supabase.auth.getUser().then(({ data }) => {
@@ -30,11 +30,6 @@ export const NavbarHome = () => {
   }, []);
 
   // Removed const avatarUrl = user?.user_metadata?.avatar_url?.split("=")[0] || null;
-
-  // Reset avatar error when user changes
-  useEffect(() => {
-    setAvatarError(false);
-  }, [user?.id]);
 
   return (
     <header className="w-full fixed border-zinc-200 dark:border-zinc-800">
@@ -61,13 +56,7 @@ export const NavbarHome = () => {
             <Settings width={20} height={20} />
           </Button>
 
-          {user && (
-            <NavbarAvatar
-              user={user}
-              avatarError={avatarError}
-              setAvatarError={setAvatarError}
-            />
-          )}
+          {user && <NavbarAvatar user={user} />}
         </div>
       </nav>
     </header>
