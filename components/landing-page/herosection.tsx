@@ -5,6 +5,7 @@ import { ArrowRight } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { MarqueeLogos } from "./marqueeLogos";
 import { TypingAnimation } from "../ui/typing-animation";
+import { Marquee } from "../ui/marquee";
 
 export const Herosection = () => {
   const router = useRouter();
@@ -84,7 +85,7 @@ export const Herosection = () => {
       {/* Marquee animation */}
 
       <div
-        className="relative mx-auto w-full max-w-4xl overflow-hidden mt-20 mb-24 h-24 flex items-center "
+        className="relative mx-auto w-full max-w-5xl overflow-hidden mt-20 mb-24"
         style={{
           WebkitMaskImage:
             "linear-gradient(to right, transparent, black 12%, black 88%, transparent)",
@@ -92,9 +93,11 @@ export const Herosection = () => {
             "linear-gradient(to right, transparent, black 12%, black 88%, transparent)",
         }}
       >
-        <div className="marquee-track">
-          <MarqueeLogos />
-          <MarqueeLogos />
+        <div className="space-y-2">
+          <Marquee pauseOnHover className="[--duration:42s]">
+            <MarqueeLogos />
+            <MarqueeLogos />
+          </Marquee>
         </div>
       </div>
 
