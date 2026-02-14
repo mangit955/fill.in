@@ -4,6 +4,7 @@ import { Button } from "../ui/button";
 import { ArrowRight } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { MarqueeLogos } from "./marqueeLogos";
+import { TypingAnimation } from "../ui/typing-animation";
 
 export const Herosection = () => {
   const router = useRouter();
@@ -32,7 +33,20 @@ export const Herosection = () => {
               </svg>
             </span>
           </span>{" "}
-          way to create forms
+          <TypingAnimation
+            words={[
+              "way to share forms",
+              "way to build a form",
+              "way to create forms",
+            ]}
+            typeSpeed={50}
+            deleteSpeed={150}
+            pauseDelay={2000}
+            blinkCursor={true}
+            loop
+          >
+            way to create forms
+          </TypingAnimation>
         </h1>
 
         <h2 className="font-medium text-lg sm:text-xl text-[rgb(55, 53, 47)] max-w-xl mx-auto pt-5">

@@ -9,6 +9,7 @@ import { PencilLine, Plus } from "lucide-react";
 import CopyLinkButton from "./CopyLinkButton";
 import DeleteFormButton from "./DeleteFormButton";
 import EmptyFormsAnimation from "./emptyAnimation";
+import { Particles } from "@/components/ui/particles";
 
 function formatRelative(dateString: string) {
   const date = new Date(dateString);
@@ -130,8 +131,14 @@ export default async function DashboardPage() {
 
   if (formsWithCounts.length === 0) {
     return (
-      <div>
+      <div className="relative min-h-screen overflow-hidden">
         <NavbarHome />
+
+        {/* Particles background */}
+        <div className="absolute inset-0 -z-10 pointer-events-none">
+          <Particles />
+        </div>
+
         <div className="min-h-[70vh] flex flex-col items-center justify-center text-center px-4">
           <EmptyFormsAnimation />
           <span className="text-xl text-neutral-700 font-bold">
@@ -143,7 +150,6 @@ export default async function DashboardPage() {
           </span>
           <form action={createForm}>
             <Button variant="default">
-              {" "}
               <Plus width={20} height={20} className="mr-2" /> New form
             </Button>
           </form>
@@ -155,6 +161,7 @@ export default async function DashboardPage() {
   return (
     <div className="min-h-screen bg-white">
       <NavbarHome />
+
       <div className="max-w-7xl mx-auto py-14 px-6 space-y-8">
         <div className="flex items-center justify-between border-b pt-18 pb-4">
           <h1 className="text-3xl text-neutral-800 font-bold">Home</h1>
