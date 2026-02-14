@@ -11,14 +11,14 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { LogOutIcon, LayoutDashboardIcon, FileTextIcon } from "lucide-react";
+import { useState } from "react";
 
 type Props = {
   user: any;
-  avatarError: boolean;
-  setAvatarError: (v: boolean) => void;
 };
 
-export function NavbarAvatar({ user, avatarError, setAvatarError }: Props) {
+export function NavbarAvatar({ user }: Props) {
+  const [avatarError, setAvatarError] = useState(false);
   const avatarUrl = user?.user_metadata?.avatar_url?.split("=")[0] || null;
 
   return (
