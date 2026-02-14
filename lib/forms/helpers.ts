@@ -7,7 +7,6 @@
 // “Given current blocks, and an intent, what is the next valid state?”
 
 import { FormBlock, LogicJump, VisibilityRule } from "@/lib/forms/types";
-import { Target } from "lucide-react";
 
 //addBlock => takes current block and returns a new array & appends a new block
 export function addBlock(blocks: FormBlock[], block: FormBlock): FormBlock[] {
@@ -28,10 +27,10 @@ export function addBlock(blocks: FormBlock[], block: FormBlock): FormBlock[] {
 export function updateBlockMeta(
   blocks: FormBlock[],
   blockId: string,
-  updates: Partial<Pick<FormBlock, "required">>
+  updates: Partial<Pick<FormBlock, "required">>,
 ): FormBlock[] {
   return blocks.map((block) =>
-    block.id === blockId ? { ...block, ...updates } : block
+    block.id === blockId ? { ...block, ...updates } : block,
   );
 }
 
@@ -43,18 +42,18 @@ export function updateBlockMeta(
 
 //review this once more
 
-export function updateBlockConfig<T extends FormBlock>(
+export function updateBlockConfig(
   blocks: FormBlock[],
   blockId: string,
-  updater: (config: T["config"]) => T["config"]
+  updater: (config: any) => any,
 ): FormBlock[] {
   return blocks.map((block) => {
     if (block.id !== blockId) return block;
 
     return {
       ...block,
-      config: updater(block.config as T["config"]),
-    };
+      config: updater((block as any).config),
+    } as FormBlock;
   });
 }
 
@@ -66,7 +65,7 @@ export function deleteBlock(blocks: FormBlock[], blockId: string): FormBlock[] {
 export function reorderBlock(
   blocks: FormBlock[],
   fromIndex: number,
-  toIndex: number
+  toIndex: number,
 ): FormBlock[] {
   const next = [...blocks];
 
@@ -99,7 +98,7 @@ export function cloneBlock(block: FormBlock): FormBlock {
 export function insertBlockAfter(
   blocks: FormBlock[],
   afterId: string,
-  newBlock: FormBlock
+  newBlock: FormBlock,
 ): FormBlock[] {
   const index = blocks.findIndex((b) => b.id === afterId);
   if (index === -1) return blocks;
@@ -113,7 +112,7 @@ export function addLogicJump(jumps: LogicJump[], jump: LogicJump): LogicJump[] {
 
 export function removeLogicJump(
   jumps: LogicJump[],
-  jumpId: string
+  jumpId: string,
 ): LogicJump[] {
   return jumps.filter((j) => j.id !== jumpId);
 }
@@ -121,14 +120,14 @@ export function removeLogicJump(
 export function updateLogicJump(
   jumps: LogicJump[],
   jumpId: string,
-  updates: Partial<Omit<LogicJump, "id">>
+  updates: Partial<Omit<LogicJump, "id">>,
 ): LogicJump[] {
   return jumps.map((j) => (j.id === jumpId ? { ...j, ...updates } : j));
 }
 
 export function upsertVisibilityRule(
   rules: VisibilityRule[],
-  rule: VisibilityRule
+  rule: VisibilityRule,
 ): VisibilityRule[] {
   const existing = rules.find((r) => r.targetBlockId === rule.targetBlockId);
 
@@ -141,19 +140,19 @@ export function upsertVisibilityRule(
 
 export function removeVisibilityRule(
   rules: VisibilityRule[],
-  targetBlockId: string
+  targetBlockId: string,
 ): VisibilityRule[] {
   return rules.filter((r) => r.targetBlockId !== targetBlockId);
 }
 
 export function getNextJumpOrder(
   jumps: LogicJump[],
-  fromBlockId: string
+  fromBlockId: string,
 ): number {
   return (
     Math.max(
       0,
-      ...jumps.filter((j) => j.fromBlockId === fromBlockId).map((j) => j.order)
+      ...jumps.filter((j) => j.fromBlockId === fromBlockId).map((j) => j.order),
     ) + 1
   );
 }
