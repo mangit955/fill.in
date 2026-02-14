@@ -96,7 +96,10 @@ export default async function Page({
 
                       let display = "—";
 
-                      const options = block.config?.options ?? [];
+                      const options =
+                        block.type === "multiple_choice"
+                          ? block.config.options
+                          : [];
 
                       // MULTI‑SELECT (array of ids)
                       if (Array.isArray(value)) {
