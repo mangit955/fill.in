@@ -15,6 +15,8 @@ import { useState } from "react";
 
 type Props = {
   user: any;
+  avatarError: boolean;
+  setAvatarError: React.Dispatch<React.SetStateAction<boolean>>;
 };
 
 export function NavbarAvatar({ user }: Props) {
