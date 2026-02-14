@@ -153,9 +153,9 @@ export default async function DashboardPage() {
   }
 
   return (
-    <div>
+    <div className="min-h-screen bg-white">
       <NavbarHome />
-      <div className="max-w-4xl mx-auto py-10 px-4  space-y-6">
+      <div className="max-w-7xl mx-auto py-14 px-6 space-y-8">
         <div className="flex items-center justify-between border-b pt-18 pb-4">
           <h1 className="text-3xl text-neutral-800 font-bold">Home</h1>
 
@@ -170,7 +170,7 @@ export default async function DashboardPage() {
         {formsWithCounts.map((form) => (
           <div
             key={form.id}
-            className="group relative rounded-md hover:bg-gray-100 p-4 flex justify-between items-center"
+            className="group relative rounded-md hover:bg-gray-100 p-3 flex justify-between items-center"
           >
             {/* Left side (clickable to responses) */}
             <NextLink
@@ -186,11 +186,11 @@ export default async function DashboardPage() {
                   <span className="text-neutral-400">•</span>
                   <span>{formatRelative(form.created_at)}</span>
                   {form.isOwner && form.hasCollaborators ? (
-                    <span className="ml-2 text-xs px-2 py-0.5 rounded bg-green-100 text-green-700">
+                    <span className="ml-2 text-xs px-2 py-0.5 rounded-full bg-green-100 text-green-700">
                       Collaborated
                     </span>
                   ) : !form.isOwner ? (
-                    <span className="ml-2 text-xs px-2 py-0.5 rounded bg-blue-100 text-blue-700">
+                    <span className="ml-2 text-xs px-2 py-0.5 rounded-full bg-blue-100 text-blue-700">
                       In collaboration
                     </span>
                   ) : null}

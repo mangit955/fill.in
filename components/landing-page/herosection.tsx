@@ -64,7 +64,7 @@ export const Herosection = () => {
           Create a free form
           <ArrowRight className="size-4 translate-y-2px font-bold" />
         </Button>
-        <h3 className="text-sm text-gray-700 ">No signup required</h3>
+        <h3 className="text-sm text-gray-700 ">Start creating — it’s free.</h3>
       </div>
 
       {/* Marquee animation */}
