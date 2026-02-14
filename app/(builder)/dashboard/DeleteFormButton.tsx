@@ -9,7 +9,11 @@ import {
 import { Trash2 } from "lucide-react";
 import { useState } from "react";
 
-export default function DeleteFormButton() {
+type Props = {
+  disabled?: boolean;
+};
+
+export default function DeleteFormButton({ disabled }: Props) {
   const [loading, setLoading] = useState(false);
   return (
     <div>
@@ -29,12 +33,12 @@ export default function DeleteFormButton() {
               );
               form?.requestSubmit();
             }}
-            className="cursor-pointer focus:outline-none
+            className={`focus:outline-none
       focus-visible:ring-4 focus-visible:ring-blue-200
       active:ring-4 active:ring-blue-200
-      text-neutral-500 hover:text-neutral-600
-      hover:bg-gray-200 p-1 rounded-md"
-            disabled={loading}
+      p-1 rounded-md
+      ${loading || disabled ? "cursor-not-allowed  opacity-40 text-neutral-400" : "cursor-pointer text-neutral-500 hover:text-neutral-600 hover:bg-gray-200"}`}
+            disabled={loading || disabled}
           >
             {loading ? (
               <Spinner width={20} height={20} />

@@ -65,6 +65,7 @@ export default async function DashboardPage() {
   );
 
   const formsWithCounts = [];
+  const ownedIds = new Set((ownedForms ?? []).map((f: any) => f.id));
 
   if (!allForms) return null;
 
@@ -73,10 +74,16 @@ export default async function DashboardPage() {
       .from("responses")
       .select("id", { count: "exact", head: true })
       .eq("form_id", form.id);
+    const { count: collaboratorsCount } = await supabase
+      .from("form_members")
+      .select("id", { count: "exact", head: true })
+      .eq("form_id", form.id);
 
     formsWithCounts.push({
       ...form,
       responseCount: count ?? 0,
+      isOwner: ownedIds.has(form.id),
+      hasCollaborators: (collaboratorsCount ?? 0) > 0,
     });
   }
 
@@ -93,6 +100,7 @@ export default async function DashboardPage() {
       description: form.description,
       schema: form,
       status: "draft",
+      user_id: user.id,
     });
 
     revalidatePath("/dashboard");
@@ -171,6 +179,15 @@ export default async function DashboardPage() {
                   <span className="capitalize">{form.status}</span>
                   <span className="text-neutral-400">•</span>
                   <span>{formatRelative(form.created_at)}</span>
+                  {form.isOwner && form.hasCollaborators ? (
+                    <span className="ml-2 text-xs px-2 py-0.5 rounded bg-green-100 text-green-700">
+                      Collaborated
+                    </span>
+                  ) : !form.isOwner ? (
+                    <span className="ml-2 text-xs px-2 py-0.5 rounded bg-blue-100 text-blue-700">
+                      In collaboration
+                    </span>
+                  ) : null}
                 </div>
               </div>
             </NextLink>
@@ -191,7 +208,7 @@ active:ring-4 active:ring-blue-200 items-center gap-1 cursor-pointer text-neutra
 
               <form action={deleteForm}>
                 <input type="hidden" name="formId" value={form.id} />
-                <DeleteFormButton />
+                <DeleteFormButton disabled={!form.isOwner} />
               </form>
             </div>
           </div>

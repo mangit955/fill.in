@@ -27,22 +27,17 @@ import { Preview } from "@/components/builder/PreviewDialog";
 import { supabase } from "../supabase/client";
 import AuthModal from "@/app/auth/authModal";
 import { NavbarHome } from "@/components/navbar/navbarHome";
-import InviteModal from "@/components/invite/InviteModal";
 
 type Props = {
   initialForm: Form;
   formId: string;
-  collaborators: {
-    id: string;
-    email: string;
-    role: string;
-  }[];
+  isOwner: boolean;
 };
 
 export default function FormEditorClient({
   initialForm,
   formId,
-  collaborators,
+  isOwner,
 }: Props) {
   const editor = useFormEditor(initialForm);
   const [mode, setMode] = useState<"editor" | "published">("editor");
@@ -53,7 +48,6 @@ export default function FormEditorClient({
   const [hasUnsavedChanges, setHasUnsavedChanges] = useState(false);
   const [copied, setCopied] = useState(false);
   const [authOpen, setAuthOpen] = useState(false);
-  const [inviteOpen, setInviteOpen] = useState(false);
 
   async function continuePublish() {
     console.log("[Publish Flow] continuePublish called");
@@ -230,16 +224,17 @@ export default function FormEditorClient({
   }
 
   return (
-    <div>
+    <div className="h-screen flex flex-col overflow-hidden">
+      {/* Top navbar */}
       <NavbarApp
         isPublishing={isPublishing}
+        isOwner={isOwner}
         onPublish={async () => {
           const {
             data: { session },
           } = await supabase.auth.getSession();
 
           if (!session?.user) {
-            // mark that user intended to publish before login
             localStorage.setItem("pendingPublish", "true");
             setAuthOpen(true);
             return;
@@ -251,82 +246,78 @@ export default function FormEditorClient({
         formId={formId}
       />
 
-      <div className="max-w-3xl mx-auto py-10">
-        <input
-          value={editor.form.title}
-          onChange={(e) => editor.updateFormMeta({ title: e.target.value })}
-          placeholder="Form Title"
-          className="text-6xl md:text-8xl font-bold text-neutral-700 placeholder:text-neutral-300 mb-6 w-full bg-transparent outline-none border-none"
-        ></input>
-        <textarea
-          ref={descRef}
-          value={editor.form.description}
-          onChange={(e) => {
-            editor.updateFormMeta({ description: e.target.value });
-            const el = e.currentTarget;
-            el.style.height = "auto";
-            el.style.height = el.scrollHeight + "px";
-          }}
-          placeholder="Description"
-          rows={1}
-          className="text-xl md:text-2xl font-medium text-neutral-500 placeholder:text-neutral-300 mb-6 w-full bg-transparent outline-none border-none resize-none overflow-hidden"
-        />
+      <AuthModal
+        open={authOpen}
+        onOpenChange={setAuthOpen}
+        onSuccess={async () => {
+          setAuthOpen(false);
+        }}
+      />
 
-        <AddBlockPanel
-          onAddShortText={() => addAndFocus(createShortTextBlock)}
-          onAddLongText={() => addAndFocus(createLongTextBlock)}
-          onAddMultipleChoice={() => addAndFocus(createMultipleChoiceBlock)}
-          onAddEmail={() => addAndFocus(createEmailBlock)}
-          onAddPhone={() => addAndFocus(createPhoneBlock)}
-          onAddDate={() => addAndFocus(createDateBlock)}
-          onAddLink={() => addAndFocus(createLinkBlock)}
-          onAddNumber={() => addAndFocus(createNumberBlock)}
-          onAddRating={() => addAndFocus(createRatingBlock)}
-          onAddFileUpload={() => addAndFocus(createFileUploadBlock)}
-          onAddTime={() => addAndFocus(createTimeBlock)}
-          onAddLinearScale={() => addAndFocus(createLinearScaleBlock)}
-        />
+      {/* Scrollable editor area */}
+      <div className="flex-1 overflow-auto">
+        <div className="max-w-3xl mx-auto py-10">
+          <input
+            value={editor.form.title}
+            onChange={(e) => editor.updateFormMeta({ title: e.target.value })}
+            placeholder="Form Title"
+            className="text-6xl md:text-8xl font-bold text-neutral-700 placeholder:text-neutral-300 mb-6 w-full bg-transparent outline-none border-none"
+          />
 
-        <BuilderCanvas
-          blocks={editor.blocks}
-          hydrated={editor.hydrated}
-          activeBlockId={activeBlockId}
-          onUpdateMeta={editor.updateMeta}
-          onUpdateConfig={editor.updateConfig}
-          onRemove={editor.remove}
-          onDuplicate={editor.duplicate}
-          onConsumeFocus={() => setActiveBlockId(null)}
-          onReorder={editor.reorder}
-          visibilityRules={editor.visibilityRules}
-          onRemoveVisibilityRule={editor.removeVisibilityRule}
-          onUpsertVisibilityRule={editor.upsertVisibilityRule}
-          logicJumps={editor.logicJumps}
-          onAddLogicJump={editor.addLogicJump}
-          onRemoveLogicJump={editor.removeLogicJump}
-          onUpdateLogicJump={editor.updateLogicJump}
-        />
+          <textarea
+            ref={descRef}
+            value={editor.form.description}
+            onChange={(e) => {
+              editor.updateFormMeta({ description: e.target.value });
+              const el = e.currentTarget;
+              el.style.height = "auto";
+              el.style.height = el.scrollHeight + "px";
+            }}
+            placeholder="Description"
+            rows={1}
+            className="text-xl md:text-2xl font-medium text-neutral-500 placeholder:text-neutral-300 mb-6 w-full bg-transparent outline-none border-none resize-none overflow-hidden"
+          />
 
-        <Preview
-          form={editor.form}
-          open={previewOpen}
-          onOpenChange={setPreviewOpen}
-        />
+          <AddBlockPanel
+            onAddShortText={() => addAndFocus(createShortTextBlock)}
+            onAddLongText={() => addAndFocus(createLongTextBlock)}
+            onAddMultipleChoice={() => addAndFocus(createMultipleChoiceBlock)}
+            onAddEmail={() => addAndFocus(createEmailBlock)}
+            onAddPhone={() => addAndFocus(createPhoneBlock)}
+            onAddDate={() => addAndFocus(createDateBlock)}
+            onAddLink={() => addAndFocus(createLinkBlock)}
+            onAddNumber={() => addAndFocus(createNumberBlock)}
+            onAddRating={() => addAndFocus(createRatingBlock)}
+            onAddFileUpload={() => addAndFocus(createFileUploadBlock)}
+            onAddTime={() => addAndFocus(createTimeBlock)}
+            onAddLinearScale={() => addAndFocus(createLinearScaleBlock)}
+          />
 
-        <AuthModal
-          open={authOpen}
-          onOpenChange={setAuthOpen}
-          onSuccess={async () => {
-            setAuthOpen(false);
+          <BuilderCanvas
+            blocks={editor.blocks}
+            hydrated={editor.hydrated}
+            activeBlockId={activeBlockId}
+            onUpdateMeta={editor.updateMeta}
+            onUpdateConfig={editor.updateConfig}
+            onRemove={editor.remove}
+            onDuplicate={editor.duplicate}
+            onConsumeFocus={() => setActiveBlockId(null)}
+            onReorder={editor.reorder}
+            visibilityRules={editor.visibilityRules}
+            onRemoveVisibilityRule={editor.removeVisibilityRule}
+            onUpsertVisibilityRule={editor.upsertVisibilityRule}
+            logicJumps={editor.logicJumps}
+            onAddLogicJump={editor.addLogicJump}
+            onRemoveLogicJump={editor.removeLogicJump}
+            onUpdateLogicJump={editor.updateLogicJump}
+          />
 
-            // wait a moment for session to be available after OAuth redirect
-          }}
-        />
-
-        <InviteModal
-          open={inviteOpen}
-          onOpenChange={setInviteOpen}
-          formId={formId}
-        />
+          <Preview
+            form={editor.form}
+            open={previewOpen}
+            onOpenChange={setPreviewOpen}
+          />
+        </div>
       </div>
     </div>
   );

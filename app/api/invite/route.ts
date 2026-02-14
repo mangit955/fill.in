@@ -78,12 +78,21 @@ export async function POST(req: Request) {
     /* ----------------------------- */
     /* Find user by email            */
     /* ----------------------------- */
+    // Supabase admin.listUsers does NOT filter by email reliably.
+    // We fetch and then find manually.
     const { data: usersData, error: userError } =
-      await admin.auth.admin.listUsers({
-        email,
-      } as any);
+      await admin.auth.admin.listUsers();
 
-    const invitedUser = usersData?.users?.[0];
+    if (userError) {
+      return NextResponse.json(
+        { error: "Failed to fetch users" },
+        { status: 500 },
+      );
+    }
+
+    const invitedUser = usersData?.users?.find(
+      (u: any) => u.email?.toLowerCase() === email.toLowerCase(),
+    );
 
     if (userError || !invitedUser) {
       return NextResponse.json(

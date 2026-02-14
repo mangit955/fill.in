@@ -1,73 +1,99 @@
 "use client";
 
 import { useState } from "react";
+import { Button } from "../ui/button";
+import { Spinner } from "../ui/spinner";
+import { toast } from "sonner";
+import { useRouter } from "next/navigation";
 
 type Props = {
   open: boolean;
   onOpenChange: (v: boolean) => void;
   formId: string;
+  canInvite: boolean; // owner only
 };
 
-export default function InviteModal({ open, onOpenChange, formId }: Props) {
+export default function InviteModal({
+  open,
+  onOpenChange,
+  formId,
+  canInvite,
+}: Props) {
+  const router = useRouter();
   const [email, setEmail] = useState("");
   const [loading, setLoading] = useState(false);
 
   if (!open) return null;
 
   async function invite() {
-    if (!email) return;
+    if (!email || !canInvite) return;
 
-    try {
-      setLoading(true);
+    setLoading(true);
 
-      const res = await fetch("/api/invite", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ email, formId }),
-      });
+    const promise = fetch("/api/invite", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ email, formId }),
+    }).then(async (res) => {
+      const data = await res.json().catch(() => null);
 
       if (!res.ok) {
-        const data = await res.json().catch(() => null);
-        alert(data?.error || "Invite failed");
-        return;
+        throw new Error(data?.error || "Invite failed");
       }
 
+      return data;
+    });
+
+    toast.promise(promise, {
+      loading: "Inviting collaborator…",
+      success: "Invite sent",
+      error: (err) => err.message,
+    });
+
+    try {
+      await promise; // ← WAIT here
       setEmail("");
-      onOpenChange(false);
+      onOpenChange(false); // close AFTER request completes
+      router.refresh();
+    } catch {
+      // do nothing, toast already handled
     } finally {
       setLoading(false);
     }
   }
 
   return (
-    <div className="fixed inset-0 bg-black/20 backdrop-blur-sm flex items-center justify-center z-50">
+    <div className="fixed inset-0 bg-black/20 backdrop-blur-sm flex items-center justify-center z-[100]">
       <div className="bg-white rounded-md shadow-lg w-full max-w-md p-6 space-y-4">
-        <h2 className="text-lg font-semibold">Invite collaborator</h2>
+        <h2 className="text-xl text-neutral-800 font-semibold">
+          Invite collaborator
+        </h2>
 
         <input
           value={email}
           onChange={(e) => setEmail(e.target.value)}
           placeholder="Enter email"
-          className="w-full border rounded-md px-3 py-2 text-sm"
+          className="w-full border focus:outline-none border-gray-300 shadow-sm rounded-md px-3 py-2 text-sm"
         />
+        {!canInvite && (
+          <p className="text-xs text-neutral-500">
+            Only the owner can invite collaborators
+          </p>
+        )}
 
         <div className="flex justify-end gap-2">
-          <button
-            onClick={() => onOpenChange(false)}
-            className="px-3 py-2 text-sm rounded-md border"
-          >
+          <Button onClick={() => onOpenChange(false)} variant="outline">
             Cancel
-          </button>
+          </Button>
 
-          <button
+          <Button
             onClick={invite}
-            disabled={loading}
-            className="px-3 py-2 text-sm rounded-md bg-black text-white disabled:opacity-50"
+            disabled={loading || !canInvite}
+            variant="default"
+            className="bg-black! min-w-[100px] hover:bg-black/80!"
           >
-            {loading ? "Inviting..." : "Send invite"}
-          </button>
+            {loading ? <Spinner height={20} width={20} /> : "Send invite"}
+          </Button>
         </div>
       </div>
     </div>

@@ -5,6 +5,12 @@ import { redirect } from "next/navigation";
 export default async function CreatePage() {
   const supabase = await createServerSupabase();
   const form = createEmptyForm();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+  if (!user) {
+    redirect("/login");
+  }
 
   const { error } = await supabase.from("forms").insert({
     id: form.id,
@@ -13,6 +19,7 @@ export default async function CreatePage() {
     description: form.description,
     status: "draft",
     schema: form,
+    user_id: user.id,
   });
 
   if (error) {

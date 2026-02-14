@@ -13,6 +13,7 @@ type Props = {
   isPublishing?: boolean;
   onPreview?: () => void;
   formId?: string;
+  isOwner?: boolean;
 };
 
 export const NavbarApp = ({
@@ -20,63 +21,72 @@ export const NavbarApp = ({
   isPublishing,
   onPreview,
   formId,
+  isOwner,
 }: Props) => {
+  // Treat undefined as owner (new form before owner is persisted)
+  const canInvite = isOwner ?? true;
   const [inviteOpen, setInviteOpen] = useState(false);
 
   return (
-    <header className="w-full fixed border-zinc-200 dark:border-zinc-800">
-      <nav className="mx-auto  flex flex-end justify-between px-4 py-1 ">
-        {/* Left: Logo or site name */}
-        <Link
-          href="/dashboard"
-          className="flex items-center hover:bg-gray-100 rounded-md p-1 focus:ring-3 focus:ring-blue-200 gap-2"
-        >
-          <FillinLogo />
-        </Link>
+    <>
+      <header className="w-full sticky border-zinc-200 dark:border-zinc-800">
+        <nav className="mx-auto  flex flex-end justify-between px-4 py-1 ">
+          {/* Left: Logo or site name */}
+          <Link
+            href="/dashboard"
+            className="flex items-center hover:bg-gray-100 rounded-md p-1 focus:ring-3 focus:ring-blue-200 gap-2"
+          >
+            <FillinLogo className="text-gray-500" />
+          </Link>
 
-        {/* Right: Nav actions */}
-        <div className="flex backdrop-blur rounded-md items-center gap-3">
-          <Button asChild variant="ghost" className="text-neutral-500 hidden">
-            <Link href="/dashboard">Home</Link>
-          </Button>
-          <Button
-            variant="ghost"
-            className="text-neutral-500"
-            onClick={() => setInviteOpen(true)}
-          >
-            Share
-          </Button>
-          <Button
-            variant="ghost"
-            onClick={() => {
-              if (onPreview) onPreview();
-            }}
-            className="text-neutral-500  "
-          >
-            Preview
-          </Button>
-          <Button
-            variant="default"
-            className="hidden  md:inline-flex  min-w-[100px] justify-center"
-            onClick={() => {
-              if (onPublish) onPublish();
-            }}
-          >
-            <span className="flex items-center justify-center w-full">
-              {isPublishing ? (
-                <Spinner height={20} width={20} strokeWidth={3} />
-              ) : (
-                "Publish"
-              )}
-            </span>
-          </Button>
-        </div>
-      </nav>
+          {/* Right: Nav actions */}
+          <div className="flex backdrop-blur rounded-md items-center gap-3">
+            <Button asChild variant="ghost" className="text-neutral-500 hidden">
+              <Link href="/dashboard">Home</Link>
+            </Button>
+            <Button
+              variant="ghost"
+              className="text-neutral-500 disabled:opacity-60 disabled:cursor-not-allowed disabled:pointer-events-auto"
+              onClick={() => setInviteOpen(true)}
+              disabled={!canInvite}
+            >
+              Collaborate
+            </Button>
+            <Button
+              variant="ghost"
+              onClick={() => {
+                if (onPreview) onPreview();
+              }}
+              className="text-neutral-500  "
+            >
+              Preview
+            </Button>
+            <Button
+              variant="default"
+              disabled={!canInvite} // ← owner only
+              onClick={() => {
+                if (!canInvite) return;
+                onPublish?.();
+              }}
+              className="hidden md:inline-flex min-w-[100px] justify-center disabled:opacity-60 disabled:cursor-not-allowed disabled:pointer-events-auto"
+            >
+              <span className="flex items-center justify-center w-full">
+                {isPublishing ? (
+                  <Spinner height={20} width={20} strokeWidth={3} />
+                ) : (
+                  "Publish"
+                )}
+              </span>
+            </Button>
+          </div>
+        </nav>
+      </header>
       <InviteModal
         open={inviteOpen}
         onOpenChange={setInviteOpen}
         formId={formId ?? ""}
+        canInvite={canInvite}
       />
-    </header>
+    </>
   );
 };
