@@ -104,18 +104,14 @@ export default async function Page({
                       // MULTI‑SELECT (array of ids)
                       if (Array.isArray(value)) {
                         const labels = value.map((optionId: string) => {
-                          const obj = options.find(
-                            (o: any) => o.id === optionId,
-                          );
-                          if (obj) return obj.label ?? obj.value ?? optionId;
+                          const byId = options.find((o) => o.id === optionId);
+                          if (byId) return byId.label ?? optionId;
 
-                          const objByValue = options.find(
-                            (o: any) => o.value === optionId,
+                          // backward compatibility for legacy saved answers that stored label directly
+                          const byLabel = options.find(
+                            (o) => o.label === optionId,
                           );
-                          if (objByValue) return objByValue.label ?? optionId;
-
-                          const str = options.find((o: any) => o === optionId);
-                          if (str) return str;
+                          if (byLabel) return byLabel.label;
 
                           return optionId;
                         });
@@ -124,13 +120,11 @@ export default async function Page({
                       }
                       // SINGLE‑SELECT (string id)
                       else if (typeof value === "string") {
-                        const obj = options.find((o: any) => o.id === value);
-                        if (obj) display = obj.label ?? obj.value ?? value;
+                        const byId = options.find((o) => o.id === value);
+                        if (byId) display = byId.label ?? value;
                         else {
-                          const objByValue = options.find(
-                            (o: any) => o.value === value,
-                          );
-                          if (objByValue) display = objByValue.label ?? value;
+                          const byLabel = options.find((o) => o.label === value);
+                          if (byLabel) display = byLabel.label;
                           else display = value;
                         }
                       }
