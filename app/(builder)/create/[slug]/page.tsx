@@ -60,7 +60,6 @@ export default async function Page({
       <FormEditorClient
         initialForm={data.schema}
         formId={data.id}
-        collaborators={[]}
         isOwner={!!user}
       />
     );
@@ -196,7 +195,11 @@ export default async function Page({
                         .eq("id", data.id)
                         .maybeSingle();
 
-                      if (!form || requester.id !== form.user_id || c.id === form.user_id) {
+                      if (
+                        !form ||
+                        requester.id !== form.user_id ||
+                        c.id === form.user_id
+                      ) {
                         redirect("/dashboard");
                       }
 
@@ -236,7 +239,6 @@ export default async function Page({
         <FormEditorClient
           initialForm={data.schema}
           formId={data.id}
-          collaborators={collaborators}
           isOwner={user?.id === formOwnerId}
         />
       </div>
