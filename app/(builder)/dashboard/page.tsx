@@ -92,6 +92,12 @@ export default async function DashboardPage() {
 
     const supabase = await createServerSupabase();
     const form = createEmptyForm();
+    const {
+      data: { user },
+    } = await supabase.auth.getUser();
+    if (!user) {
+      redirect("/login");
+    }
 
     await supabase.from("forms").insert({
       id: form.id,
