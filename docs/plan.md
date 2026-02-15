@@ -1,181 +1,117 @@
-## 🧭 Goal
+# Fill.in Production Plan
 
-> Build a **modern, Notion-style form builder** (Tally.so clone) where users can type or drag fields, customize them live, and share dynamic forms publicly.
+This plan reflects the current implementation and defines the path to production readiness.
 
----
+## 1. Product Scope
 
-## ⚙️ Tech Stack (Finalized)
+### Core capabilities already implemented
 
-| Layer                           | Tech                                                        | Notes                                          |
-| ------------------------------- | ----------------------------------------------------------- | ---------------------------------------------- |
-| **Frontend**                    | Next.js (App Router) + React + Tailwind CSS + Framer Motion | Modern, fast, supports both UI & server routes |
-| **Drag & Drop / Typing Engine** | React DnD + Custom `/command` parser                        | For Notion-style interactions                  |
-| **Database**                    | MongoDB (with Prisma ORM)                                   | Flexible JSON-based form schema                |
-| **Auth**                        | NextAuth.js                                                 | Email + OAuth support                          |
-| **Validation**                  | Zod                                                         | For schema + input validation                  |
-| **Deployment**                  | Vercel                                                      | Frontend + serverless backend                  |
-| **Storage**                     | Cloudinary / UploadThing                                    | For file upload fields                         |
-| **Optional**                    | Clerk.dev / Stripe / Resend                                 | For premium features, payments, emails         |
+- Authenticated dashboard for form ownership
+- Form creation and editing
+- Public published runtime
+- Submission capture
+- Collaboration (owner/editor)
+- Response table and basic analytics
 
----
+### Core capabilities to harden for production
 
-## 🧩 High-Level Phases
+- Security and authorization consistency across all sensitive routes
+- Reliable analytics instrumentation and validation
+- Test coverage for critical flows
+- Operational readiness (CI, monitoring, deployment docs)
 
-| Phase | Focus                     | Outcome                                            |
-| ----- | ------------------------- | -------------------------------------------------- |
-| 1️⃣    | Planning & Design         | Schema, UX wireframes, architecture                |
-| 2️⃣    | Core Builder UI           | Notion-style editor, live schema rendering         |
-| 3️⃣    | Field Engine              | Text, Email, Checkbox, Dropdown, File Upload       |
-| 4️⃣    | Form Schema & Persistence | Save/load forms from DB                            |
-| 5️⃣    | Public Form Rendering     | Dynamic route-based forms                          |
-| 6️⃣    | Submissions System        | Collect and view responses                         |
-| 7️⃣    | Auth & Dashboard          | User accounts, saved forms                         |
-| 8️⃣    | Polish & Pro Features     | Conditional logic, themes, analytics, integrations |
-| 9️⃣    | Deployment & CI/CD        | Vercel + GitHub Actions pipeline                   |
+## 2. Architecture Goals
 
----
+### Current direction
 
-## 🗓️ Detailed Weekly Breakdown
+- Next.js App Router for server/client separation
+- Supabase for auth, data, and storage
+- JSON schema driven form definition
 
-### Phase 1 – Planning & Design (Week 1)
+### Production target
 
-**Goal:** Lock the blueprint before touching code.
+- Clear trust boundaries between client and server actions
+- Strong row-level security policies with least privilege
+- Deterministic form schema versioning and migration strategy
 
-- [ ] Write **user stories** (core + advanced)
-- [ ] Define **form JSON schema**
-- [ ] Create **wireframes / layout sketch**
-- [ ] Setup repo (Next.js + Tailwind + ESLint + Prettier)
-- [ ] Plan DB schema for `Form`, `Submission`, `User`
+## 3. Engineering Workstreams
 
-🧠 _Deliverable:_ `docs/specs.md` — full product + schema plan
+## Workstream A: Security and Authz
 
----
+- Add explicit authorization checks to all responses and admin-style views
+- Enforce ownership checks in server actions (delete, update, invite)
+- Review service-role usage and reduce broad admin list operations
+- Finalize and test RLS policies for:
+  - forms
+  - form_members
+  - responses
+  - form_events
+  - uploads bucket objects
 
-### Phase 2 – Builder UI Base (Weeks 2–3)
+## Workstream B: Reliability and Data Integrity
 
-**Goal:** Implement Notion-like typing and basic field blocks.
+- Ensure runtime submit flow only shows success on confirmed write
+- Add idempotency strategy for form event tracking if needed
+- Validate analytics math with branching/visibility scenarios
+- Add guardrails for legacy data backfill behavior
 
-- [ ] Create builder layout (Left: Fields, Center: Canvas, Right: Properties)
-- [ ] Implement `/command` style input (e.g., typing `/text` adds a text field)
-- [ ] Support drag + drop for reordering fields
-- [ ] Render fields live from schema (`form.fields` array)
-- [ ] Add delete/edit controls for each field
+## Workstream C: Quality Gates
 
-🧠 _Deliverable:_ You can add, edit, and reorder fields dynamically.
+- Resolve lint/type errors and enforce clean `npm run lint`
+- Add `npm run typecheck` script and enforce in CI
+- Add test layers:
+  - unit tests for form logic helpers
+  - integration tests for route-level permissions
+  - e2e smoke tests for create/publish/submit/respond
 
----
+## Workstream D: Developer Experience
 
-### Phase 3 – Field Components & Schema Sync (Weeks 4–5)
+- Keep docs aligned to implementation and release process
+- Add database migration and seed workflow docs
+- Add contribution standards (branching, PR checks, review checklist)
 
-**Goal:** Standardize all input types & make them persist in schema.
+## 4. Milestones
 
-- [ ] Define a `Field` interface in TypeScript
-- [ ] Create reusable components:  
-       `TextField`, `EmailField`, `CheckboxField`, `DropdownField`, `DateField`, `FileField`
-- [ ] Add property editor (right panel)
-- [ ] Sync field changes (label, placeholder, required) to JSON schema
-- [ ] Auto-generate preview from schema
+## Milestone 1: Security Baseline (Week 1)
 
-🧠 _Deliverable:_ JSON-based form builder working fully offline.
+- Authz checks in all sensitive server paths
+- Ownership validation in destructive actions
+- RLS review complete with test cases
 
----
+Exit criteria:
+- Unauthorized users cannot read responses or mutate unrelated forms
 
-### Phase 4 – Database Integration (Weeks 6–7)
+## Milestone 2: Quality Baseline (Week 2)
 
-**Goal:** Connect the builder to your backend.
+- Lint clean
+- Typecheck script clean
+- Core helper unit tests added
 
-- [ ] Setup MongoDB + Prisma
-- [ ] Models: `User`, `Form`, `Field`, `Submission`
-- [ ] Next.js API routes: `/api/forms` (CRUD)
-- [ ] Save/load form JSON
-- [ ] Implement auto-save (debounced)
+Exit criteria:
+- CI blocks merge on lint/type/test failures
 
-🧠 _Deliverable:_ User can save and reload forms from DB.
+## Milestone 3: Product Confidence (Week 3)
 
----
+- End-to-end flow tests in staging
+- Analytics validation against fixture data
+- Deployment and rollback runbook complete
 
-### Phase 5 – Public Form Renderer (Weeks 8–9)
+Exit criteria:
+- Team can deploy safely and verify core journeys quickly
 
-**Goal:** Make forms accessible publicly.
+## 5. Non-Functional Requirements
 
-- [ ] Dynamic routes: `/f/[formId]`
-- [ ] Render form from schema
-- [ ] Handle input validation (Zod)
-- [ ] Submit responses → `/api/submissions`
-- [ ] Show success page or redirect
+- Performance: public runtime first interaction under 2s on broadband
+- Availability: graceful failure handling for Supabase write errors
+- Observability: error logging for API, publish, submit, and invite flows
+- Privacy: least-privilege access and controlled exposure of user details
 
-🧠 _Deliverable:_ Shareable, functional public forms.
+## 6. Interview Readiness Checklist
 
----
+Use this checklist before sharing the project as a portfolio flagship:
 
-### Phase 6 – Submissions Dashboard (Week 10)
-
-**Goal:** Let creators view responses.
-
-- [ ] Dashboard route `/dashboard/forms/[id]/submissions`
-- [ ] Fetch responses from DB
-- [ ] Display in table (with export to CSV)
-- [ ] Add submission counts in builder list
-
-🧠 _Deliverable:_ Full CRUD + response visibility.
-
----
-
-### Phase 7 – Auth & User Management (Week 11)
-
-**Goal:** Add authentication and ownership.
-
-- [ ] Integrate NextAuth (Email, Google)
-- [ ] Associate forms to user IDs
-- [ ] Protected routes (only owner can edit)
-- [ ] Dashboard: List user’s forms
-
-🧠 _Deliverable:_ Multi-user accounts with form ownership.
-
----
-
-### Phase 8 – Premium Features & Polish (Weeks 12–14)
-
-**Goal:** Match Tally’s advanced UX.
-
-- [ ] Conditional logic (show/hide fields)
-- [ ] Theming (light/dark, brand colors)
-- [ ] Webhooks & Integrations (Zapier, Notion)
-- [ ] Analytics (views, submissions)
-- [ ] Custom domain & branding
-
-🧠 _Deliverable:_ Tally-level power features unlocked.
-
----
-
-### Phase 9 – CI/CD, Deployment, Docs (Week 15)
-
-**Goal:** Prepare for production.
-
-- [ ] Vercel deployment + Mongo Atlas
-- [ ] GitHub Actions CI/CD pipeline
-- [ ] README + API docs
-- [ ] Beta testing and feedback loop
-
-🧠 _Deliverable:_ Fully deployed Tally.so clone (v1).
-
----
-
-## 📂 Folder Structure (Final Form)
-
-```bash
-tally-clone/
-├── app/
-│   ├── builder/              # Form builder
-│   ├── f/[id]/               # Public form view
-│   ├── dashboard/            # User dashboard
-│   ├── api/                  # Backend routes
-│   │   ├── forms/
-│   │   └── submissions/
-├── components/               # Reusable UI
-├── hooks/                    # Custom hooks
-├── lib/                      # DB, validation, utils
-├── prisma/                   # DB schema
-├── public/
-└── package.json
-```
+- README and architecture docs are accurate
+- Security model is explained and demonstrable
+- Lint/type/test gates pass in CI
+- One-click demo script exists for evaluator walkthrough
+- Known tradeoffs are documented with next steps

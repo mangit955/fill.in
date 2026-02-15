@@ -1,36 +1,152 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Fill.in
 
-## Getting Started
+Fill.in is a collaborative form builder built with Next.js App Router and Supabase.
+It lets users create forms, publish them to a public URL, collect responses, and collaborate with other editors.
 
-First, run the development server:
+## Product Highlights
+
+- Form builder with drag-and-drop blocks
+- Supported blocks:
+  - short text
+  - long text
+  - multiple choice (single or multi-select)
+  - email
+  - phone
+  - date
+  - link
+  - number (min/max validation)
+  - rating
+  - file upload
+  - time
+  - linear scale
+- Conditional behavior:
+  - visibility rules (show/hide blocks)
+  - logic jumps (branching to next block)
+- Public runtime at `/f/[slug]`
+- Response dashboard with table view and basic analytics
+- Collaboration model:
+  - owner
+  - editors via invite flow
+- Auth via Supabase (email and OAuth providers configured in Supabase)
+- Autosave draft behavior in editor
+
+## Tech Stack
+
+- Framework: Next.js 16 (App Router), React 19, TypeScript
+- Styling/UI: Tailwind CSS v4, Radix UI, Framer Motion, Sonner
+- Data/Auth/Storage: Supabase (Postgres + Auth + Storage)
+- Drag and drop: dnd-kit
+
+## Architecture Overview
+
+- Server-rendered routes fetch form metadata and enforce access rules.
+- Client editor manages schema state and persists to Supabase.
+- Public runtime renders `form.schema` dynamically and writes responses/events.
+- Responses page aggregates response rows plus event-based analytics.
+
+For deeper details, see:
+- [`/Users/manasraghuwanshi/Developer/projects/fill.in/docs/architecture.md`](/Users/manasraghuwanshi/Developer/projects/fill.in/docs/architecture.md)
+- [`/Users/manasraghuwanshi/Developer/projects/fill.in/docs/data-model.md`](/Users/manasraghuwanshi/Developer/projects/fill.in/docs/data-model.md)
+- [`/Users/manasraghuwanshi/Developer/projects/fill.in/docs/plan.md`](/Users/manasraghuwanshi/Developer/projects/fill.in/docs/plan.md)
+
+## Routes
+
+- Landing: `/`
+- Auth: `/login`, `/signup`, `/auth/callback`
+- Dashboard: `/dashboard`
+- Create new form: `/create`
+- Edit form: `/create/[slug]`
+- Responses: `/create/[slug]/responses`
+- Public runtime: `/f/[slug]`
+- API: `/api/invite`
+
+## Local Setup
+
+### 1. Prerequisites
+
+- Node.js 20+
+- npm 10+
+- Supabase project
+
+### 2. Install dependencies
+
+```bash
+npm install
+```
+
+### 3. Configure environment
+
+Create `.env.local` with:
+
+```bash
+NEXT_PUBLIC_SUPABASE_URL=...
+NEXT_PUBLIC_SUPABASE_ANON_KEY=...
+SUPABASE_SERVICE_ROLE_KEY=...
+```
+
+Notes:
+- `SUPABASE_SERVICE_ROLE_KEY` is server-only and must never be exposed to clients.
+- Keep `.env.local` out of version control.
+
+### 4. Run development server
 
 ```bash
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+App runs on [http://localhost:3000](http://localhost:3000).
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## Supabase Requirements
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+You need the following tables and storage bucket:
 
-## Learn More
+- `forms`
+- `form_members`
+- `responses`
+- `form_events`
+- Storage bucket: `uploads`
 
-To learn more about Next.js, take a look at the following resources:
+Expected schema is documented in [`/Users/manasraghuwanshi/Developer/projects/fill.in/docs/data-model.md`](/Users/manasraghuwanshi/Developer/projects/fill.in/docs/data-model.md).
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+## Scripts
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+```bash
+npm run dev
+npm run build
+npm run start
+npm run lint
+```
 
-## Deploy on Vercel
+## Production Checklist
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+- Add strict RLS policies for all tables and storage bucket
+- Verify server-side authz checks on all sensitive routes/actions
+- Add integration tests for create, publish, submit, and responses visibility
+- Enable CI pipeline (lint, typecheck, test, build)
+- Add monitoring and error reporting
+- Document backup and restore strategy for form/response data
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+## Interview Demo Flow
+
+Use this sequence during interviews:
+
+1. Create a form from `/create`
+2. Add mixed question types
+3. Add one visibility rule and one logic jump
+4. Publish and copy public URL
+5. Submit sample responses on runtime URL
+6. Open `/create/[slug]/responses` and explain analytics
+7. Show collaborator invite and role behavior
+
+## Current State
+
+This repo is a strong product prototype with real full-stack behavior.
+To present as production-grade, prioritize:
+
+1. Security hardening (authz and RLS review)
+2. Lint and type hygiene cleanup
+3. Test coverage for core flows
+
+## License
+
+No license file is currently included in this repository.
