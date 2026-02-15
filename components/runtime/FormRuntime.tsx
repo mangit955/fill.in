@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { Calendar } from "@/components/ui/calendar";
 import {
   Popover,
@@ -41,6 +41,11 @@ import {
 import { isValidUrl } from "@/lib/forms/helpers";
 import Image from "next/image";
 
+const HOURS = Array.from({ length: 24 }, (_, i) => String(i).padStart(2, "0"));
+const MINUTES = Array.from({ length: 60 }, (_, i) =>
+  String(i).padStart(2, "0"),
+);
+
 type Props = {
   form: Form;
   preview?: boolean;
@@ -61,7 +66,7 @@ export default function FormRuntime({ form, preview }: Props) {
   >({});
   const [open, setOpen] = useState(false);
   const [mounted, setMounted] = useState(false);
-  const [sessionId, setSessionId] = useState<string | null>(null);
+  const sessionIdRef = useRef<string | null>(null);
   useEffect(() => {
     setMounted(true);
   }, []);
@@ -98,7 +103,7 @@ export default function FormRuntime({ form, preview }: Props) {
       id = crypto.randomUUID();
       localStorage.setItem("form_session", id);
     }
-    setSessionId(id);
+    sessionIdRef.current = id;
 
     // 🔥 TRACK VIEW
     supabase.from("form_events").insert({
@@ -107,6 +112,17 @@ export default function FormRuntime({ form, preview }: Props) {
       event_type: "view",
     });
   }, [form.id, preview]);
+
+  const nextBlockId = useMemo(() => {
+    if (!currentBlockId) return null;
+    return getNextBlockId(currentBlockId, answers, form);
+  }, [currentBlockId, answers, form]);
+
+  const blockById = useMemo(() => {
+    const map = new Map<string, Form["blocks"][number]>();
+    for (const b of form.blocks) map.set(b.id, b);
+    return map;
+  }, [form.blocks]);
 
   // Preview with no questions: show empty state only
   if (preview && form.blocks.length === 0) {
@@ -150,7 +166,7 @@ export default function FormRuntime({ form, preview }: Props) {
     );
   }
 
-  const foundBlock = form.blocks.find((b) => b.id === currentBlockId);
+  const foundBlock = blockById.get(currentBlockId);
   if (!foundBlock) return <div>Invalid block</div>;
   const block = foundBlock;
 
@@ -186,10 +202,10 @@ export default function FormRuntime({ form, preview }: Props) {
     }
 
     // 🔥 TRACK SUBMIT EVENT
-    if (sessionId) {
+    if (sessionIdRef.current) {
       await supabase.from("form_events").insert({
         form_id: form.id,
-        session_id: sessionId,
+        session_id: sessionIdRef.current,
         event_type: "submit",
       });
     }
@@ -351,10 +367,10 @@ export default function FormRuntime({ form, preview }: Props) {
     }
 
     // 🔥 TRACK ANSWER EVENT
-    if (!preview && sessionId && currentBlockId) {
+    if (!preview && sessionIdRef.current && currentBlockId) {
       supabase.from("form_events").insert({
         form_id: form.id,
-        session_id: sessionId,
+        session_id: sessionIdRef.current,
         event_type: "answer",
         block_id: currentBlockId,
       });
@@ -448,7 +464,10 @@ export default function FormRuntime({ form, preview }: Props) {
                   className="w-full focus:outline-none focus:ring-4 focus:ring-blue-200 border border-gray-300 rounded-md shadow-sm px-3 py-2"
                   value={(answers[block.id] as string) ?? ""}
                   onChange={(e) =>
-                    setAnswers({ ...answers, [block.id]: e.target.value })
+                    setAnswers((prev) => ({
+                      ...prev,
+                      [block.id]: e.target.value,
+                    }))
                   }
                   onKeyDown={(e) => {
                     if (e.key === "Enter") {
@@ -458,7 +477,7 @@ export default function FormRuntime({ form, preview }: Props) {
                   }}
                 />
                 {(() => {
-                  const nextId = getNextBlockId(currentBlockId!, answers, form);
+                  const nextId = nextBlockId;
                   return (
                     <div className="mt-4 flex gap-2">
                       {history.length > 0 && (
@@ -503,11 +522,14 @@ export default function FormRuntime({ form, preview }: Props) {
                   rows={block.config.rows}
                   value={(answers[block.id] as string) ?? ""}
                   onChange={(e) =>
-                    setAnswers({ ...answers, [block.id]: e.target.value })
+                    setAnswers((prev) => ({
+                      ...prev,
+                      [block.id]: e.target.value,
+                    }))
                   }
                 />
                 {(() => {
-                  const nextId = getNextBlockId(currentBlockId!, answers, form);
+                  const nextId = nextBlockId;
                   return (
                     <div className="mt-4 flex gap-2">
                       {history.length > 0 && (
@@ -552,7 +574,10 @@ export default function FormRuntime({ form, preview }: Props) {
                   className="w-full focus:outline-none focus:ring-4 focus:ring-blue-200 border border-gray-300 rounded-md shadow-sm px-3 py-2"
                   value={(answers[block.id] as string) ?? ""}
                   onChange={(e) =>
-                    setAnswers({ ...answers, [block.id]: e.target.value })
+                    setAnswers((prev) => ({
+                      ...prev,
+                      [block.id]: e.target.value,
+                    }))
                   }
                   onKeyDown={(e) => {
                     if (e.key === "Enter") {
@@ -563,7 +588,7 @@ export default function FormRuntime({ form, preview }: Props) {
                   placeholder="Enter your email"
                 />
                 {(() => {
-                  const nextId = getNextBlockId(currentBlockId!, answers, form);
+                  const nextId = nextBlockId;
                   return (
                     <div className="mt-4 flex gap-2">
                       {history.length > 0 && (
@@ -611,7 +636,10 @@ export default function FormRuntime({ form, preview }: Props) {
                   value={(answers[block.id] as string) ?? ""}
                   onChange={(e) => {
                     const onlyDigits = e.target.value.replace(/\D/g, "");
-                    setAnswers({ ...answers, [block.id]: onlyDigits });
+                    setAnswers((prev) => ({
+                      ...prev,
+                      [block.id]: onlyDigits,
+                    }));
                   }}
                   onKeyDown={(e) => {
                     if (e.key === "Enter") {
@@ -623,7 +651,7 @@ export default function FormRuntime({ form, preview }: Props) {
                 />
 
                 {(() => {
-                  const nextId = getNextBlockId(currentBlockId!, answers, form);
+                  const nextId = nextBlockId;
                   return (
                     <div className="mt-4 flex gap-2">
                       {history.length > 0 && (
@@ -719,10 +747,10 @@ export default function FormRuntime({ form, preview }: Props) {
 
                                 const localISO = `${year}-${month}-${day}`;
 
-                                setAnswers({
-                                  ...answers,
+                                setAnswers((prev) => ({
+                                  ...prev,
                                   [block.id]: localISO,
-                                });
+                                }));
                                 setOpen(false);
                               }}
                             />
@@ -734,7 +762,7 @@ export default function FormRuntime({ form, preview }: Props) {
                 })()}
 
                 {(() => {
-                  const nextId = getNextBlockId(currentBlockId!, answers, form);
+                  const nextId = nextBlockId;
                   return (
                     <div className="mt-4 flex gap-2">
                       {history.length > 0 && (
@@ -782,12 +810,18 @@ export default function FormRuntime({ form, preview }: Props) {
                     let v = e.target.value.trim();
                     if (v && !v.startsWith("http")) {
                       v = "https://" + v;
-                      setAnswers({ ...answers, [block.id]: v });
+                      setAnswers((prev) => ({
+                        ...prev,
+                        [block.id]: v,
+                      }));
                     }
                   }}
                   value={(answers[block.id] as string) ?? ""}
                   onChange={(e) =>
-                    setAnswers({ ...answers, [block.id]: e.target.value })
+                    setAnswers((prev) => ({
+                      ...prev,
+                      [block.id]: e.target.value,
+                    }))
                   }
                   onKeyDown={(e) => {
                     if (e.key === "Enter") {
@@ -812,7 +846,7 @@ export default function FormRuntime({ form, preview }: Props) {
                 )}
 
                 {(() => {
-                  const nextId = getNextBlockId(currentBlockId!, answers, form);
+                  const nextId = nextBlockId;
 
                   return (
                     <div className="mt-4 flex gap-2">
@@ -872,9 +906,15 @@ export default function FormRuntime({ form, preview }: Props) {
                             ? [...prev, opt.id]
                             : prev.filter((id) => id !== opt.id);
 
-                          setAnswers({ ...answers, [block.id]: next });
+                          setAnswers((prev) => ({
+                            ...prev,
+                            [block.id]: next,
+                          }));
                         } else {
-                          setAnswers({ ...answers, [block.id]: opt.id });
+                          setAnswers((prev) => ({
+                            ...prev,
+                            [block.id]: opt.id,
+                          }));
                         }
                       }}
                     />
@@ -883,7 +923,7 @@ export default function FormRuntime({ form, preview }: Props) {
                 ))}
 
                 {(() => {
-                  const nextId = getNextBlockId(currentBlockId!, answers, form);
+                  const nextId = nextBlockId;
                   return (
                     <div className="mt-4 flex gap-2">
                       {history.length > 0 && (
@@ -943,7 +983,10 @@ export default function FormRuntime({ form, preview }: Props) {
 
                     // allow empty
                     if (raw === "") {
-                      setAnswers({ ...answers, [block.id]: "" });
+                      setAnswers((prev) => ({
+                        ...prev,
+                        [block.id]: "",
+                      }));
                       return;
                     }
 
@@ -952,7 +995,10 @@ export default function FormRuntime({ form, preview }: Props) {
                       return;
                     }
 
-                    setAnswers({ ...answers, [block.id]: Number(raw) });
+                    setAnswers((prev) => ({
+                      ...prev,
+                      [block.id]: Number(raw),
+                    }));
                   }}
                   onKeyDown={(e) => {
                     if (e.key === "Enter") {
@@ -965,7 +1011,7 @@ export default function FormRuntime({ form, preview }: Props) {
                 />
 
                 {(() => {
-                  const nextId = getNextBlockId(currentBlockId!, answers, form);
+                  const nextId = nextBlockId;
                   return (
                     <div className="mt-4 flex gap-2">
                       {history.length > 0 && (
@@ -1037,7 +1083,10 @@ export default function FormRuntime({ form, preview }: Props) {
                           if (!selectedValue) setRatingHover(value);
                         }}
                         onClick={() => {
-                          setAnswers({ ...answers, [block.id]: value });
+                          setAnswers((prev) => ({
+                            ...prev,
+                            [block.id]: value,
+                          }));
                           setRatingHover(null);
                         }}
                       >
@@ -1055,7 +1104,7 @@ export default function FormRuntime({ form, preview }: Props) {
                 </div>
 
                 {(() => {
-                  const nextId = getNextBlockId(currentBlockId!, answers, form);
+                  const nextId = nextBlockId;
                   return (
                     <div className="mt-4 flex gap-2">
                       {history.length > 0 && (
@@ -1310,7 +1359,7 @@ export default function FormRuntime({ form, preview }: Props) {
                 </label>
 
                 {(() => {
-                  const nextId = getNextBlockId(currentBlockId!, answers, form);
+                  const nextId = nextBlockId;
                   return (
                     <div className="mt-4 flex gap-2">
                       {history.length > 0 && (
@@ -1353,24 +1402,23 @@ export default function FormRuntime({ form, preview }: Props) {
                   const current = (answers[block.id] as string) ?? "";
                   const [h, m] = current.split(":");
 
-                  const hours = Array.from({ length: 24 }).map((_, i) =>
-                    String(i).padStart(2, "0"),
-                  );
-                  const minutes = Array.from({ length: 60 }).map((_, i) =>
-                    String(i).padStart(2, "0"),
-                  );
-
                   function updateTime(nextHour?: string, nextMinute?: string) {
                     const hour = nextHour ?? h ?? "";
                     const minute = nextMinute ?? m ?? "";
 
                     if (!hour && !minute) {
-                      setAnswers({ ...answers, [block.id]: "" });
+                      setAnswers((prev) => ({
+                        ...prev,
+                        [block.id]: "",
+                      }));
                       return;
                     }
 
                     const value = `${hour || "00"}:${minute || "00"}`;
-                    setAnswers({ ...answers, [block.id]: value });
+                    setAnswers((prev) => ({
+                      ...prev,
+                      [block.id]: value,
+                    }));
                   }
 
                   return (
@@ -1382,7 +1430,7 @@ export default function FormRuntime({ form, preview }: Props) {
                         className="border border-neutral-300 shadow-sm  rounded-md px-3 py-2 focus:outline-none focus:ring-4 focus:ring-blue-200 cursor-pointer"
                       >
                         <option value="">Hour</option>
-                        {hours.map((hr) => (
+                        {HOURS.map((hr) => (
                           <option key={hr} value={hr}>
                             {hr}
                           </option>
@@ -1398,7 +1446,7 @@ export default function FormRuntime({ form, preview }: Props) {
                         className="border border-neutral-300 shadow-sm  cursor-pointer rounded-md px-3 py-2 focus:outline-none focus:ring-4 focus:ring-blue-200"
                       >
                         <option value="">Minutes</option>
-                        {minutes.map((min) => (
+                        {MINUTES.map((min) => (
                           <option key={min} value={min}>
                             {min}
                           </option>
@@ -1409,7 +1457,7 @@ export default function FormRuntime({ form, preview }: Props) {
                 })()}
 
                 {(() => {
-                  const nextId = getNextBlockId(currentBlockId!, answers, form);
+                  const nextId = nextBlockId;
                   return (
                     <div className="mt-4 flex gap-2">
                       {history.length > 0 && (
@@ -1466,7 +1514,10 @@ export default function FormRuntime({ form, preview }: Props) {
                           key={v}
                           type="button"
                           onClick={() =>
-                            setAnswers({ ...answers, [block.id]: v })
+                            setAnswers((prev) => ({
+                              ...prev,
+                              [block.id]: v,
+                            }))
                           }
                           className={`px-3 py-2 cursor-pointer border border-neutral-300 shadow-sm hover:shadow-md rounded-md min-w-[42px]
                 ${
@@ -1484,7 +1535,7 @@ export default function FormRuntime({ form, preview }: Props) {
                 </div>
 
                 {(() => {
-                  const nextId = getNextBlockId(currentBlockId!, answers, form);
+                  const nextId = nextBlockId;
                   return (
                     <div className="mt-4 flex gap-2">
                       {history.length > 0 && (
