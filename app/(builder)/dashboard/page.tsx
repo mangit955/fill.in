@@ -5,13 +5,13 @@ import { createServerSupabase } from "@/lib/supabase/server";
 import NextLink from "next/link";
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
-import { Button } from "@/components/ui/button";
 import { NavbarHome } from "@/components/navbar/navbarHome";
-import { PencilLine, Plus } from "lucide-react";
+import { PencilLine } from "lucide-react";
 import CopyLinkButton from "./CopyLinkButton";
 import DeleteFormButton from "./DeleteFormButton";
 import EmptyFormsAnimation from "./emptyAnimation";
 import { Particles } from "@/components/ui/particles";
+import NewFormButton from "./NewFormButton";
 
 type FormSummary = {
   id: string;
@@ -178,9 +178,7 @@ export default async function DashboardPage() {
             one-two-three.
           </span>
           <form action={createForm}>
-            <Button variant="default">
-              <Plus width={20} height={20} className="mr-2" /> New form
-            </Button>
+            <NewFormButton />
           </form>
         </div>
       </div>
@@ -196,10 +194,7 @@ export default async function DashboardPage() {
           <h1 className="text-3xl text-neutral-800 font-bold">Home</h1>
 
           <form action={createForm}>
-            <Button variant="default">
-              {" "}
-              <Plus width={20} height={20} className="mr-2" /> New form
-            </Button>
+            <NewFormButton />
           </form>
         </div>
 
