@@ -170,16 +170,16 @@ export default function FormRuntime({ form, preview }: Props) {
   if (!foundBlock) return <div>Invalid block</div>;
   const block = foundBlock;
 
-  async function submitForm(finalAnswers: Record<string, unknown>) {
+  async function submitForm(
+    finalAnswers: Record<string, unknown>,
+  ): Promise<boolean> {
     if (preview) {
-      setCurrentBlockId(null);
-      setAnswers({});
-      return;
+      return true;
     }
 
     const filtered: Record<string, unknown> = {};
 
-    if (submitting) return;
+    if (submitting) return false;
     setSubmitting(true);
 
     for (const block of form.blocks) {
@@ -198,7 +198,7 @@ export default function FormRuntime({ form, preview }: Props) {
       console.error("Submit failed:", error);
       alert("Submission failed. Please try again.");
       setSubmitting(false);
-      return;
+      return false;
     }
 
     // 🔥 TRACK SUBMIT EVENT
@@ -209,6 +209,8 @@ export default function FormRuntime({ form, preview }: Props) {
         event_type: "submit",
       });
     }
+
+    return true;
   }
 
   async function submitAnswer(value: unknown) {
@@ -390,7 +392,8 @@ export default function FormRuntime({ form, preview }: Props) {
     }
 
     if (!next) {
-      await submitForm(nextAnswers);
+      const didSubmit = await submitForm(nextAnswers);
+      if (!didSubmit) return;
       setCurrentBlockId(null);
       setAnswers({});
       return;

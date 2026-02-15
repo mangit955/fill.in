@@ -1,5 +1,5 @@
 import { createServerSupabase } from "@/lib/supabase/server";
-import { notFound } from "next/navigation";
+import { notFound, redirect } from "next/navigation";
 import { Form } from "@/lib/forms/types";
 import { NavbarHome } from "@/components/navbar/navbarHome";
 import {
@@ -24,12 +24,42 @@ export default async function Page({
   // Fetch form
   const { data: formRow, error: formError } = await supabase
     .from("forms")
-    .select("id, schema, title")
+    .select("id, schema, title, user_id")
     .eq("slug", slug)
     .single();
 
   if (!formRow || formError) {
     notFound();
+  }
+
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+  if (!user) {
+    redirect("/login");
+  }
+
+  const isOwner = formRow.user_id === user.id;
+  let isMember = false;
+
+  if (!isOwner) {
+    // If form has no owner, deny access to responses.
+    if (!formRow.user_id) {
+      redirect("/dashboard");
+    }
+
+    const { data: member } = await supabase
+      .from("form_members")
+      .select("id")
+      .eq("form_id", formRow.id)
+      .eq("user_id", user.id)
+      .maybeSingle();
+
+    isMember = !!member;
+  }
+
+  if (!isOwner && !isMember) {
+    redirect("/dashboard");
   }
 
   const form = formRow.schema as Form;
