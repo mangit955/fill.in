@@ -1,3 +1,5 @@
+export const revalidate = 0;
+
 import { createEmptyForm } from "@/lib/forms/defaults";
 import { createServerSupabase } from "@/lib/supabase/server";
 import NextLink from "next/link";
@@ -65,28 +67,38 @@ export default async function DashboardPage() {
       new Date(b.created_at).getTime() - new Date(a.created_at).getTime(),
   );
 
-  const formsWithCounts = [];
   const ownedIds = new Set((ownedForms ?? []).map((f: any) => f.id));
 
-  if (!allForms) return null;
+  const formIds = allForms.map((f: any) => f.id);
 
-  for (const form of allForms) {
-    const { count } = await supabase
-      .from("responses")
-      .select("id", { count: "exact", head: true })
-      .eq("form_id", form.id);
-    const { count: collaboratorsCount } = await supabase
-      .from("form_members")
-      .select("id", { count: "exact", head: true })
-      .eq("form_id", form.id);
+  // get response counts for ALL forms in one go
+  const { data: responseCounts } = await supabase
+    .from("responses")
+    .select("form_id", { count: "exact" })
+    .in("form_id", formIds);
 
-    formsWithCounts.push({
-      ...form,
-      responseCount: count ?? 0,
-      isOwner: ownedIds.has(form.id),
-      hasCollaborators: (collaboratorsCount ?? 0) > 0,
-    });
-  }
+  const responseMap = new Map<string, number>();
+  responseCounts?.forEach((r: any) => {
+    responseMap.set(r.form_id, (responseMap.get(r.form_id) ?? 0) + 1);
+  });
+
+  // get collaborator counts in one go
+  const { data: collaboratorCounts } = await supabase
+    .from("form_members")
+    .select("form_id", { count: "exact" })
+    .in("form_id", formIds);
+
+  const collaboratorMap = new Map<string, number>();
+  collaboratorCounts?.forEach((c: any) => {
+    collaboratorMap.set(c.form_id, (collaboratorMap.get(c.form_id) || 0) + 1);
+  });
+
+  const formsWithCounts = allForms.map((form: any) => ({
+    ...form,
+    responseCount: responseMap.get(form.id) ?? 0,
+    isOwner: ownedIds.has(form.id),
+    hasCollaborators: (collaboratorMap.get(form.id) ?? 0) > 0,
+  }));
 
   async function createForm() {
     "use server";
@@ -145,7 +157,7 @@ export default async function DashboardPage() {
             No forms yet
           </span>
           <span className="text-neutral-500 mb-4 mt-2 max-w-md">
-            Roll up your sleeves and let’s get started. It's as simple as
+            Roll up your sleeves and let’s get started. It&apos;s as simple as
             one-two-three.
           </span>
           <form action={createForm}>

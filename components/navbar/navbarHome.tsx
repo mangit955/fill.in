@@ -14,13 +14,10 @@ export const NavbarHome = () => {
 
   useEffect(() => {
     supabase.auth.getUser().then(({ data }) => {
-      console.log("FULL USER:", data.user);
-      console.log("METADATA:", data.user?.user_metadata);
       setUser(data.user ?? null);
     });
 
     const { data: sub } = supabase.auth.onAuthStateChange((_e, session) => {
-      console.log("SESSION USER:", session?.user);
       setUser(session?.user ?? null);
     });
 
