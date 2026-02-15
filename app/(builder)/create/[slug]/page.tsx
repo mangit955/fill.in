@@ -141,7 +141,7 @@ export default async function Page({
           </div>
         )}
 
-        <div className="text-md flex items-center gap-2 font-semibold text-pink-500">
+        <div className="text-md flex items-center gap-2 font-semibold text-pink-600">
           {" "}
           <Sparkles size={20} />
           Collaborators

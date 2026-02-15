@@ -34,19 +34,16 @@ export const Herosection = () => {
               </svg>
             </span>
           </span>{" "}
+          way to
           <TypingAnimation
-            words={[
-              "way to share forms",
-              "way to build a form",
-              "way to create forms",
-            ]}
+            words={[" build a form", " share forms", " collect responses"]}
             typeSpeed={50}
             deleteSpeed={150}
             pauseDelay={2000}
             blinkCursor={true}
             loop
           >
-            way to create forms
+            create forms
           </TypingAnimation>
         </h1>
 
