@@ -45,7 +45,6 @@ export default function FormEditorClient({
   const [isPublishing, setIsPublishing] = useState(false);
   const [previewOpen, setPreviewOpen] = useState(false);
   const [activeBlockId, setActiveBlockId] = useState<string | null>(null);
-  const [hasUnsavedChanges, setHasUnsavedChanges] = useState(false);
   const [copied, setCopied] = useState(false);
   const [authOpen, setAuthOpen] = useState(false);
 
@@ -85,21 +84,12 @@ export default function FormEditorClient({
     setActiveBlockId(block.id);
   }
 
-  useEffect(() => {
-    setHasUnsavedChanges(true);
-  }, [editor.form]);
-
   useDebouncedEffect(
     () => {
-      if (!hasUnsavedChanges) return;
-
-      editor.saveDraft().then(() => {
-        setHasUnsavedChanges(false);
-        console.log("Autosaved");
-      });
+      editor.saveDraft();
     },
-    [hasUnsavedChanges, editor.form],
-    1500,
+    [editor.form],
+    2500,
   );
 
   // Resume publish after OAuth redirect
@@ -162,11 +152,6 @@ export default function FormEditorClient({
       listener.subscription.unsubscribe();
     };
   }, [authOpen]);
-
-  useEffect(() => {
-    if (mode === "published") return;
-    setPublishedUrl(null);
-  }, [editor.form]);
 
   useEffect(() => {
     if (!descRef.current) return;

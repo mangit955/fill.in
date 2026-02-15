@@ -45,6 +45,14 @@ export function useFormEditor(initialForm?: Form) {
     return initialForm ?? loadDraft() ?? createEmptyForm();
   });
   const [hydrated, setHydrated] = useState(false);
+  const [isDirty, setIsDirty] = useState(false);
+  const [user, setUser] = useState<any | null>(null);
+
+  useEffect(() => {
+    supabase.auth.getUser().then(({ data }) => {
+      setUser(data.user ?? null);
+    });
+  }, []);
 
   function persist(form: Form) {
     localStorage.setItem(STORAGE_KEY, JSON.stringify(form));
@@ -54,11 +62,15 @@ export function useFormEditor(initialForm?: Form) {
     setHydrated(true);
   }, []);
 
-  const debouncePersist = useMemo(() => debounce(persist, 500), []);
+  const debouncePersist = useMemo(() => debounce(persist, 1500), []);
 
   useEffect(() => {
     debouncePersist(form);
   }, [form, debouncePersist]);
+
+  useEffect(() => {
+    setIsDirty(true);
+  }, [form]);
 
   //Intent APIs
 
@@ -157,6 +169,8 @@ export function useFormEditor(initialForm?: Form) {
   }
 
   async function saveDraft() {
+    if (!isDirty) return;
+    setIsDirty(false);
     // Don't overwrite status - just update the schema and metadata
     const payload = {
       id: form.id,
@@ -185,10 +199,6 @@ export function useFormEditor(initialForm?: Form) {
   }
 
   async function publish() {
-    const {
-      data: { user },
-    } = await supabase.auth.getUser();
-
     if (!user) throw new Error("NOT_LOGGED_IN");
 
     const { error } = await supabase
