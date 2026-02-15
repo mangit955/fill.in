@@ -20,12 +20,14 @@ export const Navbar = () => {
 
         {/* Right: Nav actions */}
         <div className="flex items-center gap-2">
-          <Button
-            variant="ghost"
-            className="text-neutral-500 focus:ring-4 ring-blue-300 dark:text-gray-300 bg-white/60 dark:bg-zinc-900/60 backdrop-blur-md  dark:hover:bg-zinc-900/80 hover:text-black dark:hover:text-white transition-colors duration-200 border border-white/30 dark:border-white/10 rounded-full px-3 py-1.5 cursor-pointer hidden md:inline-flex"
-          >
-            Pricing
-          </Button>
+          <Link href="https://github.com/mangit955/fill.in/blob/main/docs/architecture.md">
+            <Button
+              variant="ghost"
+              className="text-neutral-500 focus:ring-4 ring-blue-300 dark:text-gray-300 bg-white/60 dark:bg-zinc-900/60 backdrop-blur-md  dark:hover:bg-zinc-900/80 hover:text-black dark:hover:text-white transition-colors duration-200 border border-white/30 dark:border-white/10 rounded-full px-3 py-1.5 cursor-pointer hidden md:inline-flex"
+            >
+              Docs
+            </Button>
+          </Link>
 
           <Link href="/login">
             <Button
