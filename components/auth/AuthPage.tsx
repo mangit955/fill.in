@@ -3,14 +3,12 @@
 
 import { supabase } from "@/lib/supabase/client";
 import { useState } from "react";
-import { useRouter } from "next/navigation";
 import Image from "next/image";
 import { Spinner } from "../ui/spinner";
 import { FillinLogo } from "../ui/svg/logo";
 import Link from "next/link";
 
 export default function AuthPage({ mode }: { mode: "login" | "signup" }) {
-  const router = useRouter();
   const [email, setEmail] = useState("");
   const [loading, setLoading] = useState(false);
   const [loadingProvider, setLoadingProvider] = useState<

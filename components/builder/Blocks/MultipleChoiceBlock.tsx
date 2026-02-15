@@ -25,7 +25,7 @@ export default function MultipleChoiceBlock({
   onUpdateConfig,
   onUpdateMeta,
 }: Props) {
-  const [isEditing, setIsEditing] = useState(false);
+  const [isEditing, setIsEditing] = useState(autoFocus ?? false);
   const [value, setValue] = useState(block.config.label);
   const inputRef = useRef<HTMLInputElement>(null);
 
@@ -45,19 +45,6 @@ export default function MultipleChoiceBlock({
       inputRef.current?.focus();
     }
   }, [autoFocus, isEditing]);
-
-  useEffect(() => {
-    if (autoFocus) {
-      setIsEditing(true);
-    }
-  }, [autoFocus]);
-
-  useEffect(() => {
-    if (!isEditing) {
-      setValue(block.config.label);
-    }
-  }, [block.config.label, isEditing]);
-
   return (
     <div className=" p-4">
       {/* Label */}

@@ -13,6 +13,23 @@ import DeleteFormButton from "./DeleteFormButton";
 import EmptyFormsAnimation from "./emptyAnimation";
 import { Particles } from "@/components/ui/particles";
 
+type FormSummary = {
+  id: string;
+  title: string;
+  slug: string;
+  status: string;
+  created_at: string;
+};
+
+type MemberFormRow = {
+  form_id: string;
+  forms: FormSummary | null;
+};
+
+type CountRow = {
+  form_id: string;
+};
+
 function formatRelative(dateString: string) {
   const date = new Date(dateString);
   const now = new Date();
@@ -51,25 +68,25 @@ export default async function DashboardPage() {
     .select("form_id, forms(id, title, slug, status, created_at)")
     .eq("user_id", user.id);
 
-  const sharedForms = (memberForms ?? [])
-    .map((m: any) => m.forms)
-    .filter(Boolean);
+  const sharedForms = (memberForms as MemberFormRow[] | null | undefined ?? [])
+    .map((m) => m.forms)
+    .filter((f): f is FormSummary => Boolean(f));
 
   // merge owned + shared and REMOVE duplicates (can happen if owner is also in form_members)
   const merged = [...(ownedForms ?? []), ...sharedForms];
 
   const uniqueById = Array.from(
-    new Map(merged.map((f: any) => [f.id, f])).values(),
+    new Map(merged.map((f) => [f.id, f])).values(),
   );
 
   const allForms = uniqueById.sort(
-    (a: any, b: any) =>
+    (a, b) =>
       new Date(b.created_at).getTime() - new Date(a.created_at).getTime(),
   );
 
-  const ownedIds = new Set((ownedForms ?? []).map((f: any) => f.id));
+  const ownedIds = new Set((ownedForms ?? []).map((f) => f.id));
 
-  const formIds = allForms.map((f: any) => f.id);
+  const formIds = allForms.map((f) => f.id);
 
   // get response counts for ALL forms in one go
   const { data: responseCounts } = await supabase
@@ -78,7 +95,7 @@ export default async function DashboardPage() {
     .in("form_id", formIds);
 
   const responseMap = new Map<string, number>();
-  responseCounts?.forEach((r: any) => {
+  (responseCounts as CountRow[] | null | undefined)?.forEach((r) => {
     responseMap.set(r.form_id, (responseMap.get(r.form_id) ?? 0) + 1);
   });
 
@@ -89,11 +106,11 @@ export default async function DashboardPage() {
     .in("form_id", formIds);
 
   const collaboratorMap = new Map<string, number>();
-  collaboratorCounts?.forEach((c: any) => {
+  (collaboratorCounts as CountRow[] | null | undefined)?.forEach((c) => {
     collaboratorMap.set(c.form_id, (collaboratorMap.get(c.form_id) || 0) + 1);
   });
 
-  const formsWithCounts = allForms.map((form: any) => ({
+  const formsWithCounts = allForms.map((form) => ({
     ...form,
     responseCount: responseMap.get(form.id) ?? 0,
     isOwner: ownedIds.has(form.id),

@@ -51,10 +51,32 @@ type Props = {
   preview?: boolean;
 };
 
+function resolveVisibleBlockId(
+  startId: string | null,
+  answers: Record<string, unknown>,
+  form: Form,
+): string | null {
+  let blockId = startId;
+  const visited = new Set<string>();
+
+  while (blockId) {
+    if (visited.has(blockId)) return null;
+    visited.add(blockId);
+
+    if (isBlockVisible(blockId, answers, form)) {
+      return blockId;
+    }
+
+    blockId = getNextBlockId(blockId, answers, form);
+  }
+
+  return null;
+}
+
 export default function FormRuntime({ form, preview }: Props) {
   const router = useRouter();
   const [currentBlockId, setCurrentBlockId] = useState<string | null>(
-    form.blocks[0]?.id ?? null,
+    resolveVisibleBlockId(form.blocks[0]?.id ?? null, {}, form),
   );
   const [answers, setAnswers] = useState<Record<string, unknown>>({});
   const [submitting, setSubmitting] = useState(false);
@@ -65,33 +87,7 @@ export default function FormRuntime({ form, preview }: Props) {
     Record<string, boolean>
   >({});
   const [open, setOpen] = useState(false);
-  const [mounted, setMounted] = useState(false);
   const sessionIdRef = useRef<string | null>(null);
-  useEffect(() => {
-    setMounted(true);
-  }, []);
-
-  // Reset runtime when preview opens so it always starts from first block
-  useEffect(() => {
-    if (preview) {
-      setCurrentBlockId(form.blocks[0]?.id ?? null);
-      setAnswers({});
-    }
-  }, [preview, form.id, form.blocks]);
-
-  // Skip hidden blocks automatically
-  useEffect(() => {
-    if (!currentBlockId) return;
-
-    // 🔑 Prevent preview from skipping first question on mount
-    if (preview && Object.keys(answers).length === 0) return;
-
-    const visible = isBlockVisible(currentBlockId, answers, form);
-    if (!visible) {
-      const next = getNextBlockId(currentBlockId, answers, form);
-      setCurrentBlockId(next);
-    }
-  }, [currentBlockId, answers, form, preview]);
 
   useEffect(() => {
     if (preview) return; // don't track preview
@@ -378,7 +374,8 @@ export default function FormRuntime({ form, preview }: Props) {
       });
     }
 
-    const next = getNextBlockId(currentBlockId!, nextAnswers, form);
+    const rawNext = getNextBlockId(currentBlockId!, nextAnswers, form);
+    const next = resolveVisibleBlockId(rawNext, nextAnswers, form);
 
     const isEmpty =
       value === null ||
@@ -405,9 +402,14 @@ export default function FormRuntime({ form, preview }: Props) {
 
   function goBack() {
     if (history.length === 0) return;
-    const prev = history[history.length - 1];
-    setHistory((h) => h.slice(0, -1));
-    setCurrentBlockId(prev);
+    for (let i = history.length - 1; i >= 0; i--) {
+      const prev = history[i];
+      if (!isBlockVisible(prev, answers, form)) continue;
+
+      setHistory(history.slice(0, i));
+      setCurrentBlockId(prev);
+      return;
+    }
   }
 
   const rawValue = answers[block.id];
@@ -705,61 +707,49 @@ export default function FormRuntime({ form, preview }: Props) {
 
                   return (
                     <div className="w-fit">
-                      {!mounted ? (
-                        <button
-                          type="button"
-                          className="border border-gray-300 shadow-sm rounded-md px-3 py-2 text-left min-w-[180px]"
-                        >
-                          {format(selectedDate)}
-                        </button>
-                      ) : (
-                        <Popover open={open} onOpenChange={setOpen}>
-                          <PopoverTrigger asChild>
-                            <button
-                              type="button"
-                              className="border cursor-pointer border-gray-300 shadow-sm rounded-md px-3 py-2 hover:bg-neutral-50 focus:outline-none focus:ring-4 focus:ring-blue-200 text-left min-w-[180px] flex items-center justify-between"
-                            >
-                              <span>{format(selectedDate)}</span>
-                              <ChevronDownIcon className="ml-2 h-4 w-4 text-neutral-500" />
-                            </button>
-                          </PopoverTrigger>
-
-                          <PopoverContent
-                            className="w-auto overflow-hidden p-0"
-                            align="start"
+                      <Popover open={open} onOpenChange={setOpen}>
+                        <PopoverTrigger asChild>
+                          <button
+                            type="button"
+                            className="border cursor-pointer border-gray-300 shadow-sm rounded-md px-3 py-2 hover:bg-neutral-50 focus:outline-none focus:ring-4 focus:ring-blue-200 text-left min-w-[180px] flex items-center justify-between"
                           >
-                            <Calendar
-                              mode="single"
-                              selected={selectedDate}
-                              defaultMonth={selectedDate}
-                              captionLayout="dropdown"
-                              className="[&_button]:cursor-pointer [&_[role=gridcell]]:cursor-pointer [&_select]:cursor-pointer"
-                              onSelect={(d) => {
-                                if (!d) return;
+                            <span>{format(selectedDate)}</span>
+                            <ChevronDownIcon className="ml-2 h-4 w-4 text-neutral-500" />
+                          </button>
+                        </PopoverTrigger>
 
-                                // fix timezone shift (toISOString converts to UTC which can subtract a day)
-                                const year = d.getFullYear();
-                                const month = String(d.getMonth() + 1).padStart(
-                                  2,
-                                  "0",
-                                );
-                                const day = String(d.getDate()).padStart(
-                                  2,
-                                  "0",
-                                );
+                        <PopoverContent
+                          className="w-auto overflow-hidden p-0"
+                          align="start"
+                        >
+                          <Calendar
+                            mode="single"
+                            selected={selectedDate}
+                            defaultMonth={selectedDate}
+                            captionLayout="dropdown"
+                            className="[&_button]:cursor-pointer [&_[role=gridcell]]:cursor-pointer [&_select]:cursor-pointer"
+                            onSelect={(d) => {
+                              if (!d) return;
 
-                                const localISO = `${year}-${month}-${day}`;
+                              // fix timezone shift (toISOString converts to UTC which can subtract a day)
+                              const year = d.getFullYear();
+                              const month = String(d.getMonth() + 1).padStart(
+                                2,
+                                "0",
+                              );
+                              const day = String(d.getDate()).padStart(2, "0");
 
-                                setAnswers((prev) => ({
-                                  ...prev,
-                                  [block.id]: localISO,
-                                }));
-                                setOpen(false);
-                              }}
-                            />
-                          </PopoverContent>
-                        </Popover>
-                      )}
+                              const localISO = `${year}-${month}-${day}`;
+
+                              setAnswers((prev) => ({
+                                ...prev,
+                                [block.id]: localISO,
+                              }));
+                              setOpen(false);
+                            }}
+                          />
+                        </PopoverContent>
+                      </Popover>
                     </div>
                   );
                 })()}

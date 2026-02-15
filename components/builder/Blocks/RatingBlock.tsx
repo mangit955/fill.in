@@ -19,7 +19,7 @@ export default function RatingBlock({
   onUpdateMeta,
   onUpdateConfig,
 }: Props) {
-  const [isEditing, setIsEditing] = useState(false);
+  const [isEditing, setIsEditing] = useState(autoFocus ?? false);
   const [value, setValue] = useState(block.config.label);
   const [hover, setHover] = useState<number | null>(null);
   const inputRef = useRef<HTMLInputElement>(null);
@@ -41,11 +41,6 @@ export default function RatingBlock({
   useEffect(() => {
     if (autoFocus && isEditing) inputRef.current?.focus();
   }, [autoFocus, isEditing]);
-
-  useEffect(() => {
-    if (autoFocus) setIsEditing(true);
-  }, [autoFocus]);
-
   return (
     <div className="p-4">
       {isEditing ? (

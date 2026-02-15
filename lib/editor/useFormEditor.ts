@@ -2,6 +2,7 @@
 
 import { Form, FormBlock, LogicJump, VisibilityRule } from "@/lib/forms/types";
 import { useEffect, useMemo, useState } from "react";
+import type { User } from "@supabase/supabase-js";
 import {
   addBlock,
   addLogicJump,
@@ -28,7 +29,7 @@ function loadDraft() {
   if (!raw) return null;
 
   try {
-    const data = JSON.parse(raw);
+    const data = JSON.parse(raw) as Form;
 
     return {
       ...data,
@@ -44,9 +45,9 @@ export function useFormEditor(initialForm?: Form) {
   const [form, setForm] = useState<Form>(() => {
     return initialForm ?? loadDraft() ?? createEmptyForm();
   });
-  const [hydrated, setHydrated] = useState(false);
+  const hydrated = true;
   const [isDirty, setIsDirty] = useState(false);
-  const [user, setUser] = useState<any | null>(null);
+  const [user, setUser] = useState<User | null>(null);
 
   useEffect(() => {
     supabase.auth.getUser().then(({ data }) => {
@@ -58,38 +59,35 @@ export function useFormEditor(initialForm?: Form) {
     localStorage.setItem(STORAGE_KEY, JSON.stringify(form));
   }
 
-  useEffect(() => {
-    setHydrated(true);
-  }, []);
-
   const debouncePersist = useMemo(() => debounce(persist, 1500), []);
 
   useEffect(() => {
     debouncePersist(form);
   }, [form, debouncePersist]);
 
-  useEffect(() => {
+  function updateForm(updater: (prev: Form) => Form) {
     setIsDirty(true);
-  }, [form]);
+    setForm((prev) => updater(prev));
+  }
 
   //Intent APIs
 
   function add(block: FormBlock) {
-    setForm((prev) => ({
+    updateForm((prev) => ({
       ...prev,
       blocks: addBlock(prev.blocks, block),
     }));
   }
 
   function remove(blockId: string) {
-    setForm((prev) => ({
+    updateForm((prev) => ({
       ...prev,
       blocks: deleteBlock(prev.blocks, blockId),
     }));
   }
 
   function duplicate(blockId: string) {
-    setForm((prev) => {
+    updateForm((prev) => {
       const source = prev.blocks.find((b) => b.id === blockId);
       if (!source) return prev;
 
@@ -107,7 +105,7 @@ export function useFormEditor(initialForm?: Form) {
     blockId: string,
     updates: Partial<Pick<FormBlock, "required">>,
   ) {
-    setForm((prev) => ({
+    updateForm((prev) => ({
       ...prev,
       blocks: updateBlockMeta(prev.blocks, blockId, updates),
     }));
@@ -117,28 +115,28 @@ export function useFormEditor(initialForm?: Form) {
     blockId: string,
     updater: (config: T["config"]) => T["config"],
   ) {
-    setForm((prev) => ({
+    updateForm((prev) => ({
       ...prev,
       blocks: updateBlockConfig(prev.blocks, blockId, updater),
     }));
   }
 
   function reorder(fromIndex: number, toIndex: number) {
-    setForm((prev) => ({
+    updateForm((prev) => ({
       ...prev,
       blocks: reorderBlock(prev.blocks, fromIndex, toIndex),
     }));
   }
 
   function upsertVisibility(rule: VisibilityRule) {
-    setForm((prev) => ({
+    updateForm((prev) => ({
       ...prev,
       visibilityRules: upsertVisibilityRule(prev.visibilityRules, rule),
     }));
   }
 
   function removeVisibility(targetBlockId: string) {
-    setForm((prev) => ({
+    updateForm((prev) => ({
       ...prev,
       visibilityRules: removeVisibilityRule(
         prev.visibilityRules,
@@ -148,21 +146,21 @@ export function useFormEditor(initialForm?: Form) {
   }
 
   function addJump(jump: LogicJump) {
-    setForm((prev) => ({
+    updateForm((prev) => ({
       ...prev,
       logicJumps: addLogicJump(prev.logicJumps, jump),
     }));
   }
 
   function updateJump(jumpId: string, updates: Partial<Omit<LogicJump, "id">>) {
-    setForm((prev) => ({
+    updateForm((prev) => ({
       ...prev,
       logicJumps: updateLogicJump(prev.logicJumps, jumpId, updates),
     }));
   }
 
   function removeJump(jumpId: string) {
-    setForm((prev) => ({
+    updateForm((prev) => ({
       ...prev,
       logicJumps: removeLogicJump(prev.logicJumps, jumpId),
     }));
@@ -217,7 +215,7 @@ export function useFormEditor(initialForm?: Form) {
   function updateFormMeta(
     updates: Partial<Pick<Form, "title" | "description">>,
   ) {
-    setForm((prev) => ({
+    updateForm((prev) => ({
       ...prev,
       ...updates,
     }));

@@ -81,7 +81,9 @@ export default function AddBlockPanel({
         e.stopPropagation();
         // extra safety: stop other listeners + avoid slash being typed
         if ("stopImmediatePropagation" in e) {
-          (e as any).stopImmediatePropagation();
+          (
+            e as KeyboardEvent & { stopImmediatePropagation: () => void }
+          ).stopImmediatePropagation();
         }
         setOpen(true);
         return;

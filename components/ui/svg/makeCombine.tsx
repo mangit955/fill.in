@@ -1,3 +1,7 @@
 import { Make } from "@lobehub/icons";
 
-export default () => <Make.Combine size={30} />;
+const MakeCombine = () => <Make.Combine size={30} />;
+
+MakeCombine.displayName = "MakeCombine";
+
+export default MakeCombine;

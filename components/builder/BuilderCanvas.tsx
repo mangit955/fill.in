@@ -3,7 +3,6 @@
 import { FormBlock, LogicJump, VisibilityRule } from "@/lib/forms/types";
 import BlockRenderer from "./BuilderRenderer";
 import { GripVertical, Plus, Trash2 } from "lucide-react";
-import { Tooltip, TooltipContent, TooltipTrigger } from "../ui/tooltip";
 import EmptyState from "./EmptyState";
 import { closestCenter, DndContext, DragEndEvent } from "@dnd-kit/core";
 import { useEffect, useMemo, useRef } from "react";

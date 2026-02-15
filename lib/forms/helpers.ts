@@ -45,14 +45,14 @@ export function updateBlockMeta(
 export function updateBlockConfig(
   blocks: FormBlock[],
   blockId: string,
-  updater: (config: any) => any,
+  updater: (config: FormBlock["config"]) => FormBlock["config"],
 ): FormBlock[] {
   return blocks.map((block) => {
     if (block.id !== blockId) return block;
 
     return {
       ...block,
-      config: updater((block as any).config),
+      config: updater(block.config as FormBlock["config"]),
     } as FormBlock;
   });
 }

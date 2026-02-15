@@ -17,7 +17,7 @@ import {
   createShortTextBlock,
   createTimeBlock,
 } from "@/lib/forms/defaults";
-import { useEffect, useState, useRef, useCallback } from "react";
+import { useEffect, useState, useRef } from "react";
 import { Form, FormBlock } from "@/lib/forms/types";
 import { NavbarApp } from "@/components/navbar/navbarApp";
 import { useDebouncedEffect } from "../hooks/useDebouncedEffect";
@@ -78,12 +78,11 @@ export default function FormEditorClient({
   }
   const descRef = useRef<HTMLTextAreaElement | null>(null);
 
-  const updateConfig = useCallback(editor.updateConfig, [editor]);
-
-  const updateMeta = useCallback(editor.updateMeta, [editor]);
-  const remove = useCallback(editor.remove, [editor]);
-  const duplicate = useCallback(editor.duplicate, [editor]);
-  const reorder = useCallback(editor.reorder, [editor]);
+  const updateConfig = editor.updateConfig;
+  const updateMeta = editor.updateMeta;
+  const remove = editor.remove;
+  const duplicate = editor.duplicate;
+  const reorder = editor.reorder;
 
   function addAndFocus(create: () => FormBlock) {
     const block = create();
@@ -133,7 +132,7 @@ export default function FormEditorClient({
 
   useEffect(() => {
     const { data: listener } = supabase.auth.onAuthStateChange(
-      async (event, session) => {
+      async (event) => {
         console.log("[Publish Flow] Auth state changed:", event);
         if (event === "SIGNED_IN") {
           const pending = localStorage.getItem("pendingPublish");

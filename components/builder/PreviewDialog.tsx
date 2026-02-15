@@ -1,4 +1,3 @@
-import { useEffect, useState } from "react";
 import {
   Dialog,
   DialogContent,
@@ -16,13 +15,7 @@ type Props = {
 };
 
 export function Preview({ form, open, onOpenChange }: Props) {
-  const [instanceKey, setInstanceKey] = useState(0);
-
-  useEffect(() => {
-    if (open) {
-      setInstanceKey(Date.now());
-    }
-  }, [open, form.id]);
+  const instanceKey = `${form.id}-${open ? "open" : "closed"}`;
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
@@ -42,7 +35,7 @@ export function Preview({ form, open, onOpenChange }: Props) {
     [&::-webkit-scrollbar-thumb]:hover:bg-neutral-400
   "
         >
-          <FormRuntime key={`${form.id}-${instanceKey}`} form={form} preview />
+          <FormRuntime key={instanceKey} form={form} preview />
         </div>
       </DialogContent>
     </Dialog>

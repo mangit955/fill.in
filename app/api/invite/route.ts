@@ -1,4 +1,5 @@
 import { createClient } from "@supabase/supabase-js";
+import type { User } from "@supabase/supabase-js";
 import { NextResponse } from "next/server";
 import { cookies } from "next/headers";
 import { createServerClient } from "@supabase/ssr";
@@ -23,6 +24,7 @@ export async function POST(req: Request) {
     /* Session client (who is inviting) */
     /* ----------------------------- */
     const cookieStore = await cookies();
+    type CookieOptions = Parameters<typeof cookieStore.set>[2];
 
     const supabase = createServerClient(
       process.env.NEXT_PUBLIC_SUPABASE_URL!,
@@ -32,10 +34,10 @@ export async function POST(req: Request) {
           get(name: string) {
             return cookieStore.get(name)?.value;
           },
-          set(name: string, value: string, options: any) {
+          set(name: string, value: string, options: CookieOptions) {
             cookieStore.set(name, value, options);
           },
-          remove(name: string, options: any) {
+          remove(name: string, options: CookieOptions) {
             cookieStore.set(name, "", { ...options, maxAge: 0 });
           },
         },
@@ -91,7 +93,7 @@ export async function POST(req: Request) {
     }
 
     const invitedUser = usersData?.users?.find(
-      (u: any) => u.email?.toLowerCase() === email.toLowerCase(),
+      (u: User) => u.email?.toLowerCase() === email.toLowerCase(),
     );
 
     if (userError || !invitedUser) {
