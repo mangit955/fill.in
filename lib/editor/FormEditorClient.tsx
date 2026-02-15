@@ -17,7 +17,7 @@ import {
   createShortTextBlock,
   createTimeBlock,
 } from "@/lib/forms/defaults";
-import { useEffect, useState, useRef } from "react";
+import { useEffect, useState, useRef, useCallback } from "react";
 import { Form, FormBlock } from "@/lib/forms/types";
 import { NavbarApp } from "@/components/navbar/navbarApp";
 import { useDebouncedEffect } from "../hooks/useDebouncedEffect";
@@ -77,6 +77,13 @@ export default function FormEditorClient({
     }
   }
   const descRef = useRef<HTMLTextAreaElement | null>(null);
+
+  const updateConfig = useCallback(editor.updateConfig, [editor]);
+
+  const updateMeta = useCallback(editor.updateMeta, [editor]);
+  const remove = useCallback(editor.remove, [editor]);
+  const duplicate = useCallback(editor.duplicate, [editor]);
+  const reorder = useCallback(editor.reorder, [editor]);
 
   function addAndFocus(create: () => FormBlock) {
     const block = create();
@@ -282,12 +289,12 @@ export default function FormEditorClient({
             blocks={editor.blocks}
             hydrated={editor.hydrated}
             activeBlockId={activeBlockId}
-            onUpdateMeta={editor.updateMeta}
-            onUpdateConfig={editor.updateConfig}
-            onRemove={editor.remove}
-            onDuplicate={editor.duplicate}
+            onUpdateMeta={updateMeta}
+            onUpdateConfig={updateConfig}
+            onRemove={remove}
+            onDuplicate={duplicate}
             onConsumeFocus={() => setActiveBlockId(null)}
-            onReorder={editor.reorder}
+            onReorder={reorder}
             visibilityRules={editor.visibilityRules}
             onRemoveVisibilityRule={editor.removeVisibilityRule}
             onUpsertVisibilityRule={editor.upsertVisibilityRule}

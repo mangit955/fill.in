@@ -25,6 +25,7 @@ import PhoneBlock from "./Blocks/PhoneBlock";
 import RatingBlock from "./Blocks/RatingBlock";
 import ShortTextBlock from "./Blocks/ShortTextBlock";
 import TimeBlock from "./Blocks/TimeBlock";
+import React from "react";
 
 type BlockRendererProps = {
   block: FormBlock;
@@ -36,7 +37,7 @@ type BlockRendererProps = {
   ) => void;
 };
 
-export default function BlockRenderer({
+function BlockRendererComponent({
   block,
   autoFocus,
   onUpdateMeta,
@@ -191,3 +192,6 @@ export default function BlockRenderer({
       return null;
   }
 }
+
+const BlockRenderer = React.memo(BlockRendererComponent);
+export default BlockRenderer;
