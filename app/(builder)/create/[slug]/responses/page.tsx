@@ -1,14 +1,16 @@
 import { createServerSupabase } from "@/lib/supabase/server";
 import { notFound } from "next/navigation";
 import { Form } from "@/lib/forms/types";
-import { FormBlock } from "@/lib/forms/types";
 import { NavbarHome } from "@/components/navbar/navbarHome";
-
-type ResponseRow = {
-  id: string;
-  created_at: string;
-  answers: Record<string, unknown>;
-};
+import {
+  Drawer,
+  DrawerContent,
+  DrawerHeader,
+  DrawerTitle,
+  DrawerTrigger,
+} from "@/components/ui/drawer";
+import { Button } from "@/components/ui/button";
+import ResponsesDataTable, { ResponseRow } from "./ResponsesDataTable";
 
 export default async function Page({
   params,
@@ -43,12 +45,119 @@ export default async function Page({
 
   const allResponses: ResponseRow[] = responses ?? [];
 
+  // --- ANALYTICS (unique-session based) ---
+  const { data: events } = await supabase
+    .from("form_events")
+    .select("event_type, session_id, block_id")
+    .eq("form_id", formId);
+
+  const viewSessions = new Set<string>();
+  const submitSessions = new Set<string>();
+  const answeredByBlock: Record<string, Set<string>> = {};
+
+  events?.forEach(
+    (e: {
+      event_type: string;
+      session_id: string | null;
+      block_id: string | null;
+    }) => {
+      if (!e.session_id) return;
+
+      if (e.event_type === "view") {
+        viewSessions.add(e.session_id);
+      }
+
+      if (e.event_type === "submit") {
+        submitSessions.add(e.session_id);
+      }
+
+      if (e.event_type === "answer" && e.block_id) {
+        if (!answeredByBlock[e.block_id]) {
+          answeredByBlock[e.block_id] = new Set<string>();
+        }
+        answeredByBlock[e.block_id].add(e.session_id);
+      }
+    },
+  );
+
+  const views = viewSessions.size;
+  const submits = submitSessions.size;
+  const completionRate = views ? Math.round((submits / views) * 100) : 0;
+
+  // True funnel drop-off: reached question - answered question.
+  const dropOffMap: Record<string, number> = {};
+  form.blocks.forEach((block, index) => {
+    const answered = answeredByBlock[block.id]?.size ?? 0;
+    const reached =
+      index === 0
+        ? views
+        : (answeredByBlock[form.blocks[index - 1].id]?.size ?? 0);
+    dropOffMap[block.id] = Math.max(reached - answered, 0);
+  });
+
   return (
     <div className="min-h-screen">
       <NavbarHome />
       <div className="max-w-7xl mx-auto pt-24 pb-14 px-6 space-y-8">
         {/* Header */}
-        <h1 className="text-3xl font-semibold mb-6">Responses</h1>
+        <div className="flex items-center justify-between mb-6 pb-4 border-b">
+          <h1 className="text-3xl font-semibold">Responses</h1>
+
+          <Drawer>
+            <DrawerTrigger asChild>
+              <Button variant="outline">View analytics</Button>
+            </DrawerTrigger>
+
+            <DrawerContent>
+              <DrawerHeader>
+                <DrawerTitle>Form analytics</DrawerTitle>
+              </DrawerHeader>
+
+              <div className="px-6 pb-10 space-y-6">
+                <div className="grid grid-cols-3 gap-4">
+                  <div className="border rounded-lg border-gray-300 shadow-sm p-4">
+                    <div className="text-sm text-muted-foreground">Views</div>
+                    <div className="text-2xl font-semibold">{views ?? 0}</div>
+                  </div>
+
+                  <div className="border rounded-lg border-gray-300 shadow-sm p-4">
+                    <div className="text-sm text-muted-foreground">Submits</div>
+                    <div className="text-2xl font-semibold">{submits ?? 0}</div>
+                  </div>
+
+                  <div className="border border-gray-300 rounded-lg p-4 shadow-sm">
+                    <div className="text-sm text-muted-foreground">
+                      Completion
+                    </div>
+                    <div className="text-2xl font-semibold">
+                      {completionRate}%
+                    </div>
+                  </div>
+                </div>
+
+                <div>
+                  <h3 className="font-semibold mb-3">Drop‑off by question</h3>
+                  <div className="space-y-2">
+                    {form.blocks.map((b) => {
+                      const count = dropOffMap[b.id] || 0;
+                      return (
+                        <div
+                          key={b.id}
+                          className="flex justify-between text-sm"
+                        >
+                          <span className="text-muted-foreground">
+                            {b.config?.label || "Question"}
+                          </span>
+                          <span className="font-medium">{count}</span>
+                        </div>
+                      );
+                    })}
+                  </div>
+                </div>
+              </div>
+            </DrawerContent>
+          </Drawer>
+        </div>
 
         {/* Empty state */}
         {allResponses.length === 0 && (
@@ -57,97 +166,7 @@ export default async function Page({
 
         {/* Table */}
         {allResponses.length > 0 && (
-          <div className="border rounded-md overflow-x-auto">
-            <table className="w-full text-sm">
-              <thead className="bg-muted ">
-                <tr>
-                  <th className="text-left px-3 py-2">Time</th>
-
-                  {(form.blocks as FormBlock[]).map((block) => (
-                    <th key={block.id} className="text-left px-3 py-2">
-                      {block.config?.label || "Question"}
-                    </th>
-                  ))}
-                </tr>
-              </thead>
-
-              <tbody>
-                {allResponses.map((response) => (
-                  <tr key={response.id} className="border-t hover:bg-gray-50">
-                    {/* Time */}
-                    <td className="px-3 py-2 whitespace-nowrap">
-                      {new Date(response.created_at + "Z").toLocaleString(
-                        "en-IN",
-                        {
-                          dateStyle: "medium",
-                          timeStyle: "short",
-                          timeZone: "Asia/Kolkata",
-                        },
-                      )}
-                    </td>
-
-                    {/* Answers */}
-                    {(form.blocks as FormBlock[]).map((block) => {
-                      // answers might be stored with prefixed ids like "multiple_choice_<id>"
-                      let value = response.answers?.[block.id];
-
-                      if (value === undefined) {
-                        const prefixedKey = `${block.type}_${block.id}`;
-                        value = response.answers?.[prefixedKey];
-                      }
-
-                      let display = "—";
-
-                      const options =
-                        block.type === "multiple_choice"
-                          ? block.config.options
-                          : [];
-
-                      // MULTI‑SELECT (array of ids)
-                      if (Array.isArray(value)) {
-                        const labels = value.map((optionId: string) => {
-                          const byId = options.find((o) => o.id === optionId);
-                          if (byId) return byId.label ?? optionId;
-
-                          // backward compatibility for legacy saved answers that stored label directly
-                          const byLabel = options.find(
-                            (o) => o.label === optionId,
-                          );
-                          if (byLabel) return byLabel.label;
-
-                          return optionId;
-                        });
-
-                        display = labels.join(", ");
-                      }
-                      // SINGLE‑SELECT (string id)
-                      else if (typeof value === "string") {
-                        const byId = options.find((o) => o.id === value);
-                        if (byId) display = byId.label ?? value;
-                        else {
-                          const byLabel = options.find(
-                            (o) => o.label === value,
-                          );
-                          if (byLabel) display = byLabel.label;
-                          else display = value;
-                        }
-                      }
-                      // TEXT ANSWERS
-                      else if (value !== undefined && value !== null) {
-                        display = String(value);
-                      }
-
-                      return (
-                        <td key={block.id} className="px-3 py-2">
-                          {display}
-                        </td>
-                      );
-                    })}
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
+          <ResponsesDataTable rows={allResponses} blocks={form.blocks} />
         )}
       </div>
     </div>

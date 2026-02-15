@@ -61,6 +61,7 @@ export default function FormRuntime({ form, preview }: Props) {
   >({});
   const [open, setOpen] = useState(false);
   const [mounted, setMounted] = useState(false);
+  const [sessionId, setSessionId] = useState<string | null>(null);
   useEffect(() => {
     setMounted(true);
   }, []);
@@ -86,6 +87,26 @@ export default function FormRuntime({ form, preview }: Props) {
       setCurrentBlockId(next);
     }
   }, [currentBlockId, answers, form, preview]);
+
+  useEffect(() => {
+    if (preview) return; // don't track preview
+    if (!form?.id) return;
+
+    // create/get session id
+    let id = localStorage.getItem("form_session");
+    if (!id) {
+      id = crypto.randomUUID();
+      localStorage.setItem("form_session", id);
+    }
+    setSessionId(id);
+
+    // 🔥 TRACK VIEW
+    supabase.from("form_events").insert({
+      form_id: form.id,
+      session_id: id,
+      event_type: "view",
+    });
+  }, [form.id, preview]);
 
   // Preview with no questions: show empty state only
   if (preview && form.blocks.length === 0) {
@@ -162,6 +183,15 @@ export default function FormRuntime({ form, preview }: Props) {
       alert("Submission failed. Please try again.");
       setSubmitting(false);
       return;
+    }
+
+    // 🔥 TRACK SUBMIT EVENT
+    if (sessionId) {
+      await supabase.from("form_events").insert({
+        form_id: form.id,
+        session_id: sessionId,
+        event_type: "submit",
+      });
     }
   }
 
@@ -318,6 +348,16 @@ export default function FormRuntime({ form, preview }: Props) {
         toast.error("Please select a value");
         return;
       }
+    }
+
+    // 🔥 TRACK ANSWER EVENT
+    if (!preview && sessionId && currentBlockId) {
+      supabase.from("form_events").insert({
+        form_id: form.id,
+        session_id: sessionId,
+        event_type: "answer",
+        block_id: currentBlockId,
+      });
     }
 
     const next = getNextBlockId(currentBlockId!, nextAnswers, form);
