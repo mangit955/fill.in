@@ -1,75 +1,66 @@
-# Phase 1 Checklist — User Stories
+# User Stories
 
-## Define Core Features & User Stories
+This document captures realistic user journeys for the current Fill.in product.
 
-Each story follows the format:
+## Personas
 
-> “As a [type of user], I want to [do something] so that I can [goal].”
+- Form owner: creates, publishes, and manages forms
+- Collaborator (editor): helps maintain form content
+- Respondent: fills and submits published forms
 
----
+## Story Set
 
-### Form Creation
+### A. Form Creation and Editing
 
-1. **Add Fields**  
-   As a creator, I want to add new fields (text, email, dropdown, etc.) so that I can build a custom form for my audience.
+1. As a form owner, I want to create a new empty form so I can start collecting responses quickly.
+2. As a form owner, I want to add different block types so I can capture structured and unstructured information.
+3. As a form owner, I want to edit labels/placeholders/settings on each block so the form is clear to respondents.
+4. As a form owner, I want to reorder blocks by drag-and-drop so the question flow matches my intent.
+5. As a form owner, I want to duplicate or delete a block so I can iterate faster.
+6. As a form owner, I want draft edits to autosave so I do not lose progress.
 
-2. **Edit Fields**  
-   As a creator, I want to edit field labels, placeholders, and validation rules so that I can make the form match my desired content and structure.
+### B. Form Logic
 
-3. **Delete Fields**  
-   As a creator, I want to remove unwanted fields so that I can keep my form clean and relevant.
+1. As a form owner, I want visibility rules so some questions only appear when relevant.
+2. As a form owner, I want logic jumps so respondents can branch to different next questions.
+3. As a form owner, I want required-field controls so I can enforce mandatory questions.
 
----
+### C. Publishing and Sharing
 
-### Customization
+1. As a form owner, I want to publish a form so it becomes available at a public URL.
+2. As a form owner, I want to copy the public link quickly so I can share it in any channel.
+3. As a form owner, I want to return to editor mode after publishing so I can continue refining content.
 
-4. **Customize Field Settings**  
-   As a creator, I want to set properties like “required,” “max length,” and “default value” so that I can control how users input data.
+### D. Runtime Experience
 
-5. **Visual Personalization**  
-   As a creator, I want to change basic styling (form title, colors, background) so that my form aligns with my brand.
+1. As a respondent, I want a clear one-question-at-a-time flow so the form feels simple.
+2. As a respondent, I want input validation feedback (email, phone, URL, number, file size) so I can fix mistakes immediately.
+3. As a respondent, I want to go back to previous questions so I can correct answers before submit.
+4. As a respondent, I want a success confirmation after submit so I know my response was received.
 
----
+### E. Collaboration
 
-### Reordering + Typing Commands
+1. As a form owner, I want to invite collaborators by email so others can edit my form.
+2. As a form owner, I want to remove collaborator access so permissions stay controlled.
+3. As a collaborator, I want access only to forms I am invited to so data remains private.
 
-6. **Reorder Fields Easily**  
-   As a creator, I want to drag and drop fields to reorder them so that I can adjust the layout without recreating the form.
+### F. Responses and Analytics
 
-7. **Quick Add via Commands**  
-   As a creator, I want to type “/text” or “/email” to instantly add a field so that I can build forms faster using keyboard commands.
+1. As a form owner, I want to view submissions in a table so I can review answers efficiently.
+2. As a form owner, I want question labels as table columns so responses are easy to interpret.
+3. As a form owner, I want views/submits/completion/drop-off stats so I can optimize my form.
 
----
+## Acceptance Criteria (MVP)
 
-### Saving & Loading
+- Owner can create, edit, and publish forms
+- Public runtime can submit responses to published forms
+- Responses page shows response rows and analytics summary
+- Collaboration invite/remove works for owner-managed forms
+- Core validations and required-field checks are enforced in runtime
 
-8. **Save Form Progress**  
-   As a creator, I want to auto-save form changes in real time so that I don’t lose my progress.
+## Out of Scope (Current Repo)
 
-9. **Load Existing Forms**  
-   As a creator, I want to reopen and edit saved forms so that I can update or republish them later.
-
----
-
-### Public Sharing & Submission
-
-10. **Share Public Form Link**  
-    As a creator, I want to generate a public share link so that anyone can fill out my form.
-
-11. **Submit Responses**  
-    As a responder, I want to fill and submit forms easily so that my data is sent to the creator.
-
----
-
-### Viewing Submissions
-
-12. **View Collected Responses**  
-    As a creator, I want to see all form submissions in a dashboard so that I can review and export responses easily.
-
-13. **Receive Notifications**  
-    As a creator, I want to get notified when someone submits my form so that I can stay updated in real time.
-
----
-
-**Phase 1 Goal:**  
-Build a functional form builder that supports adding fields, saving progress, and public submissions — forming the foundation of the full Tally.so experience.
+- Payments and billing
+- Webhooks and external integrations
+- Advanced workflow automation
+- White-label custom domains

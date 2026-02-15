@@ -45,9 +45,9 @@ It lets users create forms, publish them to a public URL, collect responses, and
 - Responses page aggregates response rows plus event-based analytics.
 
 For deeper details, see:
-- [`/Users/manasraghuwanshi/Developer/projects/fill.in/docs/architecture.md`](/Users/manasraghuwanshi/Developer/projects/fill.in/docs/architecture.md)
-- [`/Users/manasraghuwanshi/Developer/projects/fill.in/docs/data-model.md`](/Users/manasraghuwanshi/Developer/projects/fill.in/docs/data-model.md)
-- [`/Users/manasraghuwanshi/Developer/projects/fill.in/docs/plan.md`](/Users/manasraghuwanshi/Developer/projects/fill.in/docs/plan.md)
+- [`docs/architecture.md`](./docs/architecture.md)
+- [`docs/data-model.md`](./docs/data-model.md)
+- [`docs/plan.md`](./docs/plan.md)
 
 ## Routes
 
@@ -106,7 +106,7 @@ You need the following tables and storage bucket:
 - `form_events`
 - Storage bucket: `uploads`
 
-Expected schema is documented in [`/Users/manasraghuwanshi/Developer/projects/fill.in/docs/data-model.md`](/Users/manasraghuwanshi/Developer/projects/fill.in/docs/data-model.md).
+Expected schema is documented in [`docs/data-model.md`](./docs/data-model.md).
 
 ## Scripts
 

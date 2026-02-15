@@ -1,263 +1,284 @@
-# 📝 Field JSON Schema Examples — Complete Phase 1
+# JSON Schema Contract
 
-Each form field is stored as a JSON object with common properties.  
-Below are examples for **all Phase 1 field types**.
+This document describes the form JSON structure used by Fill.in.
 
----
+Source of truth for runtime types:
 
-## 1. Short Text
+- `lib/forms/types.ts`
 
-````json
+## Top-Level Form Shape
+
+```json
 {
-  "id": "field_1",
+  "id": "uuid",
+  "slug": "string",
+  "title": "string",
+  "description": "string",
+  "blocks": [],
+  "logicJumps": [],
+  "visibilityRules": []
+}
+```
+
+## Block Union
+
+Each item in `blocks` must include:
+
+- `id: string`
+- `type: string` (one of supported block types)
+- `required: boolean` (present on most blocks)
+- `config: object` (shape depends on block type)
+
+Supported `type` values:
+
+- `short_text`
+- `long_text`
+- `multiple_choice`
+- `email`
+- `phone`
+- `date`
+- `link`
+- `number`
+- `rating`
+- `fileUpload`
+- `time`
+- `linear_scale`
+
+## Block Config Examples
+
+### short_text
+
+```json
+{
+  "id": "short_text_a1",
   "type": "short_text",
-  "label": "What’s your name?",
-  "placeholder": "Enter your full name",
   "required": true,
-  "defaultValue": "",
-  "helpText": "Please enter your full legal name.",
-  "disabled": false,
-  "readOnly": false,
-  "order": 1,
-  "conditionalLogic": null,
-  "maxLength": 100,
-  "minLength": 2
-
+  "config": {
+    "label": "Full name",
+    "placeholder": "Type your answer",
+    "maxLength": 100
+  }
 }
+```
 
+### long_text
 
-## 2. Long Text
-
-```son
+```json
 {
-  "id": "field_2",
+  "id": "long_text_b1",
   "type": "long_text",
-  "label": "Describe your project",
-  "placeholder": "Write here...",
-  "required": false,
-  "defaultValue": "",
-  "helpText": "Please enter your full legal name.",
-  "disabled": false,
-  "readOnly": false,
-  "order": 1,
-  "conditionalLogic": null,
-  "maxLength": 100,
-  "minLength": 2
-
+  "required": true,
+  "config": {
+    "label": "Tell us about yourself",
+    "placeholder": "Type your answer",
+    "rows": 4
+  }
 }
+```
 
-## 3. Email
+### multiple_choice
 
-```son
+```json
 {
-  "id": "field_3",
+  "id": "multiple_choice_c1",
+  "type": "multiple_choice",
+  "required": true,
+  "config": {
+    "label": "Preferred work model",
+    "allowMultiple": false,
+    "options": [
+      { "id": "opt_1", "label": "On-site" },
+      { "id": "opt_2", "label": "Hybrid" },
+      { "id": "opt_3", "label": "Remote" }
+    ]
+  }
+}
+```
+
+### email
+
+```json
+{
+  "id": "email_d1",
   "type": "email",
-  "label": "Your email",
-  "placeholder": "example@email.com",
-  "required": true
-}
-
-## 4. Number
-
-```son
-{
-  "id": "field_4",
-  "type": "number",
-  "label": "How many people?",
-  "placeholder": "Enter a number",
   "required": true,
-  "min": 1,
-  "max": 100
+  "config": {
+    "label": "Work email",
+    "placeholder": "you@company.com"
+  }
 }
+```
 
+### phone
 
-## 5. Url
-
-```son
+```json
 {
-  "id": "field_5",
-  "type": "url",
-  "label": "Your portfolio link",
-  "placeholder": "https://",
-  "required": false
-}
-
-
-## 6. Phone
-
-```son
-{
-  "id": "field_6",
+  "id": "phone_e1",
   "type": "phone",
-  "label": "Your contact number",
-  "placeholder": "+91 1234567890",
-  "required": false
-}
-
-
-## 7. Dropdown/select
-
-```son
-{
-  "id": "field_7",
-  "type": "dropdown",
-  "label": "Choose your country",
-  "required": true,
-  "multiple": false,
-  "options": [
-    { "label": "India", "value": "IN" },
-    { "label": "USA", "value": "US" },
-    { "label": "UK", "value": "UK" }
-  ]
-}
-
-## 8. Multiple choice(Radio)
-
-```son
-{
-  "id": "field_8",
-  "type": "radio",
-  "label": "Select your gender",
-  "required": true,
-  "options": [
-    { "label": "Male", "value": "male" },
-    { "label": "Female", "value": "female" },
-    { "label": "Other", "value": "other" }
-  ]
-}
-
-
-## 9. Checkboxes
-
-```son
-{
-  "id": "field_9",
-  "type": "checkboxes",
-  "label": "Which services do you need?",
   "required": false,
-  "options": [
-    { "label": "Design", "value": "design" },
-    { "label": "Development", "value": "development" },
-    { "label": "Marketing", "value": "marketing" }
-  ]
+  "config": {
+    "label": "Phone number",
+    "placeholder": "Enter your phone number"
+  }
 }
+```
 
+### date
 
-## 10. Yes/No
-
-```son
+```json
 {
-  "id": "field_10",
-  "type": "yes_no",
-  "label": "Do you agree with the terms?",
-  "required": true,
-  "defaultValue": false
-}
-
-
-## 11. Date picker
-
-```son
-{
-  "id": "field_11",
+  "id": "date_f1",
   "type": "date",
-  "label": "Select your date of birth",
   "required": true,
-  "defaultValue": null
+  "config": {
+    "label": "Preferred interview date",
+    "placeholder": "Pick a date"
+  }
 }
+```
 
+### link
 
-## 12. Time picker
-
-```son
+```json
 {
-  "id": "field_12",
+  "id": "link_g1",
+  "type": "link",
+  "required": false,
+  "config": {
+    "label": "Portfolio URL",
+    "placeholder": "https://example.com"
+  }
+}
+```
+
+### number
+
+```json
+{
+  "id": "number_h1",
+  "type": "number",
+  "required": false,
+  "config": {
+    "label": "Years of experience",
+    "placeholder": "Enter a number",
+    "min": 0,
+    "max": 30
+  }
+}
+```
+
+### rating
+
+```json
+{
+  "id": "rating_i1",
+  "type": "rating",
+  "required": true,
+  "config": {
+    "label": "Rate this application flow",
+    "max": 5
+  }
+}
+```
+
+### fileUpload
+
+```json
+{
+  "id": "file_j1",
+  "type": "fileUpload",
+  "required": true,
+  "config": {
+    "label": "Upload resume",
+    "multiple": false,
+    "accept": ".pdf,.doc,.docx",
+    "maxSizeMB": 10
+  }
+}
+```
+
+### time
+
+```json
+{
+  "id": "time_k1",
   "type": "time",
-  "label": "Choose meeting time",
   "required": false,
-  "defaultValue": null
+  "config": {
+    "label": "Preferred interview time"
+  }
 }
+```
 
-## 13. Date && Time
+### linear_scale
 
-```son
+```json
 {
-  "id": "field_13",
-  "type": "datetime",
-  "label": "Select appointment slot",
+  "id": "linear_scale_l1",
+  "type": "linear_scale",
   "required": true,
-  "defaultValue": null
+  "config": {
+    "label": "How confident are you with React?",
+    "min": 1,
+    "max": 5,
+    "minLabel": "Beginner",
+    "maxLabel": "Expert"
+  }
 }
+```
 
+## Logic Rules
 
-## 14. File upload
+### visibilityRules
 
-```son
+Each rule controls whether a target block is shown.
+
+```json
 {
-  "id": "field_14",
-  "type": "file",
-  "label": "Upload your resume",
-  "required": true,
-  "multiple": false,
-  "acceptedTypes": [".pdf", ".docx"],
-  "maxFileSizeMB": 10
+  "id": "vr_1",
+  "targetBlockId": "block_to_show_or_hide",
+  "condition": {
+    "blockId": "source_block_id",
+    "operator": "equals",
+    "value": "Remote"
+  }
 }
+```
 
+### logicJumps
 
-## 15. Image upload
+Each jump can redirect the next block when condition matches.
 
-```son
+```json
 {
-  "id": "field_15",
-  "type": "image",
-  "label": "Upload your company logo",
-  "required": false,
-  "multiple": false,
-  "acceptedTypes": [".png", ".jpg", ".jpeg"],
-  "maxFileSizeMB": 10
+  "id": "jump_1",
+  "fromBlockId": "current_block_id",
+  "order": 1,
+  "condition": {
+    "blockId": "current_block_id",
+    "operator": "greater_than",
+    "value": 3
+  },
+  "toBlockId": "destination_block_id"
 }
+```
 
+Supported operators:
 
-## 16. Heading/Title
+- `equals`
+- `not_equals`
+- `contains`
+- `greater_than`
+- `less_than`
 
-```son
-{
-  "id": "field_16",
-  "type": "heading",
-  "label": "About You",
-  "style": "h2",
-  "orientation": "horizontal"
+## Persistence Notes
 
-}
+- Form JSON is stored in `forms.schema`.
+- Responses are stored as `responses.answers` keyed by `block.id`.
+- Runtime may normalize some values before save (for example link URLs).
 
+## Compatibility Guidance
 
-## 17. Paragraph/Description
-
-```son
-{
-  "id": "field_17",
-  "type": "paragraph",
-  "label": "Please fill this section carefully."
-}
-
-
-## 18. Divider
-
-```son
-{
-  "id": "field_18",
-  "type": "divider",
-  "style": "h2",
-  "orientation": "horizontal"
-
-}
-
-## 19. Page break
-
-```son
-{
-  "id": "field_19",
-  "type": "page_break",
-  "label": "Next →"
-}
-````
+- Keep `type` values stable after publish to avoid response rendering issues.
+- Prefer additive changes to `config` fields.
+- When removing a block, existing responses may still contain historical keys.
