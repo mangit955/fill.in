@@ -5,6 +5,7 @@ import { Button } from "../ui/button";
 import { Spinner } from "../ui/spinner";
 import { toast } from "sonner";
 import { useRouter } from "next/navigation";
+import { UserStar } from "lucide-react";
 
 type Props = {
   open: boolean;
@@ -65,9 +66,14 @@ export default function InviteModal({
   return (
     <div className="fixed inset-0 bg-black/20 backdrop-blur-sm flex items-center justify-center z-[100]">
       <div className="bg-white rounded-md shadow-lg w-full max-w-md p-6 space-y-4">
-        <h2 className="text-xl text-neutral-800 font-semibold">
-          Invite collaborator
-        </h2>
+        <div className="flex items-center gap-3">
+          <span className="bg-gray-100 p-1 rounded-md">
+            <UserStar className="text-gray-700" />
+          </span>
+          <h2 className="text-xl text-neutral-800 font-semibold">
+            Invite collaborator
+          </h2>
+        </div>
 
         <input
           value={email}

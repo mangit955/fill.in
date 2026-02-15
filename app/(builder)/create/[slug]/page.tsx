@@ -5,7 +5,7 @@ import { redirect } from "next/navigation";
 import { NavbarAvatar } from "@/components/navbar/avatar";
 import { getUsersByIds } from "@/lib/server/getUsersByIds";
 import { Badge } from "@/components/ui/badge";
-import { CircleMinus, Sparkles } from "lucide-react";
+import { CircleMinus, Sparkles, UserRound } from "lucide-react";
 import { createClient } from "@supabase/supabase-js";
 import {
   Tooltip,
@@ -154,6 +154,9 @@ export default async function Page({
               className="flex items-center justify-between text-sm font-semibold rounded-md px-2 py-1 hover:bg-neutral-100"
             >
               <div className="flex items-center gap-2 truncate">
+                {c.role !== "owner" && (
+                  <UserRound size={16} className="text-neutral-400" />
+                )}
                 <span
                   className={`truncate ${
                     c.role === "owner" ? "text-neutral-800" : "text-neutral-500"
@@ -217,7 +220,7 @@ export default async function Page({
                       <TooltipTrigger asChild>
                         <button
                           type="submit"
-                          className="cursor-pointer text-neutral-300 hover:text-neutral-400"
+                          className="cursor-pointer text-neutral-300 hover:text-neutral-500"
                         >
                           <CircleMinus size={18} />
                         </button>

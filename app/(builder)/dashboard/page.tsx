@@ -206,7 +206,7 @@ export default async function DashboardPage() {
             </NextLink>
 
             {/* Action buttons */}
-            <div className="flex items-center gap-3 text-sm opacity-0 group-hover:opacity-100 transition-opacity duration-150">
+            <div className="flex items-center gap-3 text-sm ">
               <NextLink
                 href={`/create/${form.slug}`}
                 className="flex focus:outline-none

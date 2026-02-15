@@ -44,13 +44,11 @@ export default async function Page({
   const allResponses: ResponseRow[] = responses ?? [];
 
   return (
-    <div>
+    <div className="min-h-screen">
       <NavbarHome />
-      <div className="max-w-6xl mx-auto py-10 px-4">
+      <div className="max-w-7xl mx-auto pt-24 pb-14 px-6 space-y-8">
         {/* Header */}
-        <h1 className="text-3xl font-semibold mb-6">
-          Responses ({allResponses.length})
-        </h1>
+        <h1 className="text-3xl font-semibold mb-6">Responses</h1>
 
         {/* Empty state */}
         {allResponses.length === 0 && (
@@ -61,7 +59,7 @@ export default async function Page({
         {allResponses.length > 0 && (
           <div className="border rounded-md overflow-x-auto">
             <table className="w-full text-sm">
-              <thead className="bg-muted">
+              <thead className="bg-muted ">
                 <tr>
                   <th className="text-left px-3 py-2">Time</th>
 
@@ -75,13 +73,17 @@ export default async function Page({
 
               <tbody>
                 {allResponses.map((response) => (
-                  <tr key={response.id} className="border-t">
+                  <tr key={response.id} className="border-t hover:bg-gray-50">
                     {/* Time */}
                     <td className="px-3 py-2 whitespace-nowrap">
-                      {new Date(response.created_at).toLocaleString("en-IN", {
-                        dateStyle: "medium",
-                        timeStyle: "short",
-                      })}
+                      {new Date(response.created_at + "Z").toLocaleString(
+                        "en-IN",
+                        {
+                          dateStyle: "medium",
+                          timeStyle: "short",
+                          timeZone: "Asia/Kolkata",
+                        },
+                      )}
                     </td>
 
                     {/* Answers */}
@@ -123,7 +125,9 @@ export default async function Page({
                         const byId = options.find((o) => o.id === value);
                         if (byId) display = byId.label ?? value;
                         else {
-                          const byLabel = options.find((o) => o.label === value);
+                          const byLabel = options.find(
+                            (o) => o.label === value,
+                          );
                           if (byLabel) display = byLabel.label;
                           else display = value;
                         }

@@ -41,7 +41,7 @@ export default function DeleteFormButton({ disabled }: Props) {
             disabled={loading || disabled}
           >
             {loading ? (
-              <Spinner width={20} height={20} />
+              <Spinner width={20} height={20} className="text-gray-800" />
             ) : (
               <Trash2 size={18} />
             )}
