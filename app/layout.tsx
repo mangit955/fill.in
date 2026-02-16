@@ -16,7 +16,7 @@ const geistMono = Geist_Mono({
 
 const siteName = "Fill.in";
 const siteUrl =
-  process.env.NEXT_PUBLIC_SITE_URL || "https://fill-in-ten.vercel.app";
+  process.env.NEXT_PUBLIC_SITE_URL || "https://fill-in-ten.vercel.app/";
 const description =
   "Design advanced forms with conditional logic, logic jumps, and real-time response tracking. Share and collect data seamlessly with Fill.in.";
 
