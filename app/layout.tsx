@@ -15,8 +15,9 @@ const geistMono = Geist_Mono({
 });
 
 const siteName = "Fill.in";
-const siteUrl =
+const siteUrlRaw =
   process.env.NEXT_PUBLIC_SITE_URL || "https://fill-in-ten.vercel.app";
+const siteUrl = siteUrlRaw.replace(/\/+$/, "");
 const description =
   "Design advanced forms with conditional logic, logic jumps, and real-time response tracking. Share and collect data seamlessly with Fill.in.";
 
@@ -51,7 +52,7 @@ export const metadata: Metadata = {
     siteName: siteName,
     images: [
       {
-        url: `${siteUrl}/og.png`, // place inside /public
+        url: "/og.png",
         width: 1200,
         height: 630,
         alt: "Fill.in Form Builder",
@@ -65,7 +66,7 @@ export const metadata: Metadata = {
     card: "summary_large_image",
     title: "Fill.in — Free Online Form Builder",
     description: description,
-    images: [`${siteUrl}/og.png`],
+    images: ["/og.png"],
   },
 
   icons: {
