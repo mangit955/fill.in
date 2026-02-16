@@ -49,20 +49,18 @@ export async function generateMetadata({
       description,
       url,
       type: "website",
-      images: ["/og.png"],
+      images: ["/og1.png"],
     },
     twitter: {
       card: "summary_large_image",
       title,
       description,
-      images: ["/og.png"],
+      images: ["/og1.png"],
     },
   };
 }
 
-export default async function RuntimePage({
-  params,
-}: RuntimeParams) {
+export default async function RuntimePage({ params }: RuntimeParams) {
   const { slug } = await params;
   const data = await getPublishedForm(slug);
 
