@@ -10,7 +10,7 @@ import {
   SortingState,
   useReactTable,
 } from "@tanstack/react-table";
-import { ArrowUpDown } from "lucide-react";
+import { ArrowUpDown, Star } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
   Table,
@@ -36,7 +36,7 @@ type Props = {
 function getAnswerDisplay(
   block: FormBlock,
   answers: Record<string, unknown>,
-): string {
+): React.ReactNode {
   let value = answers?.[block.id];
 
   if (value === undefined) {
@@ -44,8 +44,121 @@ function getAnswerDisplay(
     value = answers?.[prefixedKey];
   }
 
-  let display = "—";
+  let display: React.ReactNode = "—";
   const options = block.type === "multiple_choice" ? block.config.options : [];
+
+  if (block.type === "fileUpload") {
+    const urls = Array.isArray(value)
+      ? value.filter((v): v is string => typeof v === "string")
+      : typeof value === "string"
+        ? [value]
+        : [];
+
+    if (urls.length === 0) return "—";
+
+    return (
+      <div className="w-[220px] space-y-3">
+        {urls.map((url, idx) => {
+          const ext = url.split("?")[0].split(".").pop()?.toLowerCase() ?? "";
+          const isImage = [
+            "jpg",
+            "jpeg",
+            "png",
+            "webp",
+            "gif",
+            "bmp",
+            "svg",
+          ].includes(ext);
+          const isPdf = ext === "pdf";
+          const isDocLike = [
+            "doc",
+            "docx",
+            "ppt",
+            "pptx",
+            "xls",
+            "xlsx",
+            "txt",
+            "rtf",
+          ].includes(ext);
+
+          return (
+            <div key={`${url}-${idx}`} className="space-y-2">
+              {isImage && (
+                <img
+                  src={url}
+                  alt={`Uploaded file preview ${idx + 1}`}
+                  className="w-full h-36 object-cover rounded-md border"
+                />
+              )}
+
+              {isPdf && (
+                <iframe
+                  src={url}
+                  className="w-full h-44 rounded-md border"
+                  title={`PDF preview ${idx + 1}`}
+                />
+              )}
+
+              {isDocLike && !isPdf && (
+                <iframe
+                  src={`https://docs.google.com/gview?embedded=1&url=${encodeURIComponent(
+                    url,
+                  )}`}
+                  className="w-full h-44 rounded-md border bg-white"
+                  title={`Document preview ${idx + 1}`}
+                />
+              )}
+
+              {!isImage && !isPdf && !isDocLike && (
+                <div className="text-xs text-muted-foreground">
+                  Preview not available
+                </div>
+              )}
+
+              <a
+                href={url}
+                target="_blank"
+                rel="noreferrer"
+                className="text-xs text-blue-600 underline break-all"
+              >
+                Open file
+              </a>
+            </div>
+          );
+        })}
+      </div>
+    );
+  }
+
+  if (block.type === "rating") {
+    const raw =
+      typeof value === "number"
+        ? value
+        : typeof value === "string"
+          ? Number(value)
+          : null;
+
+    if (!raw || Number.isNaN(raw)) return "—";
+
+    const max = block.config.max ?? 5;
+    const safeValue = Math.min(Math.max(Math.round(raw), 0), max);
+
+    return (
+      <div className="flex items-center gap-0.5">
+        {Array.from({ length: max }).map((_, i) => (
+          <Star
+            key={i}
+            size={16}
+            className={
+              i < safeValue
+                ? "fill-yellow-400 text-yellow-400"
+                : "text-neutral-300"
+            }
+          />
+        ))}
+      </div>
+    );
+  }
 
   if (Array.isArray(value)) {
     const labels = value.map((optionId) => {

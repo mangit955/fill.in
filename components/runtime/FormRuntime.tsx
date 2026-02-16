@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { Calendar } from "@/components/ui/calendar";
 import {
   Popover,
@@ -89,27 +89,42 @@ export default function FormRuntime({ form, formId, preview }: Props) {
     Record<string, boolean>
   >({});
   const [open, setOpen] = useState(false);
-  const sessionIdRef = useRef<string | null>(null);
+  const sessionIdRef = useRef<string>(crypto.randomUUID());
+
+  function getOrCreateSessionId() {
+    return sessionIdRef.current;
+  }
+
+  const trackEvent = useCallback(
+    async (eventType: "view" | "answer" | "submit", blockId?: string) => {
+      if (preview || !runtimeFormId) return;
+      const sessionId = getOrCreateSessionId();
+      const { error } = await supabase.from("form_events").insert({
+        form_id: runtimeFormId,
+        session_id: sessionId,
+        event_type: eventType,
+        ...(blockId ? { block_id: blockId } : {}),
+      });
+      if (error) {
+        console.error(`[form_events:${eventType}]`, error);
+      }
+    },
+    [preview, runtimeFormId],
+  );
 
   useEffect(() => {
     if (preview) return; // don't track preview
     if (!runtimeFormId) return;
 
-    // create/get session id
-    let id = localStorage.getItem("form_session");
-    if (!id) {
-      id = crypto.randomUUID();
-      localStorage.setItem("form_session", id);
-    }
-    sessionIdRef.current = id;
+    void trackEvent("view");
+  }, [runtimeFormId, preview, trackEvent]);
 
-    // 🔥 TRACK VIEW
-    supabase.from("form_events").insert({
-      form_id: runtimeFormId,
-      session_id: id,
-      event_type: "view",
-    });
-  }, [runtimeFormId, preview]);
+  useEffect(() => {
+    if (preview) return;
+    if (!runtimeFormId || !currentBlockId) return;
+
+    void trackEvent("view", currentBlockId);
+  }, [runtimeFormId, currentBlockId, preview, trackEvent]);
 
   const nextBlockId = useMemo(() => {
     if (!currentBlockId) return null;
@@ -200,13 +215,7 @@ export default function FormRuntime({ form, formId, preview }: Props) {
     }
 
     // 🔥 TRACK SUBMIT EVENT
-    if (sessionIdRef.current) {
-      await supabase.from("form_events").insert({
-        form_id: runtimeFormId,
-        session_id: sessionIdRef.current,
-        event_type: "submit",
-      });
-    }
+    await trackEvent("submit");
 
     return true;
   }
@@ -367,13 +376,8 @@ export default function FormRuntime({ form, formId, preview }: Props) {
     }
 
     // 🔥 TRACK ANSWER EVENT
-    if (!preview && sessionIdRef.current && currentBlockId) {
-      supabase.from("form_events").insert({
-        form_id: runtimeFormId,
-        session_id: sessionIdRef.current,
-        event_type: "answer",
-        block_id: currentBlockId,
-      });
+    if (!preview && currentBlockId) {
+      void trackEvent("answer", currentBlockId);
     }
 
     const rawNext = getNextBlockId(currentBlockId!, nextAnswers, form);

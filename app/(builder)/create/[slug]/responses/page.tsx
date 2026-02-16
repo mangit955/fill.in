@@ -84,6 +84,7 @@ export default async function Page({
   const viewSessions = new Set<string>();
   const submitSessions = new Set<string>();
   const answeredByBlock: Record<string, Set<string>> = {};
+  const viewedByBlock: Record<string, Set<string>> = {};
 
   events?.forEach(
     (e: {
@@ -95,6 +96,12 @@ export default async function Page({
 
       if (e.event_type === "view") {
         viewSessions.add(e.session_id);
+        if (e.block_id) {
+          if (!viewedByBlock[e.block_id]) {
+            viewedByBlock[e.block_id] = new Set<string>();
+          }
+          viewedByBlock[e.block_id].add(e.session_id);
+        }
       }
 
       if (e.event_type === "submit") {
@@ -111,17 +118,25 @@ export default async function Page({
   );
 
   const views = viewSessions.size;
-  const submits = submitSessions.size;
-  const completionRate = views ? Math.round((submits / views) * 100) : 0;
+  // Fallback for environments where form_events insert/select is blocked by RLS:
+  // use responses count so analytics don't show 0 when submissions exist.
+  const submits =
+    submitSessions.size > 0 ? submitSessions.size : allResponses.length;
+  const effectiveViews = views > 0 ? views : submits;
+  const completionRate = effectiveViews
+    ? Math.min(100, Math.round((submits / effectiveViews) * 100))
+    : 0;
 
   // True funnel drop-off: reached question - answered question.
   const dropOffMap: Record<string, number> = {};
   form.blocks.forEach((block, index) => {
     const answered = answeredByBlock[block.id]?.size ?? 0;
-    const reached =
+    const reachedFromViews = viewedByBlock[block.id]?.size ?? 0;
+    const reachedFallback =
       index === 0
-        ? views
+        ? effectiveViews
         : (answeredByBlock[form.blocks[index - 1].id]?.size ?? 0);
+    const reached = reachedFromViews > 0 ? reachedFromViews : reachedFallback;
     dropOffMap[block.id] = Math.max(reached - answered, 0);
   });
 
@@ -147,7 +162,9 @@ export default async function Page({
                 <div className="grid grid-cols-3 gap-4">
                   <div className="border rounded-lg border-gray-300 shadow-sm p-4">
                     <div className="text-sm text-muted-foreground">Views</div>
-                    <div className="text-2xl font-semibold">{views ?? 0}</div>
+                    <div className="text-2xl font-semibold">
+                      {effectiveViews ?? 0}
+                    </div>
                   </div>
 
                   <div className="border rounded-lg border-gray-300 shadow-sm p-4">
