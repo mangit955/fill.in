@@ -2,15 +2,8 @@ import { createServerSupabase } from "@/lib/supabase/server";
 import { notFound, redirect } from "next/navigation";
 import { Form } from "@/lib/forms/types";
 import { NavbarHome } from "@/components/navbar/navbarHome";
-import {
-  Drawer,
-  DrawerContent,
-  DrawerHeader,
-  DrawerTitle,
-  DrawerTrigger,
-} from "@/components/ui/drawer";
-import { Button } from "@/components/ui/button";
 import ResponsesDataTable, { ResponseRow } from "./ResponsesDataTable";
+import AnalyticsDrawer from "./AnalyticsDrawer";
 
 export default async function Page({
   params,
@@ -139,6 +132,11 @@ export default async function Page({
     const reached = reachedFromViews > 0 ? reachedFromViews : reachedFallback;
     dropOffMap[block.id] = Math.max(reached - answered, 0);
   });
+  const dropOffItems = form.blocks.map((b) => ({
+    id: b.id,
+    label: b.config?.label || "Question",
+    count: dropOffMap[b.id] || 0,
+  }));
 
   return (
     <div className="min-h-screen">
@@ -148,62 +146,12 @@ export default async function Page({
         <div className="flex items-center justify-between mb-6 pb-4 border-b">
           <h1 className="text-3xl font-semibold">Responses</h1>
 
-          <Drawer>
-            <DrawerTrigger asChild>
-              <Button variant="outline">View analytics</Button>
-            </DrawerTrigger>
-
-            <DrawerContent>
-              <DrawerHeader>
-                <DrawerTitle>Form analytics</DrawerTitle>
-              </DrawerHeader>
-
-              <div className="px-6 pb-10 space-y-6">
-                <div className="grid grid-cols-3 gap-4">
-                  <div className="border rounded-lg border-gray-300 shadow-sm p-4">
-                    <div className="text-sm text-muted-foreground">Views</div>
-                    <div className="text-2xl font-semibold">
-                      {effectiveViews ?? 0}
-                    </div>
-                  </div>
-
-                  <div className="border rounded-lg border-gray-300 shadow-sm p-4">
-                    <div className="text-sm text-muted-foreground">Submits</div>
-                    <div className="text-2xl font-semibold">{submits ?? 0}</div>
-                  </div>
-
-                  <div className="border border-gray-300 rounded-lg p-4 shadow-sm">
-                    <div className="text-sm text-muted-foreground">
-                      Completion
-                    </div>
-                    <div className="text-2xl font-semibold">
-                      {completionRate}%
-                    </div>
-                  </div>
-                </div>
-
-                <div>
-                  <h3 className="font-semibold mb-3">Drop‑off by question</h3>
-                  <div className="space-y-2">
-                    {form.blocks.map((b) => {
-                      const count = dropOffMap[b.id] || 0;
-                      return (
-                        <div
-                          key={b.id}
-                          className="flex justify-between text-sm"
-                        >
-                          <span className="text-muted-foreground">
-                            {b.config?.label || "Question"}
-                          </span>
-                          <span className="font-medium">{count}</span>
-                        </div>
-                      );
-                    })}
-                  </div>
-                </div>
-              </div>
-            </DrawerContent>
-          </Drawer>
+          <AnalyticsDrawer
+            effectiveViews={effectiveViews}
+            submits={submits}
+            completionRate={completionRate}
+            dropOffItems={dropOffItems}
+          />
         </div>
 
         {/* Empty state */}
