@@ -56,7 +56,9 @@ export default function AnalyticsDrawer({
   return (
     <Drawer open={open} onOpenChange={handleOpenChange}>
       <DrawerTrigger asChild>
-        <Button variant="outline">View analytics</Button>
+        <Button variant="outline" className="text-gray-500 hover:text-gray-700">
+          View analytics
+        </Button>
       </DrawerTrigger>
 
       <DrawerContent
@@ -71,7 +73,9 @@ export default function AnalyticsDrawer({
           <div className="grid grid-cols-3 gap-4">
             <div className="border rounded-lg border-gray-300 shadow-sm p-4">
               <div className="text-sm text-muted-foreground">Views</div>
-              <div className="text-2xl font-semibold">{effectiveViews ?? 0}</div>
+              <div className="text-2xl font-semibold">
+                {effectiveViews ?? 0}
+              </div>
             </div>
 
             <div className="border rounded-lg border-gray-300 shadow-sm p-4">

@@ -1,11 +1,10 @@
 "use client";
 import Image from "next/image";
-import { Button } from "../ui/button";
-import { ArrowRight } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { MarqueeLogos } from "./marqueeLogos";
 import { TypingAnimation } from "../ui/typing-animation";
 import { Marquee } from "../ui/marquee";
+import { InteractiveHoverButton } from "../ui/interactive-hover-button";
 
 export const Herosection = () => {
   const router = useRouter();
@@ -52,7 +51,7 @@ export const Herosection = () => {
           builder you’ve been looking for.
         </h2>
       </div>
-      <div className="pt-20">
+      <div className="pt-20 flex flex-col items-center gap-3">
         <svg
           xmlns="http://www.w3.org/2000/svg"
           viewBox="0 0 139 124"
@@ -68,15 +67,16 @@ export const Herosection = () => {
             fill="#ffff"
           />
         </svg>
-        <Button
+        <InteractiveHoverButton
           onClick={() => router.push("/create")}
-          variant="default"
-          className=" cursor-pointer focus:ring-4 ring-blue-300 font-semibold gap-2"
+          className="border-blue-200/80 bg-white text-neutral-900 shadow-sm hover:shadow-md focus-visible:ring-4 focus-visible:ring-blue-300"
+          aria-label="Create a free form"
         >
           Create a free form
-          <ArrowRight className="size-4 translate-y-2px font-bold" />
-        </Button>
-        <h3 className="text-sm text-gray-700 ">Start creating — it’s free.</h3>
+        </InteractiveHoverButton>
+        <h3 className="text-sm text-gray-600">
+          Start creating. It&apos;s free.
+        </h3>
       </div>
 
       {/* Marquee animation */}
