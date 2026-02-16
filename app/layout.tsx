@@ -15,22 +15,22 @@ const geistMono = Geist_Mono({
 });
 
 const siteName = "Fill.in";
-const siteUrl = "https://fill-in-ten.vercel.app/";
+const siteUrl =
+  process.env.NEXT_PUBLIC_SITE_URL || "https://fill-in-ten.vercel.app";
 const description =
-  "Create powerful forms with logic jumps, conditional fields, and shareable links. Build forms like Tally for free with Fill.in.";
+  "Design advanced forms with conditional logic, logic jumps, and real-time response tracking. Share and collect data seamlessly with Fill.in.";
 
 export const metadata: Metadata = {
-  metadataBase: new URL("https://fill-in-ten.vercel.app/"),
+  metadataBase: new URL(siteUrl),
 
   title: {
     default: "Fill.in — Free Online Form Builder",
     template: "%s | Fill.in",
   },
 
-  description:
-    "Create powerful forms with logic jumps, conditional fields, and shareable links. Build forms like Tally for free with Fill.in.",
+  description: description,
 
-  applicationName: "Fill.in",
+  applicationName: siteName,
 
   keywords: [
     "form builder",
@@ -46,10 +46,9 @@ export const metadata: Metadata = {
 
   openGraph: {
     title: "Fill.in — Free Online Form Builder",
-    description:
-      "Create powerful forms with logic jumps, conditional fields, and shareable links.",
-    url: "https://fill-in-ten.vercel.app/",
-    siteName: "Fill.in",
+    description: description,
+    url: siteUrl,
+    siteName: siteName,
     images: [
       {
         url: "/og.png", // place inside /public
@@ -65,8 +64,7 @@ export const metadata: Metadata = {
   twitter: {
     card: "summary_large_image",
     title: "Fill.in — Free Online Form Builder",
-    description:
-      "Create powerful forms with logic jumps and conditional fields.",
+    description: description,
     images: ["/og.png"],
   },
 
@@ -77,7 +75,7 @@ export const metadata: Metadata = {
   },
 
   alternates: {
-    canonical: "https://fill-in-ten.vercel.app/",
+    canonical: siteUrl,
   },
 };
 
