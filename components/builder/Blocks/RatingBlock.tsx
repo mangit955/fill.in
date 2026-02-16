@@ -50,6 +50,16 @@ export default function RatingBlock({
           value={value}
           onChange={(e) => setValue(e.target.value)}
           onBlur={save}
+          onKeyDown={(e) => {
+            if (e.key === "Enter") {
+              e.preventDefault();
+              save();
+            }
+            if (e.key === "Escape") {
+              setValue(block.config.label);
+              setIsEditing(false);
+            }
+          }}
           className="w-full text-xl font-medium bg-transparent outline-none"
         />
       ) : (

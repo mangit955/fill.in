@@ -48,6 +48,7 @@ const MINUTES = Array.from({ length: 60 }, (_, i) =>
 
 type Props = {
   form: Form;
+  formId?: string;
   preview?: boolean;
 };
 
@@ -73,8 +74,9 @@ function resolveVisibleBlockId(
   return null;
 }
 
-export default function FormRuntime({ form, preview }: Props) {
+export default function FormRuntime({ form, formId, preview }: Props) {
   const router = useRouter();
+  const runtimeFormId = formId ?? form.id;
   const [currentBlockId, setCurrentBlockId] = useState<string | null>(
     resolveVisibleBlockId(form.blocks[0]?.id ?? null, {}, form),
   );
@@ -91,7 +93,7 @@ export default function FormRuntime({ form, preview }: Props) {
 
   useEffect(() => {
     if (preview) return; // don't track preview
-    if (!form?.id) return;
+    if (!runtimeFormId) return;
 
     // create/get session id
     let id = localStorage.getItem("form_session");
@@ -103,11 +105,11 @@ export default function FormRuntime({ form, preview }: Props) {
 
     // 🔥 TRACK VIEW
     supabase.from("form_events").insert({
-      form_id: form.id,
+      form_id: runtimeFormId,
       session_id: id,
       event_type: "view",
     });
-  }, [form.id, preview]);
+  }, [runtimeFormId, preview]);
 
   const nextBlockId = useMemo(() => {
     if (!currentBlockId) return null;
@@ -186,7 +188,7 @@ export default function FormRuntime({ form, preview }: Props) {
     }
 
     const { error } = await supabase.from("responses").insert({
-      form_id: form.id,
+      form_id: runtimeFormId,
       answers: filtered,
     });
 
@@ -200,7 +202,7 @@ export default function FormRuntime({ form, preview }: Props) {
     // 🔥 TRACK SUBMIT EVENT
     if (sessionIdRef.current) {
       await supabase.from("form_events").insert({
-        form_id: form.id,
+        form_id: runtimeFormId,
         session_id: sessionIdRef.current,
         event_type: "submit",
       });
@@ -367,7 +369,7 @@ export default function FormRuntime({ form, preview }: Props) {
     // 🔥 TRACK ANSWER EVENT
     if (!preview && sessionIdRef.current && currentBlockId) {
       supabase.from("form_events").insert({
-        form_id: form.id,
+        form_id: runtimeFormId,
         session_id: sessionIdRef.current,
         event_type: "answer",
         block_id: currentBlockId,
@@ -1180,7 +1182,7 @@ export default function FormRuntime({ form, preview }: Props) {
                           return;
                         }
 
-                        const filePath = `${form.id}/${
+                        const filePath = `${runtimeFormId}/${
                           block.id
                         }/${crypto.randomUUID()}-${file.name}`;
 

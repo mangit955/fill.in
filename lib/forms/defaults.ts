@@ -176,7 +176,7 @@ export function createFileUploadBlock(): FileUploadBlock {
     config: {
       label: "",
       multiple: false,
-      accept: "*",
+      accept: "*/*",
       maxSizeMB: 10,
     },
   };

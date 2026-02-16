@@ -12,12 +12,12 @@ export default async function RuntimePage({
 
   const { data } = await supabase
     .from("forms")
-    .select("schema, status")
+    .select("id, schema, status")
     .eq("slug", slug)
     .eq("status", "published")
     .single();
 
   if (!data) return <div>Form not published</div>;
 
-  return <FormRuntime form={data.schema} />;
+  return <FormRuntime form={data.schema} formId={data.id} />;
 }
