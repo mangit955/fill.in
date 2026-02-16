@@ -35,6 +35,8 @@ export const metadata: Metadata = {
 
   keywords: [
     "form builder",
+    "fillin",
+    "fill.in",
     "tally forms",
     "online forms",
     "survey builder",
