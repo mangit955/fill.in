@@ -51,7 +51,7 @@ export const metadata: Metadata = {
     siteName: siteName,
     images: [
       {
-        url: "/og.png", // place inside /public
+        url: `${siteUrl}/og.png`, // place inside /public
         width: 1200,
         height: 630,
         alt: "Fill.in Form Builder",
@@ -65,7 +65,7 @@ export const metadata: Metadata = {
     card: "summary_large_image",
     title: "Fill.in — Free Online Form Builder",
     description: description,
-    images: ["/og.png"],
+    images: [`${siteUrl}/og.png`],
   },
 
   icons: {
