@@ -43,13 +43,16 @@ export const NavbarHome = () => {
         <div className="flex backdrop-blur rounded-md items-center gap-3">
           <Button
             variant="ghost"
-            className="text-neutral-500 hidden font-semibold"
+            className="text-neutral-500 cursor-not-allowed! hidden font-semibold"
           >
             <Search width={20} height={20} className="mr-2" />
             Search
           </Button>
 
-          <Button variant="ghost" className="text-neutral-500">
+          <Button
+            variant="ghost"
+            className="text-neutral-500 cursor-not-allowed!"
+          >
             <Settings width={20} height={20} />
           </Button>
 
