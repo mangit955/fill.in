@@ -5,13 +5,14 @@ import { redirect } from "next/navigation";
 import { NavbarAvatar } from "@/components/navbar/avatar";
 import { getUsersByIds } from "@/lib/server/getUsersByIds";
 import { Badge } from "@/components/ui/badge";
-import { CircleMinus, Sparkles, UserRound } from "lucide-react";
+import { Sparkles, UserRound } from "lucide-react";
 import { createClient } from "@supabase/supabase-js";
 import {
   Tooltip,
   TooltipContent,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
+import RemoveCollaboratorButton from "./RemoveCollaboratorButton";
 
 const admin = createClient(
   process.env.NEXT_PUBLIC_SUPABASE_URL!,
@@ -216,19 +217,7 @@ export default async function Page({
                       redirect(`/create/${slug}`);
                     }}
                   >
-                    <Tooltip>
-                      <TooltipTrigger asChild>
-                        <button
-                          type="submit"
-                          className="cursor-pointer text-neutral-300 hover:text-neutral-500"
-                        >
-                          <CircleMinus size={18} />
-                        </button>
-                      </TooltipTrigger>
-                      <TooltipContent className="font-bold">
-                        Remove
-                      </TooltipContent>
-                    </Tooltip>
+                    <RemoveCollaboratorButton />
                   </form>
                 )}
               </div>
