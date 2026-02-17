@@ -1,6 +1,7 @@
 "use client";
 
 import * as React from "react";
+import Image from "next/image";
 import {
   ColumnDef,
   flexRender,
@@ -84,9 +85,12 @@ function getAnswerDisplay(
           return (
             <div key={`${url}-${idx}`} className="space-y-2">
               {isImage && (
-                <img
+                <Image
                   src={url}
                   alt={`Uploaded file preview ${idx + 1}`}
+                  width={220}
+                  height={144}
+                  sizes="220px"
                   className="w-full h-36 object-cover rounded-md border"
                 />
               )}
@@ -214,11 +218,13 @@ export default function ResponsesDataTable({ blocks, rows }: Props) {
             timeZone: "Asia/Kolkata",
           }),
       },
-      ...blocks.map((block): ColumnDef<ResponseRow> => ({
-        id: block.id,
-        header: block.config?.label || "Question",
-        cell: ({ row }) => getAnswerDisplay(block, row.original.answers),
-      })),
+      ...blocks.map(
+        (block): ColumnDef<ResponseRow> => ({
+          id: block.id,
+          header: block.config?.label || "Question",
+          cell: ({ row }) => getAnswerDisplay(block, row.original.answers),
+        }),
+      ),
     ],
     [blocks],
   );
@@ -262,14 +268,20 @@ export default function ResponsesDataTable({ blocks, rows }: Props) {
                 <TableRow key={row.id}>
                   {row.getVisibleCells().map((cell) => (
                     <TableCell key={cell.id}>
-                      {flexRender(cell.column.columnDef.cell, cell.getContext())}
+                      {flexRender(
+                        cell.column.columnDef.cell,
+                        cell.getContext(),
+                      )}
                     </TableCell>
                   ))}
                 </TableRow>
               ))
             ) : (
               <TableRow>
-                <TableCell colSpan={columns.length} className="h-24 text-center">
+                <TableCell
+                  colSpan={columns.length}
+                  className="h-24 text-center"
+                >
                   No responses yet
                 </TableCell>
               </TableRow>

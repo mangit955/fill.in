@@ -178,20 +178,11 @@ export function useFormEditor(initialForm?: Form) {
       schema: form,
     };
 
-    console.log("payload →", payload);
-
-    const { data, error } = await supabase
-      .from("forms")
-      .upsert(payload)
-      .select();
-
-    console.log("supabase data →", data);
-    console.log("supabase error →", error);
+    const { error } = await supabase.from("forms").upsert(payload).select();
 
     if (error) {
       alert("Save failed");
-      console.error("SUPABASE ERROR:", error);
-      console.error("DETAILS:", JSON.stringify(error, null, 2));
+
       return;
     }
   }

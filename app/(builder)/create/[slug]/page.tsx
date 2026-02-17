@@ -7,11 +7,6 @@ import { getUsersByIds } from "@/lib/server/getUsersByIds";
 import { Badge } from "@/components/ui/badge";
 import { Sparkles, UserRound } from "lucide-react";
 import { createClient } from "@supabase/supabase-js";
-import {
-  Tooltip,
-  TooltipContent,
-  TooltipTrigger,
-} from "@/components/ui/tooltip";
 import RemoveCollaboratorButton from "./RemoveCollaboratorButton";
 
 const admin = createClient(

@@ -61,10 +61,6 @@ export async function POST(req: Request) {
       .eq("id", formId)
       .single();
 
-    console.log("REQUESTER:", requester?.id);
-    console.log("FORM OWNER:", form?.user_id);
-    console.log("FORM ID:", formId);
-
     if (formError || !form) {
       return NextResponse.json({ error: "Form not found" }, { status: 404 });
     }

@@ -14,12 +14,13 @@ export default function RemoveCollaboratorButton() {
   return (
     <Tooltip>
       <TooltipTrigger asChild>
-        <button
-          type="submit"
-          disabled={pending}
-          aria-disabled={pending}
-          className="cursor-pointer text-neutral-300 hover:text-neutral-500 disabled:pointer-events-none disabled:cursor-not-allowed disabled:text-neutral-200"
-        >
+    <button
+      type="submit"
+      disabled={pending}
+      aria-disabled={pending}
+      aria-label={pending ? "Removing collaborator" : "Remove collaborator"}
+      className="cursor-pointer text-neutral-300 hover:text-neutral-500 disabled:pointer-events-none disabled:cursor-not-allowed disabled:text-neutral-200"
+    >
           <CircleMinus size={18} />
         </button>
       </TooltipTrigger>

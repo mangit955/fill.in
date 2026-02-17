@@ -49,28 +49,24 @@ export default function FormEditorClient({
   const [authOpen, setAuthOpen] = useState(false);
 
   async function continuePublish() {
-    console.log("[Publish Flow] continuePublish called");
     const {
       data: { session },
     } = await supabase.auth.getSession();
 
     if (!session?.user) {
-      console.log("[Publish Flow] No session, aborting");
       return;
     }
 
     try {
       setIsPublishing(true);
-      console.log("[Publish Flow] Calling editor.publish()...");
 
       const slug = await editor.publish();
-      console.log("[Publish Flow] Published! Slug:", slug);
+
       const url = `${window.location.origin}/f/${slug}`;
 
       setPublishedUrl(url);
       setMode("published");
     } catch (error) {
-      console.error("[Publish Flow] Error:", error);
       toast.error("Failed to publish form");
     } finally {
       setIsPublishing(false);
@@ -102,7 +98,7 @@ export default function FormEditorClient({
   useEffect(() => {
     const check = async () => {
       const pending = localStorage.getItem("pendingPublish");
-      console.log("[Publish Flow] Checking pendingPublish:", pending);
+
       if (!pending) return;
 
       // Wait a bit for session to be fully established after OAuth redirect
@@ -111,13 +107,8 @@ export default function FormEditorClient({
       const {
         data: { session },
       } = await supabase.auth.getSession();
-      console.log(
-        "[Publish Flow] Session:",
-        session?.user ? "User logged in" : "No user",
-      );
 
       if (session?.user) {
-        console.log("[Publish Flow] Resuming publish...");
         localStorage.removeItem("pendingPublish");
         await continuePublish();
       } else {
@@ -133,15 +124,8 @@ export default function FormEditorClient({
   useEffect(() => {
     const { data: listener } = supabase.auth.onAuthStateChange(
       async (event) => {
-        console.log("[Publish Flow] Auth state changed:", event);
         if (event === "SIGNED_IN") {
           const pending = localStorage.getItem("pendingPublish");
-          console.log(
-            "[Publish Flow] SIGNED_IN event, pending:",
-            pending,
-            "authOpen:",
-            authOpen,
-          );
 
           if (pending) {
             setAuthOpen(false);
